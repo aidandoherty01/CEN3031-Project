@@ -11,7 +11,9 @@ def index():
 ## New Ticket Page
 @app.route("/newticket/")
 def newTicket():   
-    return render_template('newticket.html')
+    catagoriesArray = ["Catagory1", "Catagory2", "Catagory3"] # TODO: get catagories from database
+
+    return render_template('newticket.html', catagoriesArray=catagoriesArray)
 
 @app.route("/newticket/", methods=['POST'])
 def newTicketPost():
