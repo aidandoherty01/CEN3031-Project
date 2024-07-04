@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, redirect, render_template
 import random
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ def index():
 
 ## New Ticket Page
 @app.route("/newticket/")
-def newTicket():
+def newTicket():   
     return render_template('newticket.html')
 
 @app.route("/newticket/", methods=['POST'])
@@ -32,8 +32,19 @@ def newTicketPost():
     out += desc
 
     print(out)
+    # send out to wherever new tickets go
 
-    return out
+    return redirect("/ticketsubmitted")
+
+## Ticket Submitted Page
+@app.route("/ticketsubmitted/")
+def ticketSubmitted():
+    return render_template('ticketsubmitted.html')
+
+@app.route("/ticketsubmitted/", methods=['POST'])
+def ticketSubmittedPost():
+    return redirect("/") # link to homepage/dashboard/ect goes here
+
 
 if __name__ == '__main__':
     app.run(debug=True)
