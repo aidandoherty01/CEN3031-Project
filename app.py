@@ -9,43 +9,43 @@ def index():
     return render_template('index.html')
 
 ## New Ticket Page
-@app.route("/newticket/")
+@app.route("/newticket/", methods=['GET', 'POST'])
 def newTicket():   
-    catagoriesArray = ["category1", "category2", "category3"] # TODO: get catagories from database
+    if (request.method == 'POST'):
+        out = "" # will hold the info sumbitted by user to be sent to database as a newticket, seperated by commas
+        # formatted as: "accID,category,description"
+        
+        accID = random.randrange(100, 999) # TODO: get accID from cached acc info once accounts have been implemented
+        out += str(accID)
 
-    return render_template('newticket.html', catagoriesArray=catagoriesArray)
+        category = request.form['catagories']
+        desc = request.form['desc']
 
-@app.route("/newticket/", methods=['POST'])
-def newTicketPost():
-    out = "" # will hold the info sumbitted by user to be sent to database as a newticket, seperated by commas
-    # formatted as: "accID,category,description"
-    
-    accID = random.randrange(100, 999) # TODO: get accID from cached acc info once accounts have been implemented
-    out += str(accID)
+        desc = desc.replace(",", "") # removes commas to prevent messing up the format, TODO: implement input validation for other unwanted inputs
 
-    category = request.form['catagories']
-    desc = request.form['desc']
+        out += ","
+        out += category
+        out += ","
+        out += desc
 
-    desc = desc.replace(",", "") # removes commas to prevent messing up the format, TODO: implement input validation for other unwanted inputs
+        print(out)
+        # send out to wherever new tickets go
 
-    out += ","
-    out += category
-    out += ","
-    out += desc
+        return redirect("/ticketsubmitted")
 
-    print(out)
-    # send out to wherever new tickets go
+    else:
+        catagoriesArray = ["category1", "category2", "category3"] # TODO: get catagories from database
 
-    return redirect("/ticketsubmitted")
+        return render_template('newticket.html', catagoriesArray=catagoriesArray)
+
 
 ## Ticket Submitted Page
-@app.route("/ticketsubmitted/")
+@app.route("/ticketsubmitted/", methods=['GET', 'POST'])
 def ticketSubmitted():
-    return render_template('ticketsubmitted.html')
-
-@app.route("/ticketsubmitted/", methods=['POST'])
-def ticketSubmittedPost():
-    return redirect("/") # link to homepage/dashboard/ect goes here
+    if (request.method == 'POST'):
+        return redirect("/") # link to homepage/dashboard/ect goes here
+    else:
+        return render_template('ticketsubmitted.html')
 
 
 if __name__ == '__main__':
