@@ -8,6 +8,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route("/homepage/", methods=["GET", "POST"])
+def hoempage():
+    return render_template('homepage.html')
+
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     return render_template('login.html')
