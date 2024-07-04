@@ -13,10 +13,10 @@
     </div>
 
     <form method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->
-        <label for="catagory">Please select the catagory that best describes your ticket:</label>
+        <label for="category">Please select the category that best describes your ticket:</label>
         <select name="catagories" id="catagories">
-            {% for catagory in catagoriesArray %} <!-- loops thru all the catagories in catagoriesArray and adds them to the dropdown box-->
-                <option value="{{ catagory }}">{{ catagory }}</option>
+            {% for category in catagoriesArray %} <!-- loops thru all the catagories in catagoriesArray and adds them to the dropdown box-->
+                <option value="{{ category }}">{{ category }}</option>
             {% endfor %}
         </select>
         

@@ -11,25 +11,25 @@ def index():
 ## New Ticket Page
 @app.route("/newticket/")
 def newTicket():   
-    catagoriesArray = ["Catagory1", "Catagory2", "Catagory3"] # TODO: get catagories from database
+    catagoriesArray = ["category1", "category2", "category3"] # TODO: get catagories from database
 
     return render_template('newticket.html', catagoriesArray=catagoriesArray)
 
 @app.route("/newticket/", methods=['POST'])
 def newTicketPost():
     out = "" # will hold the info sumbitted by user to be sent to database as a newticket, seperated by commas
-    # formatted as: "accID,catagory,description"
+    # formatted as: "accID,category,description"
     
     accID = random.randrange(100, 999) # TODO: get accID from cached acc info once accounts have been implemented
     out += str(accID)
 
-    catagory = request.form['catagories']
+    category = request.form['catagories']
     desc = request.form['desc']
 
     desc = desc.replace(",", "") # removes commas to prevent messing up the format, TODO: implement input validation for other unwanted inputs
 
     out += ","
-    out += catagory
+    out += category
     out += ","
     out += desc
 
