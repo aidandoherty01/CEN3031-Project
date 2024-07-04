@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Ticket</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1>New Ticket</h1>
+        
+    </div>
+
+    <form id="newTicketForm" method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->
+        <!-- TODO: make the dropdown options not hardcoded-->
+        <label for="catagory">Please select the catagory that best describes your ticket:</label>
+        <select name="catagories" id="catagories">
+            <option value="catagory1"selected>Catagory 1</option>
+            <option value="catagory2">Catagory 2</option>
+        </select>
+        
+        <h1></h1>
+
+        <label for="desc">Please breifly describe your problem:</label><br>
+        <textarea name="desc" id="desc" cols="40" rows="5"></textarea>
+        
+        <h1></h1>
+
+        <button type="submit" value="Submit">Sumbit Ticket</button>
+    </form>
+
+</body>
+</html>
