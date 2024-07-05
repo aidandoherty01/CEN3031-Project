@@ -4,9 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: rgb(212, 209, 209);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .header button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container h1 {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <button onclick="location.href='/login/'">Login</button>
+        <button onclick="location.href='/register/'">Register</button>
+    </div>
     <div class="container">
         <h1>Hello World</h1>
 
