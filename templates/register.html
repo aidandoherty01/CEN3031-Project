@@ -4,13 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .register-container {
+            text-align: center;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5b5f5b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-        <h2>Register</h2>
-        <form action="/login/" method="post"> 
+    <div class="register-container">
+        <h2>Register for new account</h2>
+        <form action="/login/" method="post">
             <div>
                 <label for="name">Your Name</label>
-                <input type="text" id="name" name="username" required>
+                <input type="text" id="name" name="name" required>
             </div>
             <div>
                 <label for="username">Username</label>
@@ -22,5 +65,6 @@
             </div>
             <button type="submit">Register</button>
         </form>
+    </div>
 </body>
 </html>
