@@ -58,7 +58,7 @@ def newTicket():
 @app.route("/ticketsubmitted/", methods=['GET', 'POST'])
 def ticketSubmitted():
     if (request.method == 'POST'):
-        return redirect("/") # link to homepage/dashboard/ect goes here
+        return redirect("/homepage/") # link to homepage/dashboard/ect goes here
     else:
         return render_template('ticketsubmitted.html')
 
