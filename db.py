@@ -19,11 +19,18 @@ def get_db():
 
 db = LocalProxy(get_db)
 
+def create_collections():
+    if 'tickets' not in db.list_collection_names():
+        db.create_collection('tickets')
+    if 'accounts' not in db.list_collection_names():
+        db.create_collection('accounts')
+
 def create_indexes():
     db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1})
 
 def init_app(app):
     with app.app_context():
+        create_collections()
         create_indexes()
 
 ## Ticket Fucntions
