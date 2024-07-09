@@ -27,6 +27,7 @@ def create_collections():
 
 def create_indexes():
     db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1})
+    db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1})
 
 def init_app(app):
     with app.app_context():
