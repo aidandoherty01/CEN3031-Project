@@ -20,15 +20,15 @@ def get_db():
 db = LocalProxy(get_db)
 
 def create_indexes():
-    db = get_db()
-    db.tickets.create_index ({'ticketID' : 1})
+    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1})
 
 def init_app(app):
     with app.app_context():
         create_indexes()
 
 def new_ticket(ticketID, userID, category, description):
-    db = get_db()
-    ##ticket_doc = {'ticketID' : ticketID, 'userID' : userID, 'category' : category, 'description' : description}
-    ticket_doc = {'ticketID' : ticketID}
+    ticket_doc = {'ticketID' : ticketID, 'userID' : userID, 'category' : category, 'description' : description}
     return db.tickets.insert_one(ticket_doc)
+
+def get_ticket_count():
+    return db.tickets.count_documents({})

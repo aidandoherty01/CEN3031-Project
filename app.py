@@ -5,7 +5,7 @@ import random
 import os
 import configparser
 
-from db import init_app, new_ticket
+from db import init_app, new_ticket, get_ticket_count
 
 
 app = Flask(__name__)
@@ -46,17 +46,9 @@ def newTicket():
         category = request.form['catagories']
         desc = request.form['desc']
 
-        desc = desc.replace(",", "") # removes commas to prevent messing up the format, TODO: implement input validation for other unwanted inputs
+        ticketID = get_ticket_count() + 1
 
-        out += ","
-        out += category
-        out += ","
-        out += desc
-
-        print(out)
-        # send out to wherever new tickets go
-
-        new_ticket(1, accID, category, desc)
+        new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
         return redirect("/ticketsubmitted")
 
