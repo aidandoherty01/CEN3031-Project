@@ -13,10 +13,6 @@ app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.
 init_app(app)
 
 
-config = configparser.ConfigParser()
-config.read(os.path.abspath(os.path.join(".ini")))
-
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     return render_template('index.html')

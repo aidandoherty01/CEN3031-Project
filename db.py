@@ -26,9 +26,12 @@ def init_app(app):
     with app.app_context():
         create_indexes()
 
+## Ticket Fucntions
 def new_ticket(ticketID, userID, category, description):
     ticket_doc = {'ticketID' : ticketID, 'userID' : userID, 'category' : category, 'description' : description}
     return db.tickets.insert_one(ticket_doc)
 
 def get_ticket_count():
     return db.tickets.count_documents({})
+
+## Account Functions
