@@ -1,7 +1,16 @@
-from flask import Flask, request, redirect, render_template
+from flask import Flask, request, redirect, render_template, current_app, g
+from flask_pymongo import PyMongo
+from pymongo import MongoClient
 import random
+import os
+import configparser
+
+from db import init_app, new_ticket, get_ticket_count
+
 
 app = Flask(__name__)
+app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
+init_app(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -33,15 +42,9 @@ def newTicket():
         category = request.form['catagories']
         desc = request.form['desc']
 
-        desc = desc.replace(",", "") # removes commas to prevent messing up the format, TODO: implement input validation for other unwanted inputs
+        ticketID = get_ticket_count() + 1
 
-        out += ","
-        out += category
-        out += ","
-        out += desc
-
-        print(out)
-        # send out to wherever new tickets go
+        new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
         return redirect("/ticketsubmitted")
 
