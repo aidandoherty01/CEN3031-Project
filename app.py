@@ -5,7 +5,7 @@ import random
 import os
 import configparser
 
-from db import init_app, new_ticket, get_ticket_count
+from db import init_app, new_ticket, get_ticket_count, new_account, get_account_count
 
 
 app = Flask(__name__)
@@ -18,16 +18,29 @@ def index():
     return render_template('index.html')
 
 @app.route("/homepage/", methods=["GET", "POST"])
-def hoempage():
+def homepage():
     return render_template('homepage.html')
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     return render_template('login.html')
 
+# Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
 def register():
-    return render_template('register.html')
+    if (request.method == 'POST'):
+        accID = get_account_count() + 1
+        username = request.form.get("username")
+        password = request.form.get("password")
+        fname = request.form.get("fname")
+        lname = request.form.get('lname')
+
+        new_account(accID, username, password, fname, lname)
+
+        return redirect("/index/")
+    
+    else:
+        return render_template('register.html')
 
 ## New Ticket Page
 @app.route("/newticket/", methods=['GET', 'POST'])

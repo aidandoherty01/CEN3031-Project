@@ -43,3 +43,9 @@ def get_ticket_count():
     return db.tickets.count_documents({})
 
 ## Account Functions
+def new_account(accID, username, password, fName, lName):
+    acc_doc = {'accID' : accID, 'username' : username, 'password' : password, 'fName' : fName, 'lName' : lName}
+    return db.accounts.insert_one(acc_doc)
+
+def get_account_count():
+    return db.accounts.count_documents({})
