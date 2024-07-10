@@ -36,12 +36,21 @@ def init_app(app):
 
 ## Ticket Fucntions
 def new_ticket(ticketID, userID, category, description):
-    ticket_doc = {'ticketID' : ticketID, 'userID' : userID, 'category' : category, 'description' : description, 'status' : "unassigned"}
+    ticket_doc = {'ticketID' : int(ticketID), 'userID' : int(userID), 'category' : category, 'description' : description, 'status' : "unassigned"}
     return db.tickets.insert_one(ticket_doc)
 
 def get_ticket_count():
     return db.tickets.count_documents({})
 
+def get_ticket_by_id(ticketID):
+    return db.tickets.find_one({'ticketID' : int(ticketID)}) # returns the ticket associated with the ID
+
+def get_tickets_by_acc(accID): # returns a cursor that points to the first element in the list of tickets associated with a given account
+    tickets = db.tickets.find({'userID' : int(accID)})
+    if (len(list(tickets)) == 0):
+        tickets = db.tickets.find({'assignedEmpID' : int(accID)})
+    return tickets
+     
 def assign_ticket(ticketID, empID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
     return response

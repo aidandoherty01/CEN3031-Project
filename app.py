@@ -5,7 +5,7 @@ import random
 import os
 import configparser
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket, close_ticket
+from db import init_app, new_ticket, get_ticket_count, assign_ticket, close_ticket, get_ticket_by_id, get_tickets_by_acc
 
 
 app = Flask(__name__)
@@ -73,6 +73,15 @@ def debug():
         elif (request.form['submit'] == "close"):
             ticketID = request.form['ticketIDc']
             close_ticket(ticketID)
+        elif (request.form['submit'] == "lookTicket"):
+            ticketID = request.form['ticketIDl']
+            ticket = get_ticket_by_id(ticketID)
+            print(ticket)
+        elif (request.form['submit'] == "lookAcc"):
+            accID = request.form['accID']
+            tickets = get_tickets_by_acc(accID)
+            for x in tickets:
+                print(x)
 
     return render_template('debug.html')
 
