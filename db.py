@@ -46,5 +46,8 @@ def assign_ticket(ticketID, empID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
     return response
 
+def close_ticket(ticketID):
+    print(ticketID)
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
 
 ## Account Functions

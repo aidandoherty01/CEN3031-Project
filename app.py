@@ -5,7 +5,7 @@ import random
 import os
 import configparser
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket
+from db import init_app, new_ticket, get_ticket_count, assign_ticket, close_ticket
 
 
 app = Flask(__name__)
@@ -66,9 +66,13 @@ def ticketSubmitted():
 @app.route("/debug/", methods=["GET", "POST"])
 def debug():
     if (request.method == 'POST'):
-        ticketID = request.form['ticketID']
-        empID = request.form['empID']
-        assign_ticket(ticketID, empID)
+        if (request.form['submit'] == "assign"):            
+            ticketID = request.form['ticketID']
+            empID = request.form['empID']
+            assign_ticket(ticketID, empID)
+        elif (request.form['submit'] == "close"):
+            ticketID = request.form['ticketIDc']
+            close_ticket(ticketID)
 
     return render_template('debug.html')
 
