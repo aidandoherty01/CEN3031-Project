@@ -1,4 +1,6 @@
 import bson
+import datetime
+import string
 
 from flask import current_app, g
 from werkzeug.local import LocalProxy
@@ -6,6 +8,7 @@ from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+
 
 
 def get_db():
@@ -26,7 +29,7 @@ def create_collections():
         db.create_collection('accounts')
 
 def create_indexes():
-    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
+    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1})
 
 def init_app(app):
@@ -51,9 +54,16 @@ def get_tickets_by_acc(accID): # returns a cursor that points to the first eleme
         tickets = db.tickets.find({'assignedEmpID' : int(accID)})
     return tickets
      
-def assign_ticket(ticketID, empID):
+def assign_ticket_emp(ticketID, empID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
     return response
+
+def assign_ticket_eta(ticketID, eta):
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)},  {'$set' : {'eta' : string(eta)}})
+    return response
+
+def assign_ticket_start_time(ticketID, startTime):
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'startTime' : string(startTime)}})
 
 def close_ticket(ticketID):
     print(ticketID)

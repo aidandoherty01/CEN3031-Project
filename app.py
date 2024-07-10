@@ -1,11 +1,13 @@
 from flask import Flask, request, redirect, render_template, current_app, g
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
+
 import random
 import os
-import configparser
+import datetime
+import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket, close_ticket, get_ticket_by_id, get_tickets_by_acc
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc
 
 
 app = Flask(__name__)
@@ -69,7 +71,7 @@ def debug():
         if (request.form['submit'] == "assign"):            
             ticketID = request.form['ticketID']
             empID = request.form['empID']
-            assign_ticket(ticketID, empID)
+            assign_ticket_emp(ticketID, empID)
         elif (request.form['submit'] == "close"):
             ticketID = request.form['ticketIDc']
             close_ticket(ticketID)
