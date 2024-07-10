@@ -37,7 +37,7 @@ def register():
 
         new_account(accID, username, password, fname, lname)
 
-        return redirect("/index/")
+        return redirect("/login/")
     
     else:
         return render_template('register.html')
