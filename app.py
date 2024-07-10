@@ -1,11 +1,13 @@
 from flask import Flask, request, redirect, render_template, current_app, g
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
+
 import random
 import os
-import configparser
+import datetime
+import string
 
-from db import init_app, new_ticket, get_ticket_count
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta
 
 
 app = Flask(__name__)
@@ -61,6 +63,29 @@ def ticketSubmitted():
         return redirect("/homepage/") # link to homepage/dashboard/ect goes here
     else:
         return render_template('ticketsubmitted.html')
+    
+## Debug Page
+@app.route("/debug/", methods=["GET", "POST"])
+def debug():
+    if (request.method == 'POST'):
+        if (request.form['submit'] == "assign"):            
+            ticketID = request.form['ticketID']
+            empID = request.form['empID']
+            assign_ticket_emp(ticketID, empID)
+        elif (request.form['submit'] == "close"):
+            ticketID = request.form['ticketIDc']
+            close_ticket(ticketID)
+        elif (request.form['submit'] == "lookTicket"):
+            ticketID = request.form['ticketIDl']
+            ticket = get_ticket_by_id(ticketID)
+            print(ticket)
+        elif (request.form['submit'] == "lookAcc"):
+            accID = request.form['accID']
+            tickets = get_tickets_by_acc(accID)
+            for x in tickets:
+                print(x)
+
+    return render_template('debug.html')
 
 
 if __name__ == '__main__':
