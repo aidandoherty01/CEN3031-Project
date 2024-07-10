@@ -9,7 +9,6 @@ import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta
 
-
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
 init_app(app)
@@ -20,16 +19,29 @@ def index():
     return render_template('index.html')
 
 @app.route("/homepage/", methods=["GET", "POST"])
-def hoempage():
+def homepage():
     return render_template('homepage.html')
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     return render_template('login.html')
 
+# Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
 def register():
-    return render_template('register.html')
+    if (request.method == 'POST'):
+        accID = get_account_count() + 1
+        username = request.form.get("username")
+        password = request.form.get("password")
+        fname = request.form.get("fname")
+        lname = request.form.get('lname')
+
+        new_account(accID, username, password, fname, lname)
+
+        return redirect("/login/")
+    
+    else:
+        return render_template('register.html')
 
 ## New Ticket Page
 @app.route("/newticket/", methods=['GET', 'POST'])
