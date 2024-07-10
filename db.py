@@ -43,7 +43,7 @@ def get_ticket_count():
     return db.tickets.count_documents({})
 
 def assign_ticket(ticketID, empID):
-    response = db.tickets.update_one({'ticketID' : ticketID}, {'$set' : {'assignedEmpID' : empID, 'status' : "assigned"}})
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
     return response
 
 

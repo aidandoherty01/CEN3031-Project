@@ -5,7 +5,7 @@ import random
 import os
 import configparser
 
-from db import init_app, new_ticket, get_ticket_count
+from db import init_app, new_ticket, get_ticket_count, assign_ticket
 
 
 app = Flask(__name__)
@@ -61,6 +61,16 @@ def ticketSubmitted():
         return redirect("/homepage/") # link to homepage/dashboard/ect goes here
     else:
         return render_template('ticketsubmitted.html')
+    
+## Debug Page
+@app.route("/debug/", methods=["GET", "POST"])
+def debug():
+    if (request.method == 'POST'):
+        ticketID = request.form['ticketID']
+        empID = request.form['empID']
+        assign_ticket(ticketID, empID)
+
+    return render_template('debug.html')
 
 
 if __name__ == '__main__':
