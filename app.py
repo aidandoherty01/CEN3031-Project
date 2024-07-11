@@ -1,10 +1,10 @@
 from flask import Flask, request, redirect, render_template, current_app, g
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
+from datetime import date,time,datetime
 
 import random
 import os
-import datetime
 import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets
@@ -115,10 +115,9 @@ def ITstaffview():
         i = 0
         while(i < len(ticketJSON)): # loops thru all tickets and puts the JSON data into the tickets array
             ticketsArr[i][0] = ticketJSON[i].get('ticketID')
-            #ticketsArr[i][1] = ticketJSON[i].get('startTime') TODO: UNCOMMENT THESE TWO LINES AND REMOVE THE TWO BELOW THEM ONCE TICKET ASSIGNEMENT IS DONE
-            #ticketsArr[i][2] = ticketJSON[i].get('eta)             
-            ticketsArr[i][1] = "12/24/2024, 13:30"
-            ticketsArr[i][2] = "01:15"
+            ticketsArr[i][1] = ticketJSON[i].get('startTime') 
+            ticketsArr[i][2] = ticketJSON[i].get('eta')  
+            ticketsArr[i][2] = ticketsArr[i][2][:len(ticketsArr[i][2]) - 3] # remove the last 3 chars of the time string, as these contain the seconds          
             ticketsArr[i][3] = ticketJSON[i].get('category')
             ticketsArr[i][4] = ticketJSON[i].get('description')
             i += 1
@@ -155,8 +154,30 @@ def staffTicketView(ticketID):
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
-    return "ticket: " + str(ticketID)
+    if (request.method == 'POST'):
+        if (request.form['hours'].isdigit() & request.form['minutes'].isdigit()):
+            if (int(request.form['minutes']) < 60):
+                eta = time(int(request.form['hours']), int(request.form['minutes']))
 
+                assign_ticket_eta(ticketID, eta.isoformat())
+
+                # TODO: Implement ticket assignment based on schedules once schedules are implemented
+                assign_ticket_start_time(ticketID, "12/24/2024, 09:30")
+                assign_ticket_emp(ticketID, 2)
+
+                return redirect("/ITstaffview/")
+            else:
+                return "Error: Invalid input"
+        else:
+            return "Error: Invalid input"
+    else:
+        ticketJSON = get_ticket_by_id(ticketID) # get the ticket in the url from the db
+        ticketArr = [0] * 3
+        ticketArr[0] = ticketID
+        ticketArr[1] = ticketJSON.get('category')
+        ticketArr[2] = ticketJSON.get('description')
+
+        return render_template('ticketeta.html', ticket = ticketArr)
 
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
