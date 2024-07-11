@@ -94,7 +94,7 @@
     <div class="header">
         <div class="left-buttons">
             <button onclick="location.href='/'">Calender</button>
-            <button onclick="location.href='/ITstaffview/eta/'">ETA Needed</button>
+            <button onclick="location.href='/ITstaffview'">Assigned Tickets</button>
             <button onclick="location.href='/'">Time Entry</button>
         </div>
         <div class="right-button">
@@ -103,19 +103,17 @@
     </div>
 
     <div class="table-container">
-        <div class="title">Your Assigned Tickets</div>
+        <div class="title">Tickets needing time estimates</div>
         <table>
             {% for ticket in tickets %}
             <tr>
                 <td class="ticket-ID">
-                    <button onclick="location.href='/ITstaffview/ticket/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button>
-                    <div>Ticket Start Time: {{ ticket[1] }}</div>
-                    <div>Ticket ETA: {{ ticket[2] }}</div>
+                    <button onclick="location.href='/ITstaffview/eta/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button>
                 </td>
                 
                 <td class="descr">
-                    <div>Ticket Category: {{ ticket[3] }}</div>
-                    <div>Ticket description: {{ ticket[4] }}</div>
+                    <div>Ticket Category: {{ ticket[1] }}</div>
+                    <div>Ticket description: {{ ticket[2] }}</div>
                 </td>
                 
             </tr>
