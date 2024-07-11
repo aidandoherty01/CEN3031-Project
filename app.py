@@ -99,6 +99,11 @@ def debug():
 
     return render_template('debug.html')
 
+## IT Staff View
+@app.route("/ITstaffview/", methods=["GET", "POST"])
+def ITstaffview():
+    return render_template('ITstaffview.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
