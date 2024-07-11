@@ -152,7 +152,7 @@ def staffTicketView(ticketID):
     return "ticket: " + str(ticketID)
 
 
-## IT Staff ticket ata assignment page
+## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
     return "ticket: " + str(ticketID)
