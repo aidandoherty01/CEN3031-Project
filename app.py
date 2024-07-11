@@ -159,6 +159,17 @@ def ticketEtaAssignment(ticketID):
 
 
 ## User view
+@app.route("/userview/", methods=["GET", "POST"])
+def userview():
+    if (request.method == 'POST'):
+        print('test')
+    else:
+        '''
+        TODO:
+        - get userID
+        - users active tickets (store as a 2D list)        
+        '''
+        return render_template('userview.html', tickets = [["01", "1", "des1"], ["02", "2", "des2"]])
 
 if __name__ == '__main__':
     app.run(debug=True)
