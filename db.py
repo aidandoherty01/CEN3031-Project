@@ -63,11 +63,11 @@ def assign_ticket_emp(ticketID, empID):
     return response
 
 def assign_ticket_eta(ticketID, eta):
-    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)},  {'$set' : {'eta' : string(eta)}})
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)},  {'$set' : {'eta' : eta}})
     return response
 
 def assign_ticket_start_time(ticketID, startTime):
-    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'startTime' : string(startTime)}})
+    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'startTime' : startTime}})
 
 def close_ticket(ticketID):
     print(ticketID)
