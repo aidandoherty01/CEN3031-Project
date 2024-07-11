@@ -102,7 +102,7 @@ def debug():
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
 def ITstaffview():
-    return render_template('ITstaffview.html', tickets = [['ticket1', '1', 'des1'], ['ticket2', '2', 'des2']]) 
+    return render_template('ITstaffview.html', tickets = [['01', '24', '22', '1', 'des1'], ['02','24', '22', '2', 'des2']]) # ID, start time, ETA, category, description 
 
 
 if __name__ == '__main__':

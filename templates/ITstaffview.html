@@ -30,39 +30,63 @@
             font-size: 16px;
             cursor: pointer;
         }
-        .container {
-            text-align: center;
-            margin-top: 50px;
+        .table-container {
+            margin-top: 20px; /* Adjust the value to move the table further down */
+            font-family: Arial, sans-serif;
         }
-        .container h1 {
-            margin-bottom: 20px;
-        }
-        .tickets {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .ticket {
-            background-color: white;
-            padding: 15px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 60%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .ticket-id {
+        .title {
+            font-size: 24px; /* Adjust as needed */
             font-weight: bold;
-            margin-right: 20px;
-            flex-basis: 20%;
-            text-align: left;
+            margin-bottom: 20px;
+            color: #524444;
+            text-align: center; /* Center align the title */
         }
-        .ticket-details {
-            flex-basis: 75%;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
             text-align: left;
+            font-size: 16px; /* Adjust as needed */
+            color: #555;
+        }
+        td.ticket-ID {
+            width: 30%;
+            font-size: 18px; /* Adjust as needed */
+        }
+        td.descr {
+            font-size: 16px; /* Adjust as needed */
+        }
+        td.ticket-ID button {
+            background-color: #9da79d; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        td.ticket-ID div {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #777;
+        }
+        td.descr div {
+            margin-top: 5px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
         }
     </style>
 </head>
@@ -78,19 +102,25 @@
         </div>
     </div>
 
-    <div class="container">
-        {% for ticket in tickets %} <!-- loops thru all the assigned tickets-->
-            <!-- each ticket includes ticketID, category, description-->
-            <div class="'ticket">
-                <div class="'ticket-id">
-                    {{ticket[0]}}
-                </div>
-                <div class="ticket-details">
-                    <div>{{ticket[1]}}</div>
-                    <div>{{ticket[2]}}</div>
-                </div>
-            </div>
-        {% endfor %}
+    <div class="table-container">
+        <div class="title">Your Assigned Tickets</div>
+        <table>
+            {% for ticket in tickets %}
+            <tr>
+                <td class="ticket-ID">
+                    <button onclick="location.href='/'">Ticket {{ ticket[0] }}</button>
+                    <div>Ticket Start Time: {{ ticket[1] }}</div>
+                    <div>Ticket ETA: {{ ticket[2] }}</div>
+                </td>
+                
+                <td class="descr">
+                    <div>Ticket Category: {{ ticket[3] }}</div>
+                    <div>Ticket description: {{ ticket[4] }}</div>
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 </body>
 </html>
