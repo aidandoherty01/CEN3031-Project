@@ -118,7 +118,7 @@ def ITstaffview():
             #ticketsArr[i][1] = ticketJSON[i].get('startTime') TODO: UNCOMMENT THESE TWO LINES AND REMOVE THE TWO BELOW THEM ONCE TICKET ASSIGNEMENT IS DONE
             #ticketsArr[i][2] = ticketJSON[i].get('eta)             
             ticketsArr[i][1] = "12/24/2024, 13:30"
-            ticketsArr[i][2] = "01" + " Hours " + "15" + " Minutes"
+            ticketsArr[i][2] = "01:15"
             ticketsArr[i][3] = ticketJSON[i].get('category')
             ticketsArr[i][4] = ticketJSON[i].get('description')
             i += 1
