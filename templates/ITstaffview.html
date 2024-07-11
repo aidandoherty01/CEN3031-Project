@@ -37,6 +37,33 @@
         .container h1 {
             margin-bottom: 20px;
         }
+        .tickets {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .ticket {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 60%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ticket-id {
+            font-weight: bold;
+            margin-right: 20px;
+            flex-basis: 20%;
+            text-align: left;
+        }
+        .ticket-details {
+            flex-basis: 75%;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -50,9 +77,20 @@
             <button onclick="location.href='/'">Logout</button>
         </div>
     </div>
-    <div class="container">
-        <h1>Hello World</h1>
 
+    <div class="container">
+        {% for ticket in tickets %} <!-- loops thru all the assigned tickets-->
+            <!-- each ticket includes ticketID, category, description-->
+            <div class="'ticket">
+                <div class="'ticket-id">
+                    {{ticket[0]}}
+                </div>
+                <div class="ticket-details">
+                    <div>{{ticket[1]}}</div>
+                    <div>{{ticket[2]}}</div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </body>
 </html>

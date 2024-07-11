@@ -14,10 +14,14 @@
             background-color: rgb(212, 209, 209);
             padding: 10px 20px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
         }
-        .header button {
+        .header .left-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
             padding: 10px 20px;
             margin: 0 10px;
             border: none;
@@ -37,14 +41,17 @@
 </head>
 <body>
     <div class="header">
-        <button onclick="location.href='/'">Logout</button>
-    </div>
-    <div class="header">
-        <button onclick="location.href='/newticket/'">New Ticket</button>
+        <div class="left-buttons">
+            <button onclick="location.href='/'">Calender</button>
+            <button onclick="location.href='/'">ETA Needed</button>
+            <button onclick="location.href='/'">Time Entry</button>
+        </div>
+        <div class="right-button">
+            <button onclick="location.href='/'">Logout</button>
+        </div>
     </div>
     <div class="container">
-        <h1>Hello World</h1>
-
+        
     </div>
 </body>
 </html>
