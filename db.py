@@ -53,6 +53,10 @@ def get_tickets_by_acc(accID): # returns a cursor that points to the first eleme
     if (len(list(tickets)) == 0):
         tickets = db.tickets.find({'assignedEmpID' : int(accID)})
     return tickets
+
+def get_unassigned_tickets():
+    tickets = db.tickets.find({'status' : "unassigned"})
+    return tickets
      
 def assign_ticket_emp(ticketID, empID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
