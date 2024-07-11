@@ -125,6 +125,12 @@ def ITstaffview():
             i += 1
 
         return render_template('ITstaffview.html', tickets = ticketsArr) # ID, start time, ETA, category, description 
+    
+
+## IT Staff Ticket page
+@app.route("/ITstaffview/ticket/<int:ticketID>", methods=["GET", "POST"])
+def staffTicketView(ticketID):
+    return "ticket: " + str(ticketID)
 
 
 if __name__ == '__main__':

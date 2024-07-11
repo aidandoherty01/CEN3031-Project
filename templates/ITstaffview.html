@@ -108,7 +108,7 @@
             {% for ticket in tickets %}
             <tr>
                 <td class="ticket-ID">
-                    <button onclick="location.href='/'">Ticket {{ ticket[0] }}</button>
+                    <button onclick="location.href='/ITstaffview/ticket/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button>
                     <div>Ticket Start Time: {{ ticket[1] }}</div>
                     <div>Ticket ETA: {{ ticket[2] }}</div>
                 </td>
