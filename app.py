@@ -7,7 +7,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -72,7 +72,7 @@ def newTicket():
 @app.route("/ticketsubmitted/", methods=['GET', 'POST'])
 def ticketSubmitted():
     if (request.method == 'POST'):
-        return redirect("/homepage/") 
+        return redirect("/userview/") 
     else:
         return render_template('ticketsubmitted.html')
     
@@ -187,10 +187,45 @@ def userview():
     else:
         '''
         TODO:
-        - get userID
-        - users active tickets (store as a 2D list)        
+        - get userID      
         '''
-        return render_template('userview.html', tickets = [["01", "1", "des1"], ["02", "2", "des2"]])
+
+        accID = 913 # TODO: get accID from logged in account
+        ticketJSON = list(get_active_tickets(accID)) # gets a list of the active tickets of that accID
+
+        ticketsArr = [[0] * 4 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 4
+
+        for i in range(len(ticketJSON)):
+            ticketsArr[i][0] = ticketJSON[i].get('ticketID')
+            ticketsArr[i][1] = ticketJSON[i].get('category')
+            ticketsArr[i][2] = ticketJSON[i].get('status')
+            ticketsArr[i][3] = ticketJSON[i].get('description')
+
+        return render_template('userview.html', tickets = ticketsArr)
+
+## Users view their ticket history 
+@app.route("/usertickethistory/", methods=["GET", "POST"])
+def usertickethistory():
+    if (request.method == 'POST'):
+        print('test')
+    else:
+        '''
+        TODO:
+        - get userID      
+        '''
+
+        accID = 913 # TODO: get accID from logged in account
+        ticketJSON = list(get_active_tickets(accID)) # gets a list of the active tickets of that accID
+
+        ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 6
+
+        for i in range(len(ticketJSON)):
+            ticketsArr[i][0] = ticketJSON[i].get('ticketID')
+            ticketsArr[i][1] = ticketJSON[i].get('category')
+            ticketsArr[i][2] = ticketJSON[i].get('status')
+            ticketsArr[i][3] = ticketJSON[i].get('description')
+
+        return render_template('usertickethistory.html', tickets = ticketsArr)
 
 if __name__ == '__main__':
     app.run(debug=True)

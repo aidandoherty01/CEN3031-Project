@@ -54,6 +54,10 @@ def get_tickets_by_acc(accID): # returns a cursor that points to the first eleme
         tickets = db.tickets.find({'assignedEmpID' : int(accID)})
     return tickets
 
+def get_active_tickets(accID):
+    tickets = db.tickets.find({'userID' : int(accID), 'status':  {"$in":["unassigned","assigned"]}})  
+    return tickets
+
 def get_unassigned_tickets():
     tickets = db.tickets.find({'status' : "unassigned"})
     return tickets
