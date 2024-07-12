@@ -1,13 +1,13 @@
 from flask import Flask, request, redirect, render_template, current_app, g
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
-from datetime import date,time,datetime
+from datetime import date,time,datetime,timedelta
 
 import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -16,6 +16,36 @@ init_app(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    tempArr = [[0] * 2 for _ in range(7)]
+    test1 = 3
+
+    check_account("test","test")
+
+    for i in range(7):
+        for j in range(2):
+            tempArr[i][j] = []
+
+    for i in range(7):
+        tempArr[i][0].append(str(time(i+2,30)))
+        tempArr[i][1].append(str(timedelta(hours=4, minutes=30)))
+        tempArr[i][0].append(str(time(i+3,30)))
+        tempArr[i][1].append(str(timedelta(hours=3, minutes=30)))
+
+    print(tempArr[4][0][0])
+    print(tempArr[4][1][0])
+    print(tempArr[4][0][1])
+    print(tempArr[4][1][1])
+
+    #new_schedule(2, tempArr)
+
+    tempArr2 = get_schedule(2)
+
+    print("")
+    print(tempArr2[4][0][0])
+    print(tempArr2[4][1][0])
+    print(tempArr2[4][0][1])
+    print(tempArr2[4][1][1])
+
     return render_template('index.html')
 
 ## delete late

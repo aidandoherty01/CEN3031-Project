@@ -1,5 +1,4 @@
 import bson
-import datetime
 import string
 
 from flask import current_app, g
@@ -8,6 +7,7 @@ from flask_pymongo import PyMongo
 from pymongo.errors import DuplicateKeyError, OperationFailure
 from bson.objectid import ObjectId
 from bson.errors import InvalidId
+from datetime import time, timedelta, date
 
 
 
@@ -27,10 +27,13 @@ def create_collections():
         db.create_collection('tickets')
     if 'accounts' not in db.list_collection_names():
         db.create_collection('accounts')
+    if 'schedules' not in db.list_collection_names():
+        db.create_collection('schedules')
 
 def create_indexes():
     db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1})
+    db.schedules.create_index ({'accID' : 1, 'timeSlots' : 1})
 
 def init_app(app):
     with app.app_context():
@@ -88,3 +91,29 @@ def get_account_count():
 def check_account(username, password):
     acc_exist = db.accounts.find_one({'username': username, 'password': password})
     return acc_exist
+
+## Schedule Fucntions
+def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule
+    schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
+    return db.schedules.insert_one(schedule_doc)
+
+def get_schedule(accID):  # returns an array of timedate objects, NOT STRINGS!!!
+    scheduleJSON = db.schedules.find_one({'accID' : accID}).get('timeSlots')
+    scheduleOut = [[0] * 2 for _ in range(7)]
+
+    for i in range(7):
+        for j in range(2):
+            scheduleOut[i][j] = []
+
+    print(scheduleJSON)
+
+    for i in range(7):
+        for j in range(len(scheduleJSON[i][0])):
+            startStr = scheduleJSON[i][0][j]
+            durStr = scheduleJSON[i][1][j]
+            scheduleOut[i][0].append(startStr)
+            scheduleOut[i][1].append(durStr)
+            print(str(i) + " " + str(j) + ": " + scheduleOut[i][0][j] + "-" + scheduleOut[i][1][j])
+
+    return scheduleOut
+            
