@@ -103,18 +103,20 @@
     <div class="table-container">
         <div class="title">Your Prior Ticket History</div>
         <table>
-            <tbody>
-                {% for ticket in tickets %}
-                <tr>
-                    <td>
-                        <div class="ticket-ID">Ticket {{ ticket[0] }}</div>
-                        <div>Category: {{ ticket[1] }}</div>
-                        <div>Status: {{ ticket[2] }}</div>
-                        <div>Description: {{ ticket[3] }}</div>  
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td class="ticket-ID">
+                    <button>Ticket {{ ticket[0] }}</button>
+                    <div>Ticket Status: {{ ticket[2] }}</div>
+                </td>
+                
+                <td class="descr">
+                    <div>Ticket Category: {{ ticket[1] }}</div>
+                    <div>Ticket description: {{ ticket[3] }}</div>
+                </td>
+                
+            </tr>
+            {% endfor %}
         </table>
     </div>
 </body>
