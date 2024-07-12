@@ -84,3 +84,7 @@ def new_account(accID, username, password, fName, lName):
 
 def get_account_count():
     return db.accounts.count_documents({})
+
+def check_account(username, password):
+    acc_exist = db.accounts.find_one({'username': username, 'password': password})
+    return acc_exist

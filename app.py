@@ -7,7 +7,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -18,13 +18,23 @@ init_app(app)
 def index():
     return render_template('index.html')
 
+## delete late
 @app.route("/homepage/", methods=["GET", "POST"])
 def homepage():
     return render_template('homepage.html')
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if check_account(username, password):
+            return render_template("userview.html")
+        else:
+            return redirect("/")
+    else:
+        return render_template("login.html")
+    
 
 # Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
