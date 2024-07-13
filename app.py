@@ -7,7 +7,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -16,36 +16,6 @@ init_app(app)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    tempArr = [[0] * 2 for _ in range(7)]
-    test1 = 3
-
-    check_account("test","test")
-
-    for i in range(7):
-        for j in range(2):
-            tempArr[i][j] = []
-
-    for i in range(7):
-        tempArr[i][0].append(str(time(i+2,30)))
-        tempArr[i][1].append(str(timedelta(hours=4, minutes=30)))
-        tempArr[i][0].append(str(time(i+3,30)))
-        tempArr[i][1].append(str(timedelta(hours=3, minutes=30)))
-
-    print(tempArr[4][0][0])
-    print(tempArr[4][1][0])
-    print(tempArr[4][0][1])
-    print(tempArr[4][1][1])
-
-    #new_schedule(2, tempArr)
-
-    tempArr2 = get_schedule(2)
-
-    print("")
-    print(tempArr2[4][0][0])
-    print(tempArr2[4][1][0])
-    print(tempArr2[4][0][1])
-    print(tempArr2[4][1][1])
-
     return render_template('index.html')
 
 ## delete late
@@ -155,7 +125,7 @@ def ITstaffview():
         i = 0
         while(i < len(ticketJSON)): # loops thru all tickets and puts the JSON data into the tickets array
             ticketsArr[i][0] = ticketJSON[i].get('ticketID')
-            ticketsArr[i][1] = ticketJSON[i].get('startTime') 
+            ticketsArr[i][1] = ticketJSON[i].get('startTime').strftime("%m-%d-%Y %H:%M") 
             ticketsArr[i][2] = ticketJSON[i].get('eta')  
             ticketsArr[i][2] = ticketsArr[i][2][:len(ticketsArr[i][2]) - 3] # remove the last 3 chars of the time string, as these contain the seconds          
             ticketsArr[i][3] = ticketJSON[i].get('category')
@@ -201,11 +171,23 @@ def ticketEtaAssignment(ticketID):
 
                 assign_ticket_eta(ticketID, eta.isoformat())
 
-                # TODO: Implement ticket assignment based on schedules once schedules are implemented
-                assign_ticket_start_time(ticketID, "12/24/2024, 09:30")
-                assign_ticket_emp(ticketID, 2)
+                soonestFit = datetime.max
+                emps = list(get_emp_accounts())
 
-                return redirect("/ITstaffview/")
+                for x in emps:
+                    thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
+
+                    if (thisEmpSoonestFit < soonestFit):
+                        soonestFit = thisEmpSoonestFit
+                        soonestEmp = x.get('accID')
+
+                if (soonestFit == datetime.max):
+                    return "error: could not fit ticket with that eta into any employees schedule"
+                else:
+                    assign_ticket_emp(ticketID, soonestEmp)
+                    assign_ticket_start_time(ticketID, soonestFit)
+
+                return redirect("/ITstaffview/eta")
             else:
                 return "Error: Invalid input"
         else:
