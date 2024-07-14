@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, current_app, g
+from flask import Flask, request, redirect, render_template, current_app, g, make_response
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 
@@ -8,7 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -30,7 +30,15 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
         if check_account(username, password):
-            return render_template("userview.html")
+            response = make_response(redirect('/userview/'))
+
+            acc = get_account_by_username(username)
+
+            response.set_cookie('username', username, secure=True)
+            response.set_cookie('accID', str(acc.get('accID')), secure=True)
+            response.set_cookie('type', str(acc.get('type')), secure=True)
+
+            return response
         else:
             return redirect("/")
     else:
@@ -227,6 +235,8 @@ def ticketEtaAssignment(ticketID):
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
 def userview():
+    print(request.cookies.get('username'))
+
     if (request.method == 'POST'):
         print('test')
     else:

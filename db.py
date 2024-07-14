@@ -132,8 +132,11 @@ def check_username_free(username):
 def get_emp_accounts():
     return db.accounts.find({'type' : 1})
 
+def get_account_by_username(username):
+    return db.accounts.find_one({'username' : username})
+
 def get_account(accID):
-    acc = db.accounts.find_one({'accID': accID})
+    acc = db.accounts.find_one({'accID' : accID})
     return acc
   
 def get_accounts():
