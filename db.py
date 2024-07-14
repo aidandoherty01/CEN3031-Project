@@ -119,6 +119,9 @@ def get_account(accID):
 def get_accounts():
     return db.accounts.find()
 
+def delete_account(accID):
+    db.accounts.delete_one({'accID' : accID})
+
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
