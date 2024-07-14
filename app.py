@@ -47,7 +47,7 @@ def register():
         fname = request.form.get("fname")
         lname = request.form.get('lname')
 
-        new_account(accID, username, password, fname, lname)
+        new_account(accID, username, password, fname, lname, 0)
 
         return redirect("/login/")
     
@@ -117,7 +117,7 @@ def admin():
             lname = request.form['lname']
             username = request.form['username']
             password = request.form['password']
-            new_account(accID, username, password, fname, lname)
+            new_account(accID, username, password, fname, lname, 1)
         elif (request.form['submit'] == 'deleteEmp'):
             accID = request.form['delID']
             # if not isinstance(accID, int):

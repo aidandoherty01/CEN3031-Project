@@ -98,8 +98,8 @@ def close_ticket(ticketID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
 
 ## Account Functions
-def new_account(accID, username, password, fName, lName):
-    acc_doc = {'accID' : accID, 'username' : username, 'password' : password, 'fName' : fName, 'lName' : lName, 'type' : 0}
+def new_account(accID, username, password, fName, lName, type):
+    acc_doc = {'accID' : accID, 'username' : username, 'password' : password, 'fName' : fName, 'lName' : lName, 'type' : int(type)}
     return db.accounts.insert_one(acc_doc)
 
 def get_account_count():
