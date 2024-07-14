@@ -53,8 +53,14 @@ def get_ticket_by_id(ticketID):
 
 def get_tickets_by_acc(accID): # returns a cursor that points to the first element in the list of tickets associated with a given account
     tickets = db.tickets.find({'userID' : int(accID)})
+
     if (len(list(tickets)) == 0):
         tickets = db.tickets.find({'assignedEmpID' : int(accID)})
+    return tickets
+
+def get_tickets_by_account(accID): # returns a cursor that points to the first element in the list of tickets associated with a given account
+    tickets = db.tickets.find({'userID' : int(accID)})
+
     return tickets
 
 def get_active_tickets(accID):
@@ -105,6 +111,10 @@ def check_account(username, password):
 
 def get_emp_accounts():
     return db.accounts.find({'type' : 1})
+
+def get_account(accID):
+    acc = db.accounts.find_one({'accID': accID})
+    return acc
 
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule

@@ -7,7 +7,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -212,7 +212,7 @@ def userview():
         - get userID      
         '''
 
-        accID = 913 # TODO: get accID from logged in account
+        accID = 522 # TODO: get accID from logged in account
         ticketJSON = list(get_active_tickets(accID)) # gets a list of the active tickets of that accID
 
         ticketsArr = [[0] * 4 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 4
@@ -236,8 +236,8 @@ def usertickethistory():
         - get userID      
         '''
 
-        accID = 913 # TODO: get accID from logged in account
-        ticketJSON = list(get_active_tickets(accID)) # gets a list of the active tickets of that accID
+        accID = 522 # TODO: get accID from logged in account
+        ticketJSON = list(get_tickets_by_account(accID)) # gets a list of the active tickets of that accID
 
         ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 6
 
@@ -250,12 +250,28 @@ def usertickethistory():
         return render_template('usertickethistory.html', tickets = ticketsArr)
     
 ## Users view ticket 
-@app.route("/userview/userviewticket/", methods=["GET", "POST"])
-def vewticket():
+@app.route("/userview/userviewticket/<int:ID>", methods=["GET", "POST"])
+def vewticket(ID):
     if (request.method == 'POST'):
         print('test')
     else:
-        return render_template('userviewticket.html')
+        ticketJSON = get_ticket_by_id(ID) # get the ticket associated with that ticketID
+
+        ticketsArr = [0] * 7 # create a list of size 7
+        print('HI')
+        ticketsArr[0] = ticketJSON.get('ticketID')
+        ticketsArr[1] = ticketJSON.get('category')
+        ticketsArr[2] = ticketJSON.get('status')
+        ticketsArr[3] = ticketJSON.get('description')
+        ticketsArr[4] = ticketJSON.get('eta')
+        ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
+        fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
+        lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
+        empName = fName + " " + lName
+        ticketsArr[5] = empName
+        ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+
+        return render_template('userviewticket.html', ticket = ticketsArr)
 
 if __name__ == '__main__':
     app.run(debug=True)

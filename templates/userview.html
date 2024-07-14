@@ -117,7 +117,7 @@
                     {% for ticket in tickets %}
                     <tr>
                         <td>
-                            <div class="ticket-ID"><button onclick="location.href='/userview/userviewticket/'">Ticket {{ ticket[0] }}</button></div>
+                            <div class="ticket-ID"><button onclick="location.href='/userview/userviewticket/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button></div>
                             <div>Category: {{ ticket[1] }}</div>
                             <div>Status: {{ ticket[2] }}</div>
                             <div>Description: {{ ticket[3] }}</div>  

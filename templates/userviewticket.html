@@ -54,40 +54,30 @@
             font-size: 16px; /* Adjust as needed */
             color: #2c2b2b;
         }
-        td.ticket-ID {
-            width: 30%;
-            font-size: 18px; /* Adjust as needed */
-        }
-        td.descr {
-            font-size: 16px; /* Adjust as needed */
-        }
-        td.ticket-ID button {
-            background-color: #266ab7; /* Green */
+        tr.title {
+            background-color: #608bbd; /* Green */
             border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
             font-size: 16px;
             margin: 4px 2px;
-            cursor: pointer;
             border-radius: 4px;
-        }
-        td.ticket-ID div {
-            margin-top: 5px;
-            font-size: 14px;
-            color: #272626;
-        }
-        td.descr div {
-            margin-top: 5px;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        tr:hover {
-            background-color: #f1f1f1;
+        /* Chatbot styling */
+        .chatbot-container {
+            width: 300px;
+            padding: 70px;
+            margin: 80px auto;
+            background-color: #fff;
         }
+        .chatbot-header {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
     </style>
 </head>
 <body>
@@ -101,23 +91,48 @@
     </div>
 
     <div class="table-container">
-        <div class="title">Your Prior Ticket History</div>
+        <div class="title">Ticket {{ticket[0]}} </div>
         <table>
-            {% for ticket in tickets %}
-            <tr>
-                <td class="ticket-ID">
-                    <button>Ticket {{ ticket[0] }}</button>
-                    <div>Ticket Status: {{ ticket[2] }}</div>
+            <tr class="title">
+                <td>
+                    <div>Ticket ID</div>
                 </td>
+                <td><div>Category</div></td>
                 
-                <td class="descr">
-                    <div>Ticket Category: {{ ticket[1] }}</div>
-                    <div>Ticket description: {{ ticket[3] }}</div>
+                <td>
+                    <div>Status</div>
                 </td>
+                <td><div>Description</div></td>
+                <td><div>ETA</div></td>
+                <td><div>IT Staff</div></td>
+                <td><div>Start Time</div></td>
                 
             </tr>
-            {% endfor %}
+            <tr>
+                <td>
+                    <div>{{ticket[0]}}</div>
+                </td>
+                <td><div>{{ticket[1]}}</div></td>
+                
+                <td>
+                    <div>{{ticket[2]}}</div>
+                </td>
+                <td><div>{{ticket[3]}}</div></td>
+                <td><div>{{ticket[4]}}</div></td>
+                <td><div>{{ticket[5]}}</div></td>
+                <td><div>{{ticket[6]}}</div></td>
+                
+            </tr>
         </table>
     </div>
+
+    <div class="chatbot-container">
+        <div class="chatbot-header">You are chatting with {{ticket[5]}} (your IT Staff)</div>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <input type="text" id="chatbot-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+
 </body>
 </html>
