@@ -176,7 +176,7 @@ def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!
             durStr = scheduleJSON[i][1][j].split(':')
 
             startTime = timedelta(hours=int(startStr[0]), minutes=int(startStr[1]))
-
+            
             durTime = timedelta(hours=int(durStr[0]), minutes=int(durStr[1]))
 
             scheduleOut[i][0].append(startTime)

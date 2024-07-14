@@ -51,6 +51,8 @@ def register():
             new_account(accID, username, password, fname, lname, 0)
 
             return redirect("/login/")
+        else:
+            return "Error: username is already in use"
     
     else:
         return render_template('register.html')
