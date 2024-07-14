@@ -158,7 +158,25 @@ def etaAssignment():
 ## IT Staff Ticket page
 @app.route("/ITstaffview/ticket/<int:ticketID>", methods=["GET", "POST"])
 def staffTicketView(ticketID):
-    return "ticket: " + str(ticketID)
+    if request.method == 'POST':
+        print('test')
+    else:
+        ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
+
+        ticketsArr = [0] * 7 # create a list of size 7
+        ticketsArr[0] = ticketJSON.get('ticketID')
+        ticketsArr[1] = ticketJSON.get('category')
+        ticketsArr[2] = ticketJSON.get('status')
+        ticketsArr[3] = ticketJSON.get('description')
+        ticketsArr[4] = ticketJSON.get('eta')
+        ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
+        fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
+        lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
+        empName = fName + " " + lName
+        ticketsArr[5] = empName
+        ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+
+        return render_template('userviewticket.html', ticket = ticketsArr)
 
 
 ## IT Staff ticket eta assignment page
@@ -258,7 +276,6 @@ def vewticket(ID):
         ticketJSON = get_ticket_by_id(ID) # get the ticket associated with that ticketID
 
         ticketsArr = [0] * 7 # create a list of size 7
-        print('HI')
         ticketsArr[0] = ticketJSON.get('ticketID')
         ticketsArr[1] = ticketJSON.get('category')
         ticketsArr[2] = ticketJSON.get('status')

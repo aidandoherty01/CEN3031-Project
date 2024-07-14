@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .left-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .table-container {
+            margin-top: 20px; /* Adjust the value to move the table further down */
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            font-size: 24px; /* Adjust as needed */
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c2929;
+            text-align: center; /* Center align the title */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 16px; /* Adjust as needed */
+            color: #2c2b2b;
+        }
+        tr.title {
+            background-color: #608bbd; /* Green */
+            border: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            border-radius: 4px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        /* Chatbot styling */
+        .chatbot-container {
+            width: 300px;
+            padding: 70px;
+            margin: 80px auto;
+            background-color: #fff;
+        }
+        .chatbot-header {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left-buttons">
+            <button onclick="location.href='/userview/'">Home</button>
+        </div>
+        <div class="right-button">
+            <button onclick="location.href='/'">Logout</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="title">Ticket {{ticket[0]}} </div>
+        <table>
+            <tr class="title">
+                <td><div></div></td>
+                <td>
+                    <div>Ticket ID</div>
+                </td>
+                <td><div>Category</div></td>
+                
+                <td>
+                    <div>Status</div>
+                </td>
+                <td><div>Description</div></td>
+                <td><div>ETA</div></td>
+                <td><div>IT Staff</div></td>
+                <td><div>Start Time</div></td>
+                
+            </tr>
+            <tr>
+                <td>
+                    <div>{{ticket[0]}}</div>
+                </td>
+                <td><div>{{ticket[1]}}</div></td>
+                
+                <td>
+                    <div>{{ticket[2]}}</div>
+                </td>
+                <td><div>{{ticket[3]}}</div></td>
+                <td><div>{{ticket[4]}}</div></td>
+                <td><div>{{ticket[5]}}</div></td>
+                <td><div>{{ticket[6]}}</div></td>
+                
+            </tr>
+        </table>
+    </div>
+
+    <div class="chatbot-container">
+        <div class="chatbot-header">You are chatting with {{ticket[5]}} (your IT Staff)</div>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <input type="text" id="chatbot-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+
+</body>
+</html>
