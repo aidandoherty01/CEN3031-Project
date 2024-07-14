@@ -122,6 +122,21 @@ def get_accounts():
 def delete_account(accID):
     db.accounts.delete_one({'accID' : accID})
 
+def get_new_ID(): # returns an int = the lowest avaliable acc id
+    accounts = list(db.accounts.find().sort('accID')) # gets all the accounts, sorted by ID
+    
+    if (len(accounts) == 0):
+        return 1
+    elif (len(accounts) == 1):
+        return (accounts[0].get('accID') + 1)
+    else:
+        for i in range(1, len(accounts)):
+            if ((accounts[i].get('accID') - 1) != (accounts[i-1].get('accID'))): # checks if account i's id is not one greater than the previous account
+                return (accounts[i].get('accID') - 1)
+        
+        return (len(accounts) + 1) # if there were no gaps then return the size + 1 as new acc
+
+
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]

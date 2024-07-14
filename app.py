@@ -8,7 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -41,7 +41,7 @@ def login():
 @app.route("/register/", methods=["GET", "POST"])
 def register():
     if (request.method == 'POST'):
-        accID = get_account_count() + 1
+        accID = get_new_ID()
         username = request.form.get("username")
         password = request.form.get("password")
         fname = request.form.get("fname")
@@ -112,7 +112,7 @@ def admin():
             accounts = get_accounts()
             return render_template('admin.html', accounts=accounts)
         elif (request.form['submit'] == 'createEmp'):
-            accID = get_account_count()
+            accID = get_new_ID()
             fname = request.form['fname']
             lname = request.form['lname']
             username = request.form['username']
