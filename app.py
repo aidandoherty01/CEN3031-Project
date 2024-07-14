@@ -71,7 +71,7 @@ def newTicket():
 
         new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
-        return redirect("/ticketsubmitted")
+        return redirect("/userview/ticketsubmitted/")
 
     else:
         catagoriesArray = ["category1", "category2", "category3"] # TODO: get catagories from database
