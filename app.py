@@ -1,13 +1,14 @@
 from flask import Flask, request, redirect, render_template, current_app, g
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
+
 from datetime import date,time,datetime,timedelta
 
 import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -66,7 +67,7 @@ def newTicket():
         category = request.form['catagories']
         desc = request.form['desc']
 
-        ticketID = get_ticket_count() + 1
+        ticketID = get_ticket_count() + 1   # potential bug if tickets can be deleted, generating new tickets with overlapping ids
 
         new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
@@ -86,9 +87,9 @@ def ticketSubmitted():
     else:
         return render_template('ticketsubmitted.html')
     
-## Debug Page
-@app.route("/debug/", methods=["GET", "POST"])
-def debug():
+## Admin Page
+@app.route("/admin/", methods=["GET", "POST"])
+def admin():
     if (request.method == 'POST'):
         if (request.form['submit'] == "assign"):            
             ticketID = request.form['ticketID']
@@ -106,8 +107,27 @@ def debug():
             tickets = get_tickets_by_acc(accID)
             for x in tickets:
                 print(x)
+        # Start Admin Functionality
+        elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
+            accounts = get_accounts()
+            return render_template('admin.html', accounts=accounts)
+        elif (request.form['submit'] == 'createEmp'):
+            accID = get_account_count()
+            fname = request.form['fname']
+            lname = request.form['lname']
+            username = request.form['username']
+            password = request.form['password']
+            new_account(accID, username, password, fname, lname)
+        elif (request.form['submit'] == 'deleteEmp'):
+            accID = request.form['delID']
+            # if not isinstance(accID, int):
+                # print('Error: Incorrect Input')   # Figure out better way to handle this
+            # else:
+                # delete_account(accID)
+            delete_account(int(accID))
+        # add ticket view
 
-    return render_template('debug.html')
+    return render_template('admin.html')
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
@@ -270,6 +290,7 @@ def vewticket(ID):
         empName = fName + " " + lName
         ticketsArr[5] = empName
         ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+
 
         return render_template('userviewticket.html', ticket = ticketsArr)
 

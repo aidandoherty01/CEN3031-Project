@@ -115,6 +115,9 @@ def get_emp_accounts():
 def get_account(accID):
     acc = db.accounts.find_one({'accID': accID})
     return acc
+  
+def get_accounts():
+    return db.accounts.find()
 
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule
@@ -223,11 +226,3 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
 
     return datetime.max # returns max time to show that cannot be fit into schedule
                             
-
-    
-
-
-
-
-
-            
