@@ -115,7 +115,7 @@ def ITstaffview():
     if (request.method == 'POST'):
         print('test')
     else:
-        empID = 2 # TODO: get empID from logged in account
+        empID = 4 # TODO: get empID from logged in account
         ticketJSON = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
 
         ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 5
@@ -159,7 +159,8 @@ def etaAssignment():
 @app.route("/ITstaffview/ticket/<int:ticketID>", methods=["GET", "POST"])
 def staffTicketView(ticketID):
     if request.method == 'POST':
-        print('test')
+        close_ticket(ticketID)
+        return redirect("/ITstaffview/ticket/" + str(ticketID))
     else:
         ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
@@ -170,13 +171,13 @@ def staffTicketView(ticketID):
         ticketsArr[3] = ticketJSON.get('description')
         ticketsArr[4] = ticketJSON.get('eta')
         ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
-        fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
-        lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
+        fName = get_account(ticketJSON.get('userID')).get('fName') 
+        lName = get_account(ticketJSON.get('userID')).get('lName') # get user first name and last name
         empName = fName + " " + lName
         ticketsArr[5] = empName
         ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
-        return render_template('userviewticket.html', ticket = ticketsArr)
+        return render_template('ITstaffviewticket.html', ticket = ticketsArr)
 
 
 ## IT Staff ticket eta assignment page
