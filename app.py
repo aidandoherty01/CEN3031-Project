@@ -54,7 +54,7 @@ def register():
         return render_template('register.html')
 
 ## New Ticket Page
-@app.route("/newticket/", methods=['GET', 'POST'])
+@app.route("/userview/newticket/", methods=['GET', 'POST'])
 def newTicket():   
     if (request.method == 'POST'):
         out = "" # will hold the info sumbitted by user to be sent to database as a newticket, seperated by commas
@@ -79,7 +79,7 @@ def newTicket():
 
 
 ## Ticket Submitted Page
-@app.route("/ticketsubmitted/", methods=['GET', 'POST'])
+@app.route("/userview/ticketsubmitted/", methods=['GET', 'POST'])
 def ticketSubmitted():
     if (request.method == 'POST'):
         return redirect("/userview/") 
@@ -214,7 +214,7 @@ def userview():
         return render_template('userview.html', tickets = ticketsArr)
 
 ## Users view their ticket history 
-@app.route("/usertickethistory/", methods=["GET", "POST"])
+@app.route("/userview/usertickethistory/", methods=["GET", "POST"])
 def usertickethistory():
     if (request.method == 'POST'):
         print('test')
@@ -236,6 +236,14 @@ def usertickethistory():
             ticketsArr[i][3] = ticketJSON[i].get('description')
 
         return render_template('usertickethistory.html', tickets = ticketsArr)
+    
+## Users view ticket 
+@app.route("/userview/userviewticket/", methods=["GET", "POST"])
+def vewticket():
+    if (request.method == 'POST'):
+        print('test')
+    else:
+        return render_template('userviewticket.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

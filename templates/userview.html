@@ -90,15 +90,16 @@
             justify-content: center;
             text-align: center; /* Center text horizontally */
         }
-        .ticket-ID {
+        .ticket-ID button {
             background-color: #266ab7; /* Green */
             color: white;
-            padding: 10px 20px;
+            padding: 10px 300px;
             text-align: center;
             text-decoration: none;
             font-size: 16px;
             margin: 4px 2px;
             border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -116,7 +117,7 @@
                     {% for ticket in tickets %}
                     <tr>
                         <td>
-                            <div class="ticket-ID">Ticket {{ ticket[0] }}</div>
+                            <div class="ticket-ID"><button onclick="location.href='/userview/userviewticket/'">Ticket {{ ticket[0] }}</button></div>
                             <div>Category: {{ ticket[1] }}</div>
                             <div>Status: {{ ticket[2] }}</div>
                             <div>Description: {{ ticket[3] }}</div>  
@@ -127,8 +128,8 @@
             </table>
         </div>
         <div class="button-container">
-            <button onclick="location.href='/usertickethistory/'">View Prior Ticket History</button>
-            <button onclick="location.href='/newticket/'">Open new Ticket</button>
+            <button onclick="location.href='/userview/usertickethistory/'">View Prior Ticket History</button>
+            <button onclick="location.href='/userview/newticket/'">Open new Ticket</button>
             <button onclick="location.href='/'">Start Chat</button>
             <button onclick="location.href='/'">View Chat History</button>
         </div>
