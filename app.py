@@ -14,6 +14,12 @@ app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
 init_app(app)
 
+@app.route("/logout/", methods=["GET", "POST"])
+def logout():
+    response = make_response(redirect('/'))
+    response.delete_cookie('accID')
+    response.delete_cookie('type')
+    return response
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -34,13 +40,12 @@ def login():
 
             acc = get_account_by_username(username)
 
-            response.set_cookie('username', username, secure=True)
             response.set_cookie('accID', str(acc.get('accID')), secure=True)
             response.set_cookie('type', str(acc.get('type')), secure=True)
 
             return response
         else:
-            return redirect("/")
+            return "Login Failed, incorrect username or password"
     else:
         return render_template("login.html")
     
@@ -235,7 +240,7 @@ def ticketEtaAssignment(ticketID):
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
 def userview():
-    print(request.cookies.get('username'))
+    print(request.cookies.get('accID'))
 
     if (request.method == 'POST'):
         print('test')
