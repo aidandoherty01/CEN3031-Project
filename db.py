@@ -109,6 +109,13 @@ def check_account(username, password):
     acc_exist = db.accounts.find_one({'username': username, 'password': password})
     return acc_exist
 
+def check_username_free(username):
+    acc = list(db.accounts.find({'username' : username}))
+    if (len(acc) == 0):
+        return True
+    else:
+        return False
+
 def get_emp_accounts():
     return db.accounts.find({'type' : 1})
 
