@@ -98,15 +98,28 @@ def close_ticket(ticketID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
 
 ## Account Functions
+def hash_password(passPlain): # hashes passwords using division by prime method
+    passASCII = list(passPlain.encode('ascii')) # converts input to array of ascii values
+    temp = ""
+    for i in passASCII: # puts all these ascii values into one string
+        temp += str(i)
+
+    passInt = int(temp) # convert string to int
+
+    passHash = str(int(passInt) % 137077) # hash int, store as string
+
+    return passHash
+
 def new_account(accID, username, password, fName, lName, type):
-    acc_doc = {'accID' : accID, 'username' : username, 'password' : password, 'fName' : fName, 'lName' : lName, 'type' : int(type)}
+    passHash = hash_password(password)
+    acc_doc = {'accID' : accID, 'username' : username, 'password' : passHash, 'fName' : fName, 'lName' : lName, 'type' : int(type)}
     return db.accounts.insert_one(acc_doc)
 
 def get_account_count():
     return db.accounts.count_documents({})
 
 def check_account(username, password):
-    acc_exist = db.accounts.find_one({'username': username, 'password': password})
+    acc_exist = db.accounts.find_one({'username': username, 'password': hash_password(password)})
     return acc_exist
 
 def check_username_free(username):
