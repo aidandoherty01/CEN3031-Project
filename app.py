@@ -58,8 +58,8 @@ def login():
             else:
                 response = make_response(redirect('/admin/'))
 
-            response.set_cookie('accID', str(acc.get('accID')), secure=False) # SET SECURE TO TRUE BEFORE FINAL RELEASE!!
-            response.set_cookie('type', str(acc.get('type')), secure=False)
+            response.set_cookie('accID', str(acc.get('accID')), secure=True)
+            response.set_cookie('type', str(acc.get('type')), secure=True)
 
             return response
         else:
@@ -226,7 +226,7 @@ def etaAssignment():
 def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
-        if (cookieID() == ticket.get('ticketID') or check_type(2)):
+        if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST':
                 close_ticket(ticketID)
                 return redirect("/ITstaffview/ticket/" + str(ticketID))
