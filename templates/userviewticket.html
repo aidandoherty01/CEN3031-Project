@@ -126,13 +126,27 @@
         </table>
     </div>
 
-    <div class="chatbot-container">
-        <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
-        <div class="chatbot-messages" id="chatbot-messages"></div>
-        <input type="text" id="chatbot-input" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+        
+
+       
+         
+    {% if chat %} {
+        <div class="chatbot-container">
+            <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    }
+    {% else %}
+        <div class="chatbot-container">
+            <div class="chatbot-header">You can start the chat when your ticket is assigned with an IT staff.</div>
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <input type="text" id="chatbot-input" placeholder="Type a message...">
+        </div>
+    {% endif %}
     
+
 
 </body>
 </html>

@@ -356,15 +356,24 @@ def vewticket(ID):
                 ticketsArr[2] = ticketJSON.get('status')
                 ticketsArr[3] = ticketJSON.get('description')
                 ticketsArr[4] = ticketJSON.get('eta')
-                ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
-                fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
-                lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
-                empName = fName + " " + lName
-                ticketsArr[5] = empName
-                ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+                # checking if those are NoneType object
+                if (ticketsArr[4] is not None):
+                    ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
+                if(ticketJSON.get('status') == 'unassigned'):
+                    ticketsArr[5] = ''
+                    chat = False
+                else:
+                    fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
+                    lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
+                    empName = fName + " " + lName
+                    ticketsArr[5] = empName
+                    chat = True
+                ticketsArr[6] = ticketJSON.get('startTime')
+                if(ticketsArr[4] is not None):
+                    ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
 
-                return render_template('userviewticket.html', ticket = ticketsArr)
+                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat)
             
         else:
             return "Not authorized to view this page. Ensure that you are logged in."
