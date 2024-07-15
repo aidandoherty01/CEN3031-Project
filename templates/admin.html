@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Admin</h1>
+        
+    </div>
+
+    <form method="POST">        
+        
+        <h1></h1>
+
+        <!--Assign a ticket to an employee based off their IDs-->
+        <label for="empID">empID</label>
+        <input type="text" id="empID" name="empID">
+
+        <label for="ticketID">ticketID</label>
+        <input type="text" id="ticketID" name="ticketID">  
+
+        <button type="submit" name="submit" value="assign">assign ticket</button>
+
+        <h1></h1>
+        
+        <!--Close a specfied ticket based off its ID-->
+        <label for="ticketIDc">ticketID</label>
+        <input type="text" id="ticketIDc" name="ticketIDc">
+
+        <button type="submit" name="submit" value="close">close ticket</button>
+
+        <h1></h1>
+
+        <!--Lookup tickets based off their ID-->
+        <label for="ticketIDl">ticketID</label>
+        <input type="text" id="ticketIDl" name="ticketIDl">
+
+        <button type="submit" name="submit" value="lookTicket">lookup ticket ID</button>
+
+        <h1></h1>
+
+        <!--Lookup accounts based off of their ID-->
+        <label for="accID">accID</label>
+        <input type="text" id="accID" name="accID">
+
+        <button type="submit" name="submit" value="lookAcc">lookup account</button>
+
+        <h1>Start Admin Functionality</h1>
+
+        <!--Print All Employee Accounts-->
+        <div>
+            <button type="submit" name="submit" value="allEmp">Print All [Employee] Accounts</button>
+            <p>
+                <table>
+                    {% for item in accounts %}  <!--Iterates through all passed accounts-->
+                    <tr>
+                    <td>{{item}}</td> <!--Prints each document in the collection-->
+                    </tr>
+                    {% endfor %}    <!--Ends for loop-->
+                </table>
+            </p>
+        </div>
+
+        <h1></h1>
+
+        <!--Create Employee Account-->
+        <!--Potential bug with input not being required-->
+        <div>
+            <label for="fname">Your First Name</label>
+            <input type="text" id="fname" name="fname">
+        </div>
+        <div>
+            <label for="lname">Your Last Name</label>
+            <input type="text" id="lname" name="lname">
+        </div>
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password">
+        </div>
+        <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>        
+        
+        <h1></h1>
+
+        <!--Delete Employee Account-->
+        <!--Potential bug with input not being required-->
+        <div>
+            <label for="delID">Account ID</label>
+            <input type="number" id="delID" name="delID">
+        </div>
+        <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
+
+    </form>
+
+</body>
+</html>

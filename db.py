@@ -98,23 +98,67 @@ def close_ticket(ticketID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
 
 ## Account Functions
-def new_account(accID, username, password, fName, lName):
-    acc_doc = {'accID' : accID, 'username' : username, 'password' : password, 'fName' : fName, 'lName' : lName, 'type' : 0}
+def hash_password(passPlain): # hashes passwords using division by prime method
+    passASCII = list(passPlain.encode('ascii')) # converts input to array of ascii values
+    temp = ""
+    for i in passASCII: # puts all these ascii values into one string
+        temp += str(i)
+
+    passInt = int(temp) # convert string to int
+
+    passHash = str(int(passInt) % 137077) # hash int, store as string
+
+    return passHash
+
+def new_account(accID, username, password, fName, lName, type):
+    passHash = hash_password(password)
+    acc_doc = {'accID' : accID, 'username' : username, 'password' : passHash, 'fName' : fName, 'lName' : lName, 'type' : int(type)}
     return db.accounts.insert_one(acc_doc)
 
 def get_account_count():
     return db.accounts.count_documents({})
 
 def check_account(username, password):
-    acc_exist = db.accounts.find_one({'username': username, 'password': password})
+    acc_exist = db.accounts.find_one({'username': username, 'password': hash_password(password)})
     return acc_exist
+
+def check_username_free(username):
+    acc = list(db.accounts.find({'username' : username}))
+    if (len(acc) == 0):
+        return True
+    else:
+        return False
 
 def get_emp_accounts():
     return db.accounts.find({'type' : 1})
 
+def get_account_by_username(username):
+    return db.accounts.find_one({'username' : username})
+
 def get_account(accID):
-    acc = db.accounts.find_one({'accID': accID})
+    acc = db.accounts.find_one({'accID' : accID})
     return acc
+  
+def get_accounts():
+    return db.accounts.find()
+
+def delete_account(accID):
+    db.accounts.delete_one({'accID' : accID})
+
+def get_new_ID(): # returns an int = the lowest avaliable acc id
+    accounts = list(db.accounts.find().sort('accID')) # gets all the accounts, sorted by ID
+    
+    if (len(accounts) == 0):
+        return 1
+    elif (len(accounts) == 1):
+        return (accounts[0].get('accID') + 1)
+    else:
+        for i in range(1, len(accounts)):
+            if ((accounts[i].get('accID') - 1) != (accounts[i-1].get('accID'))): # checks if account i's id is not one greater than the previous account
+                return (accounts[i].get('accID') - 1)
+        
+        return (len(accounts) + 1) # if there were no gaps then return the size + 1 as new acc
+
 
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule
@@ -135,7 +179,7 @@ def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!
             durStr = scheduleJSON[i][1][j].split(':')
 
             startTime = timedelta(hours=int(startStr[0]), minutes=int(startStr[1]))
-
+            
             durTime = timedelta(hours=int(durStr[0]), minutes=int(durStr[1]))
 
             scheduleOut[i][0].append(startTime)
@@ -223,11 +267,3 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
 
     return datetime.max # returns max time to show that cannot be fit into schedule
                             
-
-    
-
-
-
-
-
-            
