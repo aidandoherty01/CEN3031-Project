@@ -227,12 +227,30 @@ def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
         if (cookieID() == ticket.get('ticketID')):
-            return "ticket: " + str(ticketID)
+            if request.method == 'POST':
+                close_ticket(ticketID)
+                return redirect("/ITstaffview/ticket/" + str(ticketID))
+            else:
+                ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
+
+                ticketsArr = [0] * 7 # create a list of size 7
+                ticketsArr[0] = ticketJSON.get('ticketID')
+                ticketsArr[1] = ticketJSON.get('category')
+                ticketsArr[2] = ticketJSON.get('status')
+                ticketsArr[3] = ticketJSON.get('description')
+                ticketsArr[4] = ticketJSON.get('eta')
+                ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
+                fName = get_account(ticketJSON.get('userID')).get('fName') 
+                lName = get_account(ticketJSON.get('userID')).get('lName') # get user first name and last name
+                empName = fName + " " + lName
+                ticketsArr[5] = empName
+                ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+
+                return render_template('ITstaffviewticket.html', ticket = ticketsArr)
         else:
             return "Not authorized to view this page"
     else:
         return "Not authorized to view this page"
-
 
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
