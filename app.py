@@ -58,8 +58,8 @@ def login():
             else:
                 response = make_response(redirect('/admin/'))
 
-            response.set_cookie('accID', str(acc.get('accID')), secure=True)
-            response.set_cookie('type', str(acc.get('type')), secure=True)
+            response.set_cookie('accID', str(acc.get('accID')), secure=False) # SET SECURE TO TRUE BEFORE FINAL RELEASE!!
+            response.set_cookie('type', str(acc.get('type')), secure=False)
 
             return response
         else:
