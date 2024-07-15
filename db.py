@@ -39,6 +39,10 @@ def init_app(app):
     with app.app_context():
         create_collections()
         create_indexes()
+        # create admin account on initialization
+        if(check_username_free('admin')):
+            new_account(0, 'admin', 'password', 'John', 'Doe', 2)
+            # accID, username, password, fName, lName, type
 
 ## Ticket Fucntions
 def new_ticket(ticketID, userID, category, description):
@@ -129,9 +133,6 @@ def check_username_free(username):
     else:
         return False
 
-def get_emp_accounts():
-    return db.accounts.find({'type' : 1})
-
 def get_account_by_username(username):
     return db.accounts.find_one({'username' : username})
 
@@ -141,6 +142,9 @@ def get_account(accID):
   
 def get_accounts():
     return db.accounts.find()
+
+def get_emp_accounts():
+    return db.accounts.find({'type' : 1})
 
 def delete_account(accID):
     db.accounts.delete_one({'accID' : accID})
