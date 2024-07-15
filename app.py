@@ -226,7 +226,7 @@ def etaAssignment():
 def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
-        if (cookieID() == ticket.get('ticketID')):
+        if (cookieID() == ticket.get('ticketID') or check_type(2)):
             if request.method == 'POST':
                 close_ticket(ticketID)
                 return redirect("/ITstaffview/ticket/" + str(ticketID))
@@ -345,7 +345,7 @@ def vewticket(ID):
     ticketJSON = get_ticket_by_id(ID) # get the ticket associated with that ticketID
 
     if (check_type(0)):
-        if (ticketJSON.get('userID') == cookieID()):          
+        if (ticketJSON.get('userID') == cookieID() or check_type(2)):          
             if (request.method == 'POST'):
                 print('test')
             else:
