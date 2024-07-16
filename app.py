@@ -91,7 +91,7 @@ def register():
 ## New Ticket Page
 @app.route("/userview/newticket/", methods=['GET', 'POST'])
 def newTicket():   
-    if (check_type(0) or check_type(2)):
+    if (check_type(0)):
         if (request.method == 'POST'):
             out = "" # will hold the info sumbitted by user to be sent to database as a newticket, seperated by commas
             # formatted as: "accID,category,description"
@@ -171,12 +171,15 @@ def admin():
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
-def ITstaffview():
+def ITstaffview(staffID):
     if (check_type(1)):
         if (request.method == 'POST'):
-            print('test')
+            return redirect("/ITstaffview/")
         else:
-            empID = cookieID()
+            if cookieType() == 1:
+                empID = cookieID()
+            elif cookieType() == 2:
+                empID = staffID
             ticketJSON = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
 
             ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 5
