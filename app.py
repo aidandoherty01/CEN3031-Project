@@ -177,7 +177,13 @@ def ITstaffview():
             print('test')
         else:
             empID = cookieID()
-            ticketJSON = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
+            ticketRaw = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
+
+            ticketJSON = []
+
+            for x in ticketRaw:
+                if (x.get('status') == "assigned"):
+                    ticketJSON.append(x)
 
             ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 5
 
