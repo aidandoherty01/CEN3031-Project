@@ -237,7 +237,7 @@ def etaAssignment():
 def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
-        if (cookieID() == ticket.get('ticketID')):
+        if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST':
                 close_ticket(ticketID)
                 return redirect("/ITstaffview/ticket/" + str(ticketID))
@@ -262,7 +262,7 @@ def staffTicketView(ticketID):
             return "Not authorized to view this page"
     else:
         return "Not authorized to view this page"
-
+    
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
