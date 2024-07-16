@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, current_app, g, make_response
+from flask import Flask, request, redirect, render_template, current_app, g, make_response, url_for
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 
@@ -129,6 +129,10 @@ def ticketSubmitted():
 def admin():
     if (check_type(2)):
         if (request.method == 'POST'):
+            # view ITstaff page with input ID
+            if (request.form['submit'] == 'staffID'):
+                staffID = request.form['staffID']
+                return redirect(url_for('ITstaffview', staffID=staffID))
             if (request.form['submit'] == "assign"):            
                 ticketID = request.form['ticketID']
                 empID = request.form['empID']
@@ -171,15 +175,15 @@ def admin():
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
-def ITstaffview(staffID):
+def ITstaffview():
     if (check_type(1)):
         if (request.method == 'POST'):
             return redirect("/ITstaffview/")
         else:
             if cookieType() == 1:
-                empID = cookieID()
+                empID = cookieID('staffID')
             elif cookieType() == 2:
-                empID = staffID
+                empID = request.args.get('staffID')
             ticketJSON = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
 
             ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 5

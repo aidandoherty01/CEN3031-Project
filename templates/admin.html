@@ -96,36 +96,38 @@
         </div>
         <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
 
+        <!--View-->
+        <table>
+            <tr>
+                <td>
+                    <!--Enter staffID to get their view-->
+                    <h1>
+                        IT staff view
+                    </h1>
+                </td>
+                <td>                  
+                    <!--Enter userID to get their view-->
+                    <h1>
+                        User view
+                    </h1>                  
+                </td>               
+            </tr>
+
+            <tr>
+                <td>
+                    <input type="number" value="staffID" name="staffID">
+                    <button type="submit" value="staffID" name="submit" onclick="location.href='/ITstaffview/'">Enter ID</button>                    
+                </td>
+                <td>
+                    <input type="number" value="userID" name="userID">  
+                    <button onclick="location.href='/ITstaffview/'">Enter ID</button>                
+                </td>
+            </tr>
+        </table>
+
     </form>
 
-    <!--View-->
-    <table>
-        <tr>
-            <td>
-                <!--Enter staffID to get their view-->
-                <h1>
-                    IT staff view
-                </h1>
-            </td>
-             <td>                  
-                <!--Enter userID to get their view-->
-                <h1>
-                    User view
-                </h1>                  
-             </td>               
-        </tr>
-
-        <tr>
-            <td>
-                <input type="text" id="staffID" name="staffID">
-                <button onclick="location.href='/ITstaffview/{{staffID}}'">Enter ID</button>                    
-            </td>
-            <td>
-                <input type="text" id="uerID" name="userID">  
-                <button onclick="location.href='/ITstaffview/'">Enter ID</button>                
-            </td>
-        </tr>
-    </table>
+    
     
 
     
