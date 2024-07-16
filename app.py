@@ -133,7 +133,11 @@ def admin():
             if (request.form['submit'] == 'staffID'):
                 staffID = request.form['staffID']
                 return redirect(url_for('ITstaffview', staffID=staffID))
-            if (request.form['submit'] == "assign"):            
+            elif (request.form['submit'] == 'userID'):
+                userID = request.form['userID']
+                print(userID)
+                return redirect(url_for('userview', userID=userID))
+            elif (request.form['submit'] == "assign"):            
                 ticketID = request.form['ticketID']
                 empID = request.form['empID']
                 assign_ticket_emp(ticketID, empID)
@@ -307,9 +311,12 @@ def ticketEtaAssignment(ticketID):
 def userview():
     if (check_type(0)):
         if (request.method == 'POST'):
-            print('test')
+            redirect("/userview/")
         else:
-            accID = cookieID()
+            if cookieType() == 0:
+                accID = cookieID()
+            elif cookieType() == 2:
+                accID = request.args.get('userID')
             ticketJSON = list(get_active_tickets(accID)) # gets a list of the active tickets of that accID
 
             ticketsArr = [[0] * 4 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 4
