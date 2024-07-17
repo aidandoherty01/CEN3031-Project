@@ -135,8 +135,6 @@ def admin():
                 return redirect('/admin/create/')
             elif (request.form['submit'] == 'deleteEmp'):
                 return redirect('/admin/delete')
-            # add ticket view
-
         return render_template('admin.html')
     else:
         return "Not authorized to view this page"
