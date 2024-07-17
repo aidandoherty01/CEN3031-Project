@@ -177,7 +177,13 @@ def ITstaffview():
             print('test')
         else:
             empID = cookieID()
-            ticketJSON = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
+            ticketRaw = list(get_tickets_by_acc(empID)) # gets a list of the tickets assinged to empID, list is of JSONs, will be converted to arrays
+
+            ticketJSON = []
+
+            for x in ticketRaw:
+                if (x.get('status') == "assigned"):
+                    ticketJSON.append(x)
 
             ticketsArr = [[0] * 5 for _ in range(len(ticketJSON))] # create a 2D array of size [# tickets] x 5
 
@@ -226,7 +232,7 @@ def etaAssignment():
 def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
-        if (cookieID() == ticket.get('ticketID')):
+        if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST':
                 close_ticket(ticketID)
                 return redirect("/ITstaffview/ticket/" + str(ticketID))
@@ -345,7 +351,7 @@ def vewticket(ID):
     ticketJSON = get_ticket_by_id(ID) # get the ticket associated with that ticketID
 
     if (check_type(0)):
-        if (ticketJSON.get('userID') == cookieID()):          
+        if (ticketJSON.get('userID') == cookieID() or check_type(2)):          
             if (request.method == 'POST'):
                 print('test')
             else:
