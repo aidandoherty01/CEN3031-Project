@@ -11,18 +11,17 @@
         <h1>Admin</h1>
     </div>
 
-    <form method="POST">        
-        
-        <!--Print All Employee Accounts-->
-        <button type="submit" name="submit" value="allEmp">Print Employee Roster</button>
-        
-        <!--Create Employee Account-->
-        <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>        
-        
-        <!--Delete Employee Account-->
-        <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
-
+    <form method="POST">
+        <button type="submit" name="submit" value="return">Return to Admin Home</button>
     </form>
+
+    <form method="POST">        
+        <label for="delID">Account ID</label>
+        <input type="number" id="delID" name="delID" required>
+        <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
+    </form>
+    
+    <p>{{message}}</p>
 
 </body>
 </html>

@@ -54,7 +54,7 @@
             font-size: 16px; /* Adjust as needed */
             color: #2c2b2b;
         }
-        tr.title {
+        td.title {
             background-color: #608bbd; /* Green */
             border: none;
             font-size: 16px;
@@ -83,10 +83,10 @@
 <body>
     <div class="header">
         <div class="left-buttons">
-            <button onclick="location.href='/userview/'">Home</button>
+            <button onclick="location.href='/ITstaffview/'">Home</button>
         </div>
         <div class="right-button">
-            <button onclick="location.href='/logout/'">Logout</button>
+            <button onclick="location.href='/'">Logout</button>
         </div>
     </div>
 
@@ -94,6 +94,7 @@
         <div class="title">Ticket {{ticket[0]}} </div>
         <table>
             <tr class="title">
+                <td><div></div></td>
                 <td>
                     <div>Ticket ID</div>
                 </td>
@@ -103,12 +104,18 @@
                     <div>Status</div>
                 </td>
                 <td><div>Description</div></td>
+                <td><div>Customer</div></td>
                 <td><div>ETA</div></td>
-                <td><div>IT Staff</div></td>
                 <td><div>Start Time</div></td>
                 
             </tr>
             <tr>
+
+                <td>
+                    <form action="/ITstaffview/ticket/{{ ticket[0] }}" method="POST" >
+                        <button type="submit" value="Submit">Done</button>
+                    </form>
+                </td>
                 <td>
                     <div>{{ticket[0]}}</div>
                 </td>
@@ -118,35 +125,21 @@
                     <div>{{ticket[2]}}</div>
                 </td>
                 <td><div>{{ticket[3]}}</div></td>
-                <td><div>{{ticket[4]}}</div></td>
                 <td><div>{{ticket[5]}}</div></td>
+                <td><div>{{ticket[4]}}</div></td>
                 <td><div>{{ticket[6]}}</div></td>
                 
             </tr>
         </table>
     </div>
 
-        
-
-    <!-- Chat will only be available when ticket is assigned -->
-         
-    {% if chat %} {
-        <div class="chatbot-container">
-            <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
-            <div class="chatbot-messages" id="chatbot-messages"></div>
-            <input type="text" id="chatbot-input" placeholder="Type a message...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    }
-    {% else %}
-        <div class="chatbot-container">
-            <div class="chatbot-header">You can start the chat when your ticket is assigned with an IT staff.</div>
-            <div class="chatbot-messages" id="chatbot-messages"></div>
-            <input type="text" id="chatbot-input" placeholder="Type a message...">
-        </div>
-    {% endif %}
+    <div class="chatbot-container">
+        <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
+        <div class="chatbot-messages" id="chatbot-messages"></div>
+        <input type="text" id="chatbot-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
     
-
 
 </body>
 </html>
