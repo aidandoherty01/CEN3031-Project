@@ -8,7 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, update_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -129,12 +129,18 @@ def ticketSubmitted():
 def admin():
     if (check_type(2)): # check account type is 'admin'
         if (request.method == 'POST'):
-            if (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
+            if (request.form['submit'] == 'logout'):
+                return redirect('/logout/')
+            # Manage Employees
+            elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
                 return redirect('/admin/roster/')
             elif (request.form['submit'] == 'createEmp'):
                 return redirect('/admin/create/')
             elif (request.form['submit'] == 'deleteEmp'):
                 return redirect('/admin/delete')
+            elif (request.form['submit'] == 'modify'):
+                accID = request.form['accID']
+                return redirect('/admin/modify/' + str(accID))
         return render_template('admin.html')
     else:
         return "Not authorized to view this page"
@@ -186,6 +192,33 @@ def deleteEmp():
                     return render_template('admindelete.html', message='Account successfully deleted')
         else:
             return render_template('admindelete.html')
+    else:
+        return 'Not authorized to view this page'
+    
+@app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
+def modifyEmp(empID):
+    if (check_type(2)):
+        account = get_account(empID)
+        if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
+            return 'Specified employee does not exist'
+        # Processing webpage
+        if (request.method == 'POST'):
+            if(request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            if(request.form['submit'] == 'modify'):
+                fname = request.form['fname']
+                lname = request.form['lname']
+                username = request.form['username']
+                password = request.form['password']
+                if not update_account(empID, username, password, fname, lname):
+                    return 'Username is already being used'
+                else:
+                    account = get_account(empID)
+                    tickets = get_tickets_by_acc(empID)
+                    return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+        else:
+            tickets = get_tickets_by_acc(empID)
+            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
     else:
         return 'Not authorized to view this page'
 

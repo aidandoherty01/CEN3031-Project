@@ -64,7 +64,6 @@ def get_tickets_by_acc(accID): # returns a cursor that points to the first eleme
 
 def get_tickets_by_account(accID): # returns a cursor that points to the first element in the list of tickets associated with a given account
     tickets = db.tickets.find({'userID' : int(accID)})
-
     return tickets
 
 def get_active_tickets(accID):
@@ -162,6 +161,16 @@ def get_new_ID(): # returns an int = the lowest avaliable acc id
                 return (accounts[i].get('accID') - 1)
         
         return (len(accounts) + 1) # if there were no gaps then return the size + 1 as new acc
+    
+def update_account(accID, username, password, fName, lName):
+    if not check_username_free(username):
+        return 0
+    hashed = hash_password(password)
+    response = db.accounts.find_one_and_update(
+        { 'accID' : accID },
+        { '$set' : { 'username' : username, 'password' : hashed , 'fName' : fName, 'lName' : lName } }
+    )
+    return response
 
 ## Schedule Fucntions
 def new_schedule(accID, timeSlots): # takes in array of strings and an accID to create a new schedule

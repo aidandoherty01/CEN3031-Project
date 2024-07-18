@@ -12,16 +12,20 @@
     </div>
 
     <form method="POST">        
+        <div>
+            <!--Logout of current session-->
+            <button type="submit" name="submit" value="logout">Logout</button>
+        </div>
+        <h1>Manage Employees</h1>
+        <div>
+            <!--Print All Employee Accounts-->
+            <button type="submit" name="submit" value="allEmp">View Employee Roster</button>
+            <!--Create Employee Account-->
+            <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>        
         
-        <!--Print All Employee Accounts-->
-        <button type="submit" name="submit" value="allEmp">Print Employee Roster</button>
-        
-        <!--Create Employee Account-->
-        <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>        
-        
-        <!--Delete Employee Account-->
-        <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
-
+            <!--Delete Employee Account-->
+            <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
+        </div>
         <!--
         i. Manage employee account information (including creation and deletion of accounts).
         ii. Assign employee availability scheduling.
@@ -29,7 +33,12 @@
         iv. Manually override the automatic scheduling/assigning of tickets.
         v. View the same ticket information as employee accounts, but for all tickets/employees.
         -->
-
+    </form>
+    <!--Second form to get around required input-->
+    <form method="POST">
+        <label for="accID">accID</label>
+        <input type="number" name="accID" value="accID" required>
+        <button type="submit" name="submit" value="modify">Modify Employee</button>
     </form>
 
 </body>
