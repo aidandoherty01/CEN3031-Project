@@ -126,50 +126,103 @@ def ticketSubmitted():
     else:
         return render_template('ticketsubmitted.html')
     
-## Admin Page
+## Admin View
 @app.route("/admin/", methods=["GET", "POST"])
 def admin():
+    if (check_type(2)): # check account type is 'admin'
+        if (request.method == 'POST'):
+            if (request.form['submit'] == 'logout'):
+                return redirect('/logout/')
+            # Manage Employees
+            elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
+                return redirect('/admin/roster/')
+            elif (request.form['submit'] == 'createEmp'):
+                return redirect('/admin/create/')
+            elif (request.form['submit'] == 'deleteEmp'):
+                return redirect('/admin/delete')
+            elif (request.form['submit'] == 'modify'):
+                accID = request.form['accID']
+                return redirect('/admin/modify/' + str(accID))
+        return render_template('admin.html')
+    else:
+        return "Not authorized to view this page"
+
+@app.route("/admin/roster/", methods=["GET", "POST"])
+def printRoster():
     if (check_type(2)):
         if (request.method == 'POST'):
-            if (request.form['submit'] == "assign"):            
-                ticketID = request.form['ticketID']
-                empID = request.form['empID']
-                assign_ticket_emp(ticketID, empID)
-            elif (request.form['submit'] == "close"):
-                ticketID = request.form['ticketIDc']
-                close_ticket(ticketID)
-            elif (request.form['submit'] == "lookTicket"):
-                ticketID = request.form['ticketIDl']
-                ticket = get_ticket_by_id(ticketID)
-                print(ticket)
-            elif (request.form['submit'] == "lookAcc"):
-                accID = request.form['accID']
-                tickets = get_tickets_by_acc(accID)
-                for x in tickets:
-                    print(x)
-            # Start Admin Functionality
-            elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
-                accounts = get_accounts()
-                return render_template('admin.html', accounts=accounts)
-            elif (request.form['submit'] == 'createEmp'):
+            if(request.form['submit'] == 'return'):
+                return redirect('/admin/')
+        else:
+            accounts = get_emp_accounts()
+            return render_template('adminroster.html', accounts=accounts)
+    else:
+        return 'Not authorized to view this page'
+    
+@app.route("/admin/create/", methods=["GET", "POST"])
+def createEmp():
+    if (check_type(2)):
+        if (request.method == 'POST'):
+            if(request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            elif(request.form['submit'] == 'createEmp'):
                 accID = get_new_ID()
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
                 new_account(accID, username, password, fname, lname, 1)
-            elif (request.form['submit'] == 'deleteEmp'):
-                accID = request.form['delID']
-                # if not isinstance(accID, int):
-                    # print('Error: Incorrect Input')   # Figure out better way to handle this
-                # else:
-                    # delete_account(accID)
-                delete_account(int(accID))
-            # add ticket view
-
-        return render_template('admin.html')
+                account = get_account(accID)
+                return render_template('admincreate.html', account=account)
+        else:
+            return render_template('admincreate.html')
     else:
-        return "Not authorized to view this page"
+        return 'Not authorized to view this page'
+    
+@app.route("/admin/delete/", methods=["GET", "POST"])
+def deleteEmp():
+    if (check_type(2)):
+        if (request.method == 'POST'):
+            if(request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            elif(request.form['submit'] == 'deleteEmp'):
+                accID = int(request.form['delID'])
+                if not get_account(accID):
+                    return 'Specified employee does not exist'
+                else:
+                    delete_account(accID)
+                    return render_template('admindelete.html', message='Account successfully deleted')
+        else:
+            return render_template('admindelete.html')
+    else:
+        return 'Not authorized to view this page'
+    
+@app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
+def modifyEmp(empID):
+    if (check_type(2)):
+        account = get_account(empID)
+        if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
+            return 'Specified employee does not exist'
+        # Processing webpage
+        if (request.method == 'POST'):
+            if(request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            if(request.form['submit'] == 'modify'):
+                fname = request.form['fname']
+                lname = request.form['lname']
+                username = request.form['username']
+                password = request.form['password']
+                if not update_account(empID, username, password, fname, lname):
+                    return 'Username is already being used'
+                else:
+                    account = get_account(empID)
+                    tickets = get_tickets_by_acc(empID)
+                    return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+        else:
+            tickets = get_tickets_by_acc(empID)
+            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+    else:
+        return 'Not authorized to view this page'
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
