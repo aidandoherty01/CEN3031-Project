@@ -271,6 +271,14 @@ def date_to_weekday(date): # gets the int value of the weekday of a given date (
 
     return switch.get(date.strftime("%A"))
 
+def get_day_array(date): # creates an array of the days for the next week
+    out = []
+    for i in range(7):
+        out.append(date.day)
+        date += timedelta(days=1)
+
+    return out
+
 def check_intersect(start1, start2, eta1, eta2): #checks if a given pair of starts and etas intersect
     if (start1 < start2):
         if ((start1 + eta1) > start2):
