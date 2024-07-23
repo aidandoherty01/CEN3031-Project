@@ -10,7 +10,8 @@ import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
+convert_tickets_to_minutes
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -355,6 +356,21 @@ def ticketEtaAssignment(ticketID):
             return render_template('ticketeta.html', ticket = ticketArr)
     else:
         return "Not authorized to view this page"
+    
+## IT staff calendar page
+@app.route("/ITstaffview/calendar")
+def empCalendar():
+    if (check_type(1)):
+        scheduleRaw = get_schedule(cookieID())
+        ticketsRaw = list(get_tickets_by_acc(cookieID()))
+
+        schedule = convert_schedule_to_minutes(scheduleRaw)
+        tickets = convert_tickets_to_minutes(ticketsRaw)
+
+        return "test"
+    
+    return "Not authorized to view this page"
+      
 
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])

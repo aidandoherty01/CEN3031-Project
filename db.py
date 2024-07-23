@@ -201,6 +201,62 @@ def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!
 
     return scheduleOut
 
+def get_first_day_of_week(dateIn): # returns a datetime that holds the first day of the week that the given date is in
+    dayIn = date_to_weekday(dateIn)
+    delta = timedelta(days=dayIn)
+
+    dateIn = dateIn - delta
+
+    dateOut = datetime(dateIn.year, dateIn.month, dateIn.day, 0, 0, 0, 0)
+
+    return dateOut
+
+def convert_schedule_to_minutes(scheduleRaw): # converts an input schedule array to ints representing the time deltas as minutes (ex. 12:00 = 720)
+        scheduleOut = [[0] * 2 for _ in range(7)]
+
+        for i in range(7): # initalize empty array
+            for j in range(2):
+                scheduleOut[i][j] = []
+
+        for i in range(7): # loop thru array and convery time deltas to int representing minutes
+            for j in range(len(scheduleRaw[i][0])): 
+                tempStart = int(scheduleRaw[i][0][j].total_seconds() / 60) # converts start time to minutes
+
+                tempDur = int(scheduleRaw[i][1][j].total_seconds() / 60) # converts dur to minutes
+
+                scheduleOut[i][0].append(tempStart)
+                scheduleOut[i][1].append(tempDur)
+
+        return scheduleOut
+
+def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d array formatted the same as the schedules but with an aditional catagory for ticket id(tickets[day][0=start, 1=duration, 2=ticketID0][n])
+
+    ticketsOut = [[0] * 3 for _ in range(7)]
+
+    for i in range(7): # initalize empty array
+         for j in range(3):
+            ticketsOut[i][j] = []
+
+    firstOfWeek = get_first_day_of_week(datetime.now())
+
+    for x in ticketsRaw:
+        if (x.get("startTime") > firstOfWeek and x.get("startTime") < (firstOfWeek + timedelta(days=7,hours=23,minutes=59))): # ensures that only tickets within the desired week are added
+            day = date_to_weekday(x.get('startTime'))
+
+            tempStart = (x.get("startTime").hour * 60) # converts start time to minutes
+            tempStart += (x.get("startTime").minute)
+
+            tempDur = x.get("eta").split(":") # converts eta to minutes
+            dur = int(tempDur[0]) * 60
+            dur += int(tempDur[1]) 
+
+            ticketsOut[day][0].append(tempStart)
+            ticketsOut[day][1].append(tempDur)
+            ticketsOut[day][2].append(x.get("ticketID"))
+
+    return ticketsOut
+    
+
 def date_to_weekday(date): # gets the int value of the weekday of a given date (0 = sun, 1 = mon, ...)
     
     switch = {
