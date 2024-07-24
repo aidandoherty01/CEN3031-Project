@@ -62,8 +62,9 @@
 
         th, td {
             border: 1px solid #ddd;
-            padding: 10px;
+            padding: 0px;
             text-align: center;
+            width: calc(100% / 8);
         }
 
         th {
@@ -71,16 +72,30 @@
 
         }
 
-        td {
-            font-size: 1px;
-        }
-        .blocked {
-            background-color: red;
-        }
-        .open {
-            background-color: blue;
+        .time {
+            font-size: 15px;
         }
 
+    
+        .blocked {
+            background-color: rgb(193, 191, 191);    
+            height: calc(800px / 1440); /* Distribute the height for 24 time slots */
+            line-height: calc(800px / 1440); /* Center text vertically */        
+        }
+        .open {
+            background-color: white;   
+        }
+
+        .time div {
+            height: calc(800px / 24); /* Distribute the height for 24 time slots */
+            line-height: calc(800px / 24); /* Center text vertically */
+        }
+
+
+        .time-slot {
+            height: calc(800px / 1440); /* Distribute the height for 24 hours */
+            line-height: calc(800px / 1440); /* Center text vertically */
+        }
         
     </style>
 </head>
@@ -95,6 +110,7 @@
         <table>
             <thead>
                 <tr>
+                    <th></th>
                     <th>Sunday</th>
                     <th>Monday</th>
                     <th>Tuesday</th>
@@ -106,31 +122,49 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        
-                            {% for minute in range(1440) %}
-                                
-                                    {% if minute >= 600 and minute <= 900 %}
-                                        <div class="blocked">yes</div>
-                                    {% else %}
-                                        <div class="open">no</div>
-                                    {% endif %}
-                                
-                            {% endfor %}
-                        
-                        
+                    <td class="time">
+                        {% for hour in range(0, 12) %}
+                            <div>{{hour}}:00 AM</div>                            
+                        {% endfor %}
+                        <div>12:00 PM</div>
+                        {% for hour in range(1, 12) %}
+                            <div>{{hour}}:00 PM</div>                            
+                        {% endfor %}
                     </td>
-                    <td>22</td>
-                    <td>23</td>
-                    <td>24</td>
-                    <td>25</td>
-                    <td>26</td>
-                    <td>27</td>
+                    <td class="day-container" id="sun"></td>
+                    <td class="day-container" id="mon"></td>
+                    <td class="day-container" id="tue"></td>
+                    <td class="day-container" id="wed"></td>
+                    <td class="day-container" id="thu"></td>
+                    <td class="day-container" id="fri"></td>
+                    <td class="day-container" id="sat"></td>
                 </tr>
             </tbody>
         </table>
     </div>
-
     
+    <script>
+        const shifts = JSON.parse('{{ shift | tojson }}');
+
+        const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+        days.forEach((day, index) => {
+            const scheduleContainer = document.getElementById(day);
+            for (let minute = 0; minute < 1440; minute++) {
+                let open = false;
+                for (let i = 0; i < shifts[index][0].length; i++) {
+                    if (minute >= shifts[index][0][i] && minute < shifts[index][1][i]) {
+                        open = true;
+                        break;  // Exit the inner loop if condition is met
+                    }
+                }
+                const div = document.createElement('div');
+                div.className = open ? 'open' : 'blocked';
+                div.classList.add('time-slot');
+                scheduleContainer.appendChild(div);
+            }
+        });
+    </script>
+
 </body>
 </html>

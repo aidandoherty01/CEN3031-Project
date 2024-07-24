@@ -379,10 +379,10 @@ def empCalendar():
 @app.route("/calendar/")
 def Calendar():
     numbers = [num for num in range(1, 1441) if num % 2 == 0]
-    shift = [[[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]]]
+    shift = [[[480], [1080]], [[0, 840], [600, 1080]], [[480], [1080]], [[480, 840], [600, 1080]], [[480], [1080]], [[480, 840], [600, 1080]], [[480], [1080]]]
     tickettime = [[[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]]]
     
-    return render_template('ITstaffcalendar.html', shift = shift, tickettime = tickettime, numbers=range(1, 1441))
+    return render_template('ITstaffcalendar.html', shift = shift, tickettime = tickettime)
       
 
 ## User view
