@@ -378,7 +378,10 @@ def empCalendar():
 ## IT staff calendar page for testing only (will delete later and use the above)
 @app.route("/calendar/")
 def Calendar():
-    return render_template('empcalendar.html')
+    shift = [[[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]], [[600, 1000], [900, 1500]], [[600], [1500]]]
+    tickettime = [[[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]]]
+    
+    return render_template('ITstaffcalendar.html', shift = shift, tickettime = tickettime, numbers=range(1, 1441))
       
 
 ## User view
