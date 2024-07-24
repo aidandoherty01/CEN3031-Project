@@ -68,8 +68,20 @@
 
         th {
             background-color: #f2f2f2;
+
         }
-    </style>
+
+        td {
+            font-size: 1px;
+        }
+        .blocked {
+            background-color: red;
+        }
+        .open {
+            background-color: blue;
+        }
+
+        
     </style>
 </head>
 <body>
@@ -95,9 +107,18 @@
             <tbody>
                 <tr>
                     <td>
-                        {% for num in numbers %}
-                            <div></div>
-                        {% endfor %}
+                        
+                            {% for minute in range(1440) %}
+                                
+                                    {% if minute >= 600 and minute <= 900 %}
+                                        <div class="blocked">yes</div>
+                                    {% else %}
+                                        <div class="open">no</div>
+                                    {% endif %}
+                                
+                            {% endfor %}
+                        
+                        
                     </td>
                     <td>22</td>
                     <td>23</td>
