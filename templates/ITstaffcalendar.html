@@ -69,7 +69,11 @@
 
         th {
             background-color: #f2f2f2;
+            height: 40px;
+        }
 
+        td {
+            background-color: white;
         }
 
         .time {
@@ -84,6 +88,10 @@
         }
         .open {
             background-color: white;   
+        }
+
+        .ticketed {
+            background-color: aqua;
         }
 
         .time div {
@@ -145,6 +153,7 @@
     
     <script>
         const shifts = JSON.parse('{{ shift | tojson }}');
+        const ticket = JSON.parse('{{ tickettime | tojson }}');
 
         const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -152,14 +161,31 @@
             const scheduleContainer = document.getElementById(day);
             for (let minute = 0; minute < 1440; minute++) {
                 let open = false;
+                let ticketed = false;
+                for (let i = 0; i < ticket[index][0].length; i++) {
+                    if (minute >= ticket[index][0][i] && minute < ticket[index][1][i]) {
+                        ticketed = true;
+                        break;  // Exit the inner loop if condition is met
+                    }
+                }
+
                 for (let i = 0; i < shifts[index][0].length; i++) {
                     if (minute >= shifts[index][0][i] && minute < shifts[index][1][i]) {
                         open = true;
                         break;  // Exit the inner loop if condition is met
                     }
                 }
+                
                 const div = document.createElement('div');
-                div.className = open ? 'open' : 'blocked';
+                if (ticketed) {
+                    div.className = 'ticketed';
+                }
+                else if (open) {
+                    div.className = 'open';
+                }
+                else {
+                    div.className = 'blocked';
+                }
                 div.classList.add('time-slot');
                 scheduleContainer.appendChild(div);
             }
