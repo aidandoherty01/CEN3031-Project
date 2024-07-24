@@ -41,7 +41,7 @@ def logout():
 def index():
     return render_template('index.html')
 
-## delete late
+## delete later
 @app.route("/homepage/", methods=["GET", "POST"])
 def homepage():
     return render_template('homepage.html')
@@ -374,6 +374,11 @@ def empCalendar():
         return "test"
     
     return "Not authorized to view this page"
+
+## IT staff calendar page for testing only (will delete later and use the above)
+@app.route("/calendar/")
+def Calendar():
+    return render_template('empcalendar.html')
       
 
 ## User view
