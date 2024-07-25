@@ -41,11 +41,6 @@ def logout():
 def index():
     return render_template('index.html')
 
-## delete later
-@app.route("/homepage/", methods=["GET", "POST"])
-def homepage():
-    return render_template('homepage.html')
-
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     error = None
