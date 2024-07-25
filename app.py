@@ -8,9 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
-assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, update_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -171,8 +169,12 @@ def createEmp():
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
-                new_account(accID, username, password, fname, lname, 1)
-                account = get_account(accID)
+                accType = int(request.form['accType'])
+                if not check_username_free(username):
+                    return 'Error: Username is already in use.'
+                else:
+                    new_account(accID, username, password, fname, lname, accType)
+                    account = get_account(accID)
                 return render_template('admincreate.html', account=account)
         else:
             return render_template('admincreate.html')
@@ -214,11 +216,13 @@ def modifyEmp(empID):
                 password = request.form['password']
                 if not update_account(empID, username, password, fname, lname):
                     return 'Username is already being used'
-                else:
-                    account = get_account(empID)
-                    tickets = get_tickets_by_acc(empID)
-                    return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
-        else:
+            if(request.form['submit'] == 'schedule'):
+                print('test')
+            # Re-Render Page with modified information
+            account = get_account(empID)
+            tickets = get_tickets_by_acc(empID)
+            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+        else:   # Initial Load or Non-Post Requests
             tickets = get_tickets_by_acc(empID)
             return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
     else:

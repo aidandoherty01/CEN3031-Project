@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: rgb(210, 209, 212);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .header .right-buttons {
+            display: flex;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .container {
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+        }
+        .table-container {
+            width: 65%;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center; /* Center align the title */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 30px;
+            text-align: left;
+            font-size: 20px;
+            color: #555;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .button-container {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-left: 20px; /* Adjust spacing between table and buttons */
+            
+        }
+        .button-container button {
+            background-color: #ffffff;
+            border: none;
+            color: rgb(18, 18, 19);
+            font-weight: bold;
+            width: 300px; /* Set a fixed width */
+            height: 100px; /* Set a fixed height */
+            text-align: center;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 5px solid #266ab7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center; /* Center text horizontally */
+        }
+        .ticket-ID button {
+            background-color: #266ab7; /* Green */
+            color: white;
+            padding: 10px 300px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="right-button">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="table-container">
+            <div class="title">Your Active Tickets</div>
+            <table>
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>
+                            <div class="ticket-ID"><button onclick="location.href='/userview/userviewticket/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button></div>
+                            <div>Category: {{ ticket[1] }}</div>
+                            <div>Status: {{ ticket[2] }}</div>
+                            <div>Description: {{ ticket[3] }}</div>  
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="button-container">
+            <button onclick="location.href='/userview/usertickethistory/'">View Prior Ticket History</button>
+            <button onclick="location.href='/userview/newticket/'">Open new Ticket</button>
+            <button onclick="location.href='/'">Start Chat</button>
+            <button onclick="location.href='/'">View Chat History</button>
+        </div>
+    </div>
+</body>
+</html>

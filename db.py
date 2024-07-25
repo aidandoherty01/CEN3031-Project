@@ -164,7 +164,10 @@ def get_new_ID(): # returns an int = the lowest avaliable acc id
     
 def update_account(accID, username, password, fName, lName):
     if not check_username_free(username):
-        return 0
+        # Username is not free, check if this username's accID == this accID
+        temp = get_account_by_username(username)
+        if(temp.get('accID') != accID):
+            return 0    # Can't have duplicate usernames on different ids
     hashed = hash_password(password)
     response = db.accounts.find_one_and_update(
         { 'accID' : accID },

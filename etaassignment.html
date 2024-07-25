@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: rgb(212, 209, 209);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .left-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .table-container {
+            margin-top: 20px; /* Adjust the value to move the table further down */
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            font-size: 24px; /* Adjust as needed */
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #524444;
+            text-align: center; /* Center align the title */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            font-size: 16px; /* Adjust as needed */
+            color: #555;
+        }
+        td.ticket-ID {
+            width: 30%;
+            font-size: 18px; /* Adjust as needed */
+        }
+        td.descr {
+            font-size: 16px; /* Adjust as needed */
+        }
+        td.ticket-ID button {
+            background-color: #9da79d; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        td.ticket-ID div {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #777;
+        }
+        td.descr div {
+            margin-top: 5px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left-buttons">
+            <button onclick="location.href='/'">Calender</button>
+            <button onclick="location.href='/ITstaffview'">Assigned Tickets</button>
+            <button onclick="location.href='/'">Time Entry</button>
+        </div>
+        <div class="right-button">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="title">Tickets needing time estimates</div>
+        <table>
+            {% for ticket in tickets %}
+            <tr>
+                <td class="ticket-ID">
+                    <button onclick="location.href='/ITstaffview/eta/{{ ticket[0] }}'">Ticket {{ ticket[0] }}</button>
+                </td>
+                
+                <td class="descr">
+                    <div>Ticket Category: {{ ticket[1] }}</div>
+                    <div>Ticket description: {{ ticket[2] }}</div>
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
