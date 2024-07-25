@@ -11,14 +11,17 @@
             margin: 0;
         }
         .header {
-            background-color: #3e6b98;
+            background-color: #4c65b8de;
             padding: 10px 20px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: flex-end;
         }
-        
-        .header .logout-button button {
+        .header .left-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
             padding: 10px 20px;
             margin: 0 10px;
             border: none;
@@ -80,6 +83,34 @@
 
         .ticketed {
             background-color: rgb(82, 80, 147);
+            position: relative; /* Ensure the button can be positioned absolutely */
+            overflow: hidden; /* Ensure no overflow from the button */
+        }
+
+        .ticketed .text {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+            z-index: 1; /* Ensure text is on top */
+        }
+
+        .ticketed button {
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* Make the button background transparent */
+            color: transparent; /* Make the button text invisible */
+            border: none;
+            cursor: pointer;
+            position: absolute; /* Position the button absolutely */
+            top: 0;
+            left: 0;
+            z-index: 0; /* Place the button behind the text */
+        }
+
+        .ticketed button:hover {
+            background-color: rgba(82, 80, 147, 0.8); /* Slightly darker shade for hover effect */
         }
 
         .time div {
@@ -97,7 +128,10 @@
 </head>
 <body>
     <div class="header">
-        <div class="logout-button">
+        <div class="left-buttons">
+            <button onclick="location.href='/'">Home</button>
+        </div>
+        <div class="right-buttons">
             <button onclick="location.href='/logout/'">Logout</button>
         </div>
     </div>
@@ -150,9 +184,11 @@
             for (let minute = 0; minute < 1440; minute++) {
                 let open = false;
                 let ticketed = false;
+                let ticketID;
                 for (let i = 0; i < ticket[index][0].length; i++) {
                     if (minute >= ticket[index][0][i] && minute < ticket[index][1][i]) {
                         ticketed = true;
+                        ticketID = ticket[index][2][i];
                         break;  // Exit the inner loop if condition is met
                     }
                 }
@@ -167,6 +203,18 @@
                 const div = document.createElement('div');
                 if (ticketed) {
                     div.className = 'ticketed';
+                    
+                    const text = document.createElement('div');
+                    text.className = 'text';
+                    text.textContent = ticketID;
+                    
+                    const button = document.createElement('button');
+                    button.onclick = function() {
+                        window.location.href = '/home/';
+                    };
+                    
+                    div.appendChild(text);
+                    div.appendChild(button);
                 }
                 else if (open) {
                     div.className = 'open';
