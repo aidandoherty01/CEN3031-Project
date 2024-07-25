@@ -71,7 +71,9 @@
             font-size: 15px;
         }
 
-    
+        .timeborder {
+            background-color: rgb(240, 245, 243);
+        }
         .blocked {
             background-color: rgb(193, 191, 191);    
             height: calc(800px / 1440); /* Distribute the height for 24 time slots */
@@ -81,8 +83,12 @@
             background-color: white;   
         }
 
+        .borderline {
+            background-color: black;
+        }
+
         .ticketed {
-            background-color: rgb(82, 80, 147);
+            background-color: rgb(166, 165, 194);
             position: relative; /* Ensure the button can be positioned absolutely */
             overflow: hidden; /* Ensure no overflow from the button */
         }
@@ -181,46 +187,55 @@
 
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
+            
             for (let minute = 0; minute < 1440; minute++) {
-                let open = false;
-                let ticketed = false;
-                let ticketID;
-                for (let i = 0; i < ticket[index][0].length; i++) {
-                    if (minute >= ticket[index][0][i] && minute < ticket[index][1][i]) {
-                        ticketed = true;
-                        ticketID = ticket[index][2][i];
-                        break;  // Exit the inner loop if condition is met
-                    }
-                }
-
-                for (let i = 0; i < shifts[index][0].length; i++) {
-                    if (minute >= shifts[index][0][i] && minute < shifts[index][1][i]) {
-                        open = true;
-                        break;  // Exit the inner loop if condition is met
-                    }
-                }
-                
                 const div = document.createElement('div');
-                if (ticketed) {
-                    div.className = 'ticketed';
-                    
-                    const text = document.createElement('div');
-                    text.className = 'text';
-                    text.textContent = ticketID;
-                    
-                    const button = document.createElement('button');
-                    button.onclick = function() {
-                        window.location.href = '/home/';
-                    };
-                    
-                    div.appendChild(text);
-                    div.appendChild(button);
-                }
-                else if (open) {
-                    div.className = 'open';
+                if (minute%60 === 0) {                   
+                    div.className = 'timeborder';                
                 }
                 else {
-                    div.className = 'blocked';
+                    let open = false;
+                    let ticketed = false;
+                    let borderline = false;
+                    let ticketID;
+                    for (let i = 0; i < ticket[index][0].length; i++) {
+                        if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
+                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i] + 1) {
+                                borderline = true;
+                            }
+                            else if (minute >= ticket[index][1][i] - 1 && minute <= ticket[index][1][i]) {
+                                borderline = true;
+                            }
+                            else {
+                                ticketed = true;
+                                ticketID = ticket[index][2][i];                            
+                            }
+                            break;  // Exit the inner loop if condition is met
+                        }
+                    }
+
+                    for (let i = 0; i < shifts[index][0].length; i++) {
+                        if (minute >= shifts[index][0][i] && minute <= shifts[index][1][i]) {
+                            open = true;
+                            break;  // Exit the inner loop if condition is met
+                        }
+                    }
+                    
+                    if (borderline) {
+                        div.className = 'borderline';
+                    }
+                    else if (ticketed) {
+                        div.className = 'ticketed';
+                        
+                        
+                    }
+                    else if (open) {
+                        div.className = 'open';
+                    }
+                    else {
+                        div.className = 'blocked';
+                    }
+                   
                 }
                 div.classList.add('time-slot');
                 scheduleContainer.appendChild(div);
