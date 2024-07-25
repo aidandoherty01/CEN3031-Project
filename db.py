@@ -223,13 +223,14 @@ def convert_schedule_to_minutes(scheduleRaw): # converts an input schedule array
                 tempStart = int(scheduleRaw[i][0][j].total_seconds() / 60) # converts start time to minutes
 
                 tempDur = int(scheduleRaw[i][1][j].total_seconds() / 60) # converts dur to minutes
+                tempFinish = tempStart + tempDur
 
                 scheduleOut[i][0].append(tempStart)
-                scheduleOut[i][1].append(tempDur)
+                scheduleOut[i][1].append(tempFinish)
 
         return scheduleOut
 
-def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d array formatted the same as the schedules but with an aditional catagory for ticket id(tickets[day][0=start, 1=duration, 2=ticketID0][n])
+def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d array formatted the same as the schedules but with an aditional catagory for ticket id(tickets[day][0=start, 1=finish, 2=ticketID0][n])
 
     ticketsOut = [[0] * 3 for _ in range(7)]
 
@@ -250,8 +251,10 @@ def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d
             dur = int(tempDur[0]) * 60
             dur += int(tempDur[1]) 
 
+            finish = tempStart + dur
+
             ticketsOut[day][0].append(tempStart)
-            ticketsOut[day][1].append(tempDur)
+            ticketsOut[day][1].append(finish)
             ticketsOut[day][2].append(x.get("ticketID"))
 
     return ticketsOut
