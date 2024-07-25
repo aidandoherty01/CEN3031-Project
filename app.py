@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, current_app, g, make_response
+from flask import Flask, request, redirect, render_template, current_app, g, make_response, flash
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 
@@ -48,6 +48,7 @@ def homepage():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
+    error = None
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -66,7 +67,8 @@ def login():
 
             return response
         else:
-            return "Login Failed, incorrect username or password"
+            error = 'Login failed. Please check your username and password.'
+            return render_template('login.html', error=error)
     else:
         return render_template("login.html")
     
@@ -86,7 +88,8 @@ def register():
 
             return redirect("/login/")
         else:
-            return "Error: username is already in use"
+            error = "Error: username is already in use"
+            return render_template("register.html", error = error)
     
     else:
         return render_template('register.html')
@@ -440,7 +443,6 @@ def vewticket(ID):
                 print('test')
             else:
                 ticketsArr = [0] * 7 # create a list of size 7
-                print('HI')
                 ticketsArr[0] = ticketJSON.get('ticketID')
                 ticketsArr[1] = ticketJSON.get('category')
                 ticketsArr[2] = ticketJSON.get('status')
