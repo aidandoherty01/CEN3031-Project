@@ -177,6 +177,12 @@ def new_schedule(accID, timeSlots): # takes in array of strings and an accID to 
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
     return db.schedules.insert_one(schedule_doc)
 
+def check_if_schedule(accID):
+    if (db.schedules.find_one({'accID' : accID}) != None):
+        return True
+    else:
+        return False
+
 def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!!
     scheduleJSON = db.schedules.find_one({'accID' : accID}).get('timeSlots')
     scheduleOut = [[0] * 2 for _ in range(7)]

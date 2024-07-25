@@ -11,7 +11,7 @@ import string
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
 get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
-convert_tickets_to_minutes, get_first_day_of_week, get_day_array
+convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -328,11 +328,12 @@ def ticketEtaAssignment(ticketID):
                     emps = list(get_emp_accounts())
 
                     for x in emps:
-                        thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
+                        if (check_if_schedule(x.get('accID'))):
+                            thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
 
-                        if (thisEmpSoonestFit < soonestFit):
-                            soonestFit = thisEmpSoonestFit
-                            soonestEmp = x.get('accID')
+                            if (thisEmpSoonestFit < soonestFit):
+                                soonestFit = thisEmpSoonestFit
+                                soonestEmp = x.get('accID')
 
                     if (soonestFit == datetime.max):
                         return "error: could not fit ticket with that eta into any employees schedule"
@@ -370,7 +371,7 @@ def empCalendar():
 
         dayArray = get_day_array(firstOfWeek)
 
-        return "test"
+        return render_template('ITstaffcalendar.html', shift = schedule, tickettime = tickets)
     
     return "Not authorized to view this page"
 
