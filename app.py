@@ -71,6 +71,7 @@ def login():
 # Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
 def register():
+    error = None
     if (request.method == 'POST'):
         accID = get_new_ID()
         username = request.form.get("username")
@@ -83,7 +84,7 @@ def register():
 
             return redirect("/login/")
         else:
-            error = "Error: username is already in use"
+            error = "Username is already in use. Try again!"
             return render_template("register.html", error = error)
     
     else:
