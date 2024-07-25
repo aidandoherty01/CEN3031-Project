@@ -78,7 +78,7 @@ def register():
         fname = request.form.get("fname")
         lname = request.form.get('lname')
 
-        if (check_username_free):
+        if (check_username_free(username)):
             new_account(accID, username, password, fname, lname, 0)
 
             return redirect("/login/")
