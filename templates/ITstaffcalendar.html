@@ -72,7 +72,7 @@
         }
 
         .timeborder {
-            background-color: rgb(11, 11, 11);
+            border-bottom: 1px solid rgb(220, 218, 218);
         }
         .blocked {
             background-color: rgb(233, 233, 233);    
@@ -176,10 +176,9 @@
             
             for (let minute = 1; minute < 1441; minute++) {
                 const div = document.createElement('div');
-                if (minute%60 === 0) {             // test       
+                if (minute % 60 === 0) {            
                     div.className = 'timeborder';                
-                }                
-                else {
+                } else {
                     let open = false;
                     let ticketed = false;
                     let ticketheader = false;
@@ -189,8 +188,7 @@
                             if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i] + 30) {
                                 ticketheader = true;
                                 // want a text on this area for 30 minutes
-                            }
-                            else {
+                            } else {
                                 ticketed = true;
                                 ticketID = ticket[index][2][i];                            
                             }
@@ -208,8 +206,7 @@
                     if (ticketheader) {
                         div.className = 'ticketheader';
     
-                    }
-                    else if (ticketed) {
+                    } else if (ticketed) {
                         div.className = 'ticketed';
                         
                         const button = document.createElement('button');
@@ -217,11 +214,9 @@
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
                         };
                         div.appendChild(button);
-                    }    
-                    else if (open) {
+                    } else if (open) {
                         div.className = 'open';
-                    }
-                    else {
+                    } else {
                         div.className = 'blocked';
                     }
                    
