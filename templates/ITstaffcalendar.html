@@ -75,7 +75,7 @@
             background-color: rgb(235, 241, 239);
         }
         .blocked {
-            background-color: rgb(193, 191, 191);    
+            background-color: rgb(233, 233, 233);    
             height: calc(800px / 1440); /* Distribute the height for 24 time slots */
             line-height: calc(800px / 1440); /* Center text vertically */        
         }
@@ -83,21 +83,12 @@
             background-color: white;   
         }
 
-        .borderline {
-            background-color: black;
-        }
-
-        .text {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: rgb(8, 8, 8);
-            font-size: 20px;
-            z-index: 1; /* Ensure text is on top */
+        .ticketheader {
+            background-color: rgb(166, 165, 194);
         }
 
         .ticketed {
-            background-color: rgb(166, 165, 194);
+            background-color: rgb(206, 205, 228);
             position: relative; /* Ensure the button can be positioned absolutely */
             overflow: hidden; /* Ensure no overflow from the button */
         }
@@ -109,7 +100,6 @@
             color: transparent; /* Make the button text invisible */
             border: none;
             cursor: pointer;
-            color: rgb(156, 42, 42);
             position: absolute; /* Position the button absolutely */
             top: 0;
             left: 0;
@@ -193,15 +183,13 @@
                 else {
                     let open = false;
                     let ticketed = false;
-                    let borderline = false;
+                    let ticketheader = false;
                     let ticketID;
                     for (let i = 0; i < ticket[index][0].length; i++) {
                         if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
-                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i] + 1) {
-                                borderline = true;
-                            }
-                            else if (minute >= ticket[index][1][i] - 1 && minute <= ticket[index][1][i]) {
-                                borderline = true;
+                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i] + 30) {
+                                ticketheader = true;
+                                // want a text on this area for 30 minutes
                             }
                             else {
                                 ticketed = true;
@@ -218,8 +206,9 @@
                         }
                     }
                     
-                    if (borderline) {
-                        div.className = 'borderline';
+                    if (ticketheader) {
+                        div.className = 'ticketheader';
+    
                     }
                     else if (ticketed) {
                         div.className = 'ticketed';
@@ -228,7 +217,6 @@
                         button.onclick = function() {
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
                         };
-                        button.innerText = 'View Ticket';  // Add text to the button
                         div.appendChild(button);
                     }    
                     else if (open) {
