@@ -106,6 +106,19 @@
             z-index: 0; /* Place the button behind the text */
         }
 
+        .ticketheader button{
+            width: 100%;
+            height: 100%;
+            background-color: transparent; /* Make the button background transparent */
+            color: transparent; /* Make the button text invisible */
+            border: none;
+            cursor: pointer;
+            position: absolute; /* Position the button absolutely */
+            top: 0;
+            left: 0;
+            z-index: 0; /* Place the button behind the text */
+        }
+
         .time div {
             height: calc(800px / 24); /* Distribute the height for 24 time slots */
             line-height: calc(800px / 24); /* Center text vertically */
@@ -189,9 +202,9 @@
                                 ticketheader = true;
                                 // want a text on this area for 30 minutes
                             } else {
-                                ticketed = true;
-                                ticketID = ticket[index][2][i];                            
+                                ticketed = true;                          
                             }
+                            ticketID = ticket[index][2][i];  
                             break;  // Exit the inner loop if condition is met
                         }
                     }
@@ -205,6 +218,12 @@
                     
                     if (ticketheader) {
                         div.className = 'ticketheader';
+                        
+                        const button = document.createElement('button');
+                        button.onclick = function() {
+                            window.location.href = "/ITstaffview/ticket/" + ticketID;
+                        };
+                        div.appendChild(button);
     
                     } else if (ticketed) {
                         div.className = 'ticketed';
