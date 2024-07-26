@@ -72,7 +72,7 @@
         }
 
         .timeborder {
-            background-color: rgb(235, 241, 239);
+            background-color: rgb(11, 11, 11);
         }
         .blocked {
             background-color: rgb(233, 233, 233);    
@@ -110,7 +110,6 @@
             height: calc(800px / 24); /* Distribute the height for 24 time slots */
             line-height: calc(800px / 24); /* Center text vertically */
         }
-
 
         .time-slot {
             height: calc(800px / 1440); /* Distribute the height for 24 hours */
@@ -175,7 +174,7 @@
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
             
-            for (let minute = 0; minute < 1440; minute++) {
+            for (let minute = 1; minute < 1441; minute++) {
                 const div = document.createElement('div');
                 if (minute%60 === 0) {                   
                     div.className = 'timeborder';                
