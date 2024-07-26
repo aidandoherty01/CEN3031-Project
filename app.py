@@ -137,13 +137,15 @@ def admin():
             elif (request.form['submit'] == 'createEmp'):
                 return redirect('/admin/create/')
             elif (request.form['submit'] == 'deleteEmp'):
-                return redirect('/admin/delete')
-            elif (request.form['submit'] == 'modify'):
-                accID = request.form['accID']
-                return redirect('/admin/modify/' + str(accID))
-        return render_template('admin.html')
+                empID = request.form['empAccs']
+                delete_account(int(empID))
+            elif (request.form['submit'] == 'modifyEmp'):
+                empID = request.form['empAccs']
+                return redirect('/admin/modify/' + str(empID))
+        emps = get_emp_accounts()
+        return render_template('admin.html', emps=emps)
     else:
-        return "Not authorized to view this page"
+        return "Error: Not authorized to view this page"
 
 @app.route("/admin/roster/", methods=["GET", "POST"])
 def printRoster():
@@ -155,7 +157,7 @@ def printRoster():
             accounts = get_emp_accounts()
             return render_template('adminroster.html', accounts=accounts)
     else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
     
 @app.route("/admin/create/", methods=["GET", "POST"])
 def createEmp():
@@ -179,25 +181,7 @@ def createEmp():
         else:
             return render_template('admincreate.html')
     else:
-        return 'Not authorized to view this page'
-    
-@app.route("/admin/delete/", methods=["GET", "POST"])
-def deleteEmp():
-    if (check_type(2)):
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-            elif(request.form['submit'] == 'deleteEmp'):
-                accID = int(request.form['delID'])
-                if not get_account(accID):
-                    return 'Specified employee does not exist'
-                else:
-                    delete_account(accID)
-                    return render_template('admindelete.html', message='Account successfully deleted')
-        else:
-            return render_template('admindelete.html')
-    else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
     
 @app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
 def modifyEmp(empID):
@@ -226,7 +210,7 @@ def modifyEmp(empID):
             tickets = get_tickets_by_acc(empID)
             return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
     else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])

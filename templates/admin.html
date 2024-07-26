@@ -22,23 +22,24 @@
             <button type="submit" name="submit" value="allEmp">View Employee Roster</button>
             <!--Create Employee Account-->
             <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>        
-        
-            <!--Delete Employee Account-->
-            <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
         </div>
-        <!--
-        i. Manage employee account information (including creation and deletion of accounts).
-        ii. Assign employee availability scheduling.
-        iii. Assign employees to
-        iv. Manually override the automatic scheduling/assigning of tickets.
-        v. View the same ticket information as employee accounts, but for all tickets/employees.
-        -->
     </form>
+
     <!--Second form to get around required input-->
     <form method="POST">
-        <label for="accID">accID</label>
-        <input type="number" name="accID" value="accID" required>
-        <button type="submit" name="submit" value="modify">Modify Employee</button>
+        <div>
+            <label for="empAccs">Employees:</label>
+            <select name="empAccs" id="empAccs" required>
+                {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
+                <option value="{{ item.get('accID') }}">{{ item.get('accID') }} {{ item.get('fName') }} {{ item.get('lName') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" name="submit" value="modifyEmp">Modify Employee</button>
+            <h1>Careful With the Delete!!!<br><br><br></h1>
+            <button type="submit" name="submit" value="deleteEmp">Delete Employee</button>
+        </div>
     </form>
 
 </body>

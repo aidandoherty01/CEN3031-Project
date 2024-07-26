@@ -7,24 +7,24 @@
 
 </head>
 <body>
-    <div class="container">
-        <h1>Employee: {{empID}}</h1>
-    </div>
-
     <form method="POST">
         <button type="submit" name="submit" value="return">Return to Admin Home</button>
     </form>
     
-    <p>Employee: {{account}}</p>
+    <!--Print Employee Information and Assigned Tickets-->
+    <p><b>Employee:</b> {{account}}</p>
     <table>
-        <th>Tickets:</th>
+        <th>Tickets: </th>
         {% for item in tickets %}
             <tr>
                 <td>{{item}}</td>
             </tr>
         {% endfor %}
     </table>
+
+    <h1></h1>
     
+    <!--Employee Credentials-->
     <form method="POST">
         <div>
             <label for="fname">First Name</label>
@@ -43,6 +43,11 @@
             <input type="password" id="password" name="password" required>
         </div>
         <button type="submit" name="submit" value="modify">Modify Account</button>
+    </form>
+
+    <!--Schedule-->
+    <form>
+        
     </form>
 
 </body>
