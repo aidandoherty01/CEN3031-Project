@@ -142,6 +142,7 @@ def admin():
             elif (request.form['submit'] == 'modifyEmp'):
                 empID = request.form['empAccs']
                 return redirect('/admin/modify/' + str(empID))
+        
         emps = get_emp_accounts()
         return render_template('admin.html', emps=emps)
     else:
@@ -153,9 +154,9 @@ def printRoster():
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
-        else:
-            accounts = get_emp_accounts()
-            return render_template('adminroster.html', accounts=accounts)
+        
+        accounts = get_emp_accounts()
+        return render_template('adminroster.html', accounts=accounts)
     else:
         return 'Error: Not authorized to view this page'
     
@@ -178,37 +179,45 @@ def createEmp():
                     new_account(accID, username, password, fname, lname, accType)
                     account = get_account(accID)
                 return render_template('admincreate.html', account=account)
-        else:
-            return render_template('admincreate.html')
+        
+        return render_template('admincreate.html')
     else:
         return 'Error: Not authorized to view this page'
     
 @app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
 def modifyEmp(empID):
     if (check_type(2)):
+
         account = get_account(empID)
         if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
-            return 'Specified employee does not exist'
+            return 'Error: Specified employee does not exist.'
+        tickets = get_tickets_by_acc(empID)
+
         # Processing webpage
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
-            if(request.form['submit'] == 'modify'):
+            elif(request.form['submit'] == 'change'):
+                empID = request.form['empAccs']
+                return redirect('/admin/modify/' + str(empID))
+            elif(request.form['submit'] == 'modify'):
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
                 if not update_account(empID, username, password, fname, lname):
-                    return 'Username is already being used'
-            if(request.form['submit'] == 'schedule'):
+                    return 'Error: Username is already being used.'
+            elif(request.form['submit'] == 'schedule'):
                 print('test')
-            # Re-Render Page with modified information
+
+            # Create menu for modifying/creating schedules
+
+            # Load modified information
             account = get_account(empID)
             tickets = get_tickets_by_acc(empID)
-            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
-        else:   # Initial Load or Non-Post Requests
-            tickets = get_tickets_by_acc(empID)
-            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+
+        emps = get_emp_accounts()   # Used for changing employee dropdown
+        return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets, emps=emps)
     else:
         return 'Error: Not authorized to view this page'
 
