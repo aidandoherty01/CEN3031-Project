@@ -72,7 +72,7 @@
         }
 
         .timeborder {
-            background-color: rgb(240, 245, 243);
+            background-color: rgb(235, 241, 239);
         }
         .blocked {
             background-color: rgb(193, 191, 191);    
@@ -87,19 +87,19 @@
             background-color: black;
         }
 
+        .text {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: rgb(8, 8, 8);
+            font-size: 20px;
+            z-index: 1; /* Ensure text is on top */
+        }
+
         .ticketed {
             background-color: rgb(166, 165, 194);
             position: relative; /* Ensure the button can be positioned absolutely */
             overflow: hidden; /* Ensure no overflow from the button */
-        }
-
-        .ticketed .text {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-size: 20px;
-            z-index: 1; /* Ensure text is on top */
         }
 
         .ticketed button {
@@ -109,14 +109,11 @@
             color: transparent; /* Make the button text invisible */
             border: none;
             cursor: pointer;
+            color: rgb(156, 42, 42);
             position: absolute; /* Position the button absolutely */
             top: 0;
             left: 0;
             z-index: 0; /* Place the button behind the text */
-        }
-
-        .ticketed button:hover {
-            background-color: rgba(82, 80, 147, 0.8); /* Slightly darker shade for hover effect */
         }
 
         .time div {
@@ -227,8 +224,13 @@
                     else if (ticketed) {
                         div.className = 'ticketed';
                         
-                        
-                    }
+                        const button = document.createElement('button');
+                        button.onclick = function() {
+                            window.location.href = "/ITstaffview/ticket/" + ticketID;
+                        };
+                        button.innerText = 'View Ticket';  // Add text to the button
+                        div.appendChild(button);
+                    }    
                     else if (open) {
                         div.className = 'open';
                     }
