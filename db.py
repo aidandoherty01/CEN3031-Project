@@ -298,3 +298,6 @@ def send_msg(ticketID, accID, msg):
     msgs.append(newMsg)
 
     return db.ticketChats.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'msgs' : msgs}})
+
+def get_ticket_chat(ticketID):
+    return db.ticketChats.find_one({'ticketID' : ticketID})
