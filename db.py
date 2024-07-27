@@ -29,11 +29,14 @@ def create_collections():
         db.create_collection('accounts')
     if 'schedules' not in db.list_collection_names():
         db.create_collection('schedules')
+    if 'ticketChats' not in db.list_collection_names():
+        db.create_collection('ticketChats')
 
 def create_indexes():
     db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1, 'type' : 1}) # type can be 0,1,2; 0 = user, 1 = employee, 2 = admin
     db.schedules.create_index ({'accID' : 1, 'timeSlots' : 1})
+    db.ticketChats.create_index({'ticketID' : 1, 'userID' : 1, 'empID' : 1, 'msgs' : 1}) # msgs is a 2D array, of size [n] * [3]. n is the msg in chronological order, [n][0] = msg contents, [n][1] = timestamp, [n][2] = accID that sent msg
 
 def init_app(app):
     with app.app_context():
@@ -87,6 +90,7 @@ def get_ticket_finish_time(ticket):
 
 def assign_ticket_emp(ticketID, empID):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
+    new_ticket_chat(ticketID, db.tickets.find_one({'ticketID' : int(ticketID)}).get('userID'), int(empID))
     return response
 
 def assign_ticket_eta(ticketID, eta):
@@ -279,3 +283,18 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
 
     return datetime.max # returns max time to show that cannot be fit into schedule
                             
+## Ticket Chat Functions
+
+def new_ticket_chat(ticketID, userID, empID):
+    newArr = []
+    chatDoc = {'ticketID' : int(ticketID), 'userID' : int(userID), 'empID' : int(empID), 'msgs' : newArr}
+    return db.ticketChats.insert_one(chatDoc)
+
+def send_msg(ticketID, accID, msg):
+    chat = db.ticketChats.find_one({'ticketID' : int(ticketID)})
+    msgs = chat.get('msgs')
+
+    newMsg = [msg, datetime.now(), int(accID)]
+    msgs.append(newMsg)
+
+    return db.ticketChats.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'msgs' : msgs}})
