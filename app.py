@@ -192,7 +192,7 @@ def modifyEmp(empID):
         if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
             return 'Error: Specified employee does not exist.'
         tickets = get_tickets_by_acc(empID)
-
+        schedule = get_schedule(empID)
         # Processing webpage
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
@@ -208,16 +208,23 @@ def modifyEmp(empID):
                 if not update_account(empID, username, password, fname, lname):
                     return 'Error: Username is already being used.'
             elif(request.form['submit'] == 'schedule'):
-                print('test')
+                day = request.form['day']
+                start = request.form['startTime']
+                end = request.form['endTime']
+                temp = get_schedule(empID)
+                temp = temp[0][0][0]
+                print(day, start, end, temp)
+                print(type(start), type(temp))
 
             # Create menu for modifying/creating schedules
 
             # Load modified information
             account = get_account(empID)
             tickets = get_tickets_by_acc(empID)
+            schedule = get_schedule(empID)
 
         emps = get_emp_accounts()   # Used for changing employee dropdown
-        return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets, emps=emps)
+        return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets, emps=emps, schedule=schedule)
     else:
         return 'Error: Not authorized to view this page'
 

@@ -23,11 +23,14 @@
             <button type="submit" name="submit" value="change">Change Employee</button>
         </div>
     </form>
+
+    <h1></h1>
     
     <!--Print Employee Information and Assigned Tickets-->
     <div>
-        <p><b>Employee:</b> {{ account.get('fName')}} {{ account.get('lName') }}</p>
+        <p><b>Employee:</b> {{ account.get('fName')}} {{ account.get('lName') }}<br>Username: {{ account.get('username') }}<br>Password: {{ account.get('password') }}</p>
     </div>
+    <!--Printing the Tickets-->
     <div>
         <table>
             <th>Tickets:</th>
@@ -38,8 +41,20 @@
             {% endfor %}
         </table>
     </div>
+    <!--Printing the Schedule-->
     <div>
-        <p>schedule:</p>
+        <table>
+            <th>Schedule:</th>
+            {% for day in schedule %}
+            <tr>
+                <td>{{ loop.index }}</td>   <!--Days of the week-->
+                {% for i in  range(day | length) %}
+                    <!--Start Time followed by Duration-->
+                    <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td><td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
+                {% endfor %}
+            <tr>
+            {% endfor %}
+        </table>
     </div>
 
     <h1></h1>
@@ -65,5 +80,27 @@
         <button type="submit" name="submit" value="modify">Modify Account</button>
     </form>
 
+    <h1></h1>
+
+    <!--Schedule Changes-->
+    <form method="POST">
+        <select name="day" id="day" required>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+
+        <label for="startTime">Start Time:</label>
+        <input type="time" name="startTime" value="startTime" required>
+
+        <label for="endTime">End Time:</label>
+        <input type="time" name="endTime" value="endTime" required>
+
+        <button type="submit" name="submit" value="schedule">Submit</button>
+    </form>
 </body>
 </html>
