@@ -415,7 +415,8 @@ def vewticket(ID):
     if (check_type(0)):
         if (ticketJSON.get('userID') == cookieID() or check_type(2)):          
             if (request.method == 'POST'):
-                print('test')
+                send_msg(ID, cookieID(), request.form['chatInput'])
+                return(redirect("/userview/userviewticket/" + str(ID)))
             else:
                 ticketsArr = [0] * 7 # create a list of size 7
                 print('HI')
