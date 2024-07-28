@@ -113,7 +113,7 @@
 
                 <td>
                     <form action="/ITstaffview/ticket/{{ ticket[0] }}" method="POST" >
-                        <button type="submit" value="Submit">Done</button>
+                        <button type="submit" name="submit" value="close">Done</button>
                     </form>
                 </td>
                 <td>
@@ -133,13 +133,14 @@
         </table>
     </div>
 
-    <div class="chatbot-container">
-        <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
-        <div class="chatbot-messages" id="chatbot-messages"></div>
-        <input type="text" id="chatbot-input" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
-    
+    <form method="POST">
+        <div class="chatbot-container">
+            <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
+            <div class="chatbot-messages" id="chatbot-messages"></div>
+            <input type="text" id="chatInput" name="chatInput" placeholder="Type a message...">
+            <button type="submit" name="submit" value="send">Send</button>
+        </div>
+    </form>
 
 </body>
 </html>

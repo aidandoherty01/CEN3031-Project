@@ -10,7 +10,8 @@ import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, get_ticket_chat, \
+send_msg
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -288,9 +289,13 @@ def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
         if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
-            if request.method == 'POST':
-                close_ticket(ticketID)
-                return redirect("/ITstaffview/ticket/" + str(ticketID))
+            if request.method == 'POST': # mark ticket as closed
+                if (request.form['submit'] == "close"):
+                    close_ticket(ticketID)
+                    return redirect("/ITstaffview/ticket/" + str(ticketID))
+                else: # send chat msg
+                    send_msg(ticketID, cookieID(), request.form['chatInput'])
+                    return redirect("/ITstaffview/ticket/" + str(ticketID))
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
@@ -306,6 +311,8 @@ def staffTicketView(ticketID):
                 empName = fName + " " + lName
                 ticketsArr[5] = empName
                 ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
+
+                chat = get_ticket_chat(ticketID)
 
                 return render_template('ITstaffviewticket.html', ticket = ticketsArr)
         else:
