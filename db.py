@@ -180,7 +180,40 @@ def new_schedule(accID, timeSlots): # takes in array of strings and an accID to 
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
     return db.schedules.insert_one(schedule_doc)
 
+def update_schedule(accID, day, startTime, duration):
+    if not db.schedules.find_one({'accID' : accID}):
+        found = False
+        schedule = [[0] * 2 for _ in range(7)]  # initialize new schedule
+        for i in range(7):
+            for j in range(2):
+                schedule[i][j] = []
+    else:
+        found = True
+        schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
+    for i in range(0, len(schedule[day][0])):
+        # Converting to timedelta for intersection checking
+        s = datetime.strptime(schedule[day][0][i], '%H:%M:%S')
+        s = timedelta(hours=s.hour, minutes=s.minute, seconds=s.second)
+        d = datetime.strptime(schedule[day][1][i], '%H:%M:%S')
+        d = timedelta(hours=d.hour, minutes=d.minute, seconds=d.second)
+        if check_intersect(startTime, s, duration, d):  # check if the new timeslot intersects with any of the current schedule
+            return 0    # Intersection found, return flag
+    
+    # startTime and duration were passed to this function as timedeltas, so convert to strings for storage
+    startTime = str(startTime)
+    duration = str(duration)
+    schedule[day][0].append(startTime)
+    schedule[day][1].append(duration)
+
+    if found:
+        db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : schedule}})
+    else:
+        new_schedule(accID, schedule)
+    return schedule
+
 def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!!
+    if not db.schedules.find_one({'accID' : accID}):
+        return [] # if schedule doesn't exists, return any empty array
     scheduleJSON = db.schedules.find_one({'accID' : accID}).get('timeSlots')
     scheduleOut = [[0] * 2 for _ in range(7)]
 
