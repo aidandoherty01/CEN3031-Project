@@ -331,7 +331,7 @@ def staffTicketView(ticketID):
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
-                chat = format_ticket_chat(get_ticket_chat(ticketID), cookieID())
+                chatContents = format_ticket_chat(get_ticket_chat(ticketID), cookieID())
 
                 ticketsArr = [0] * 7 # create a list of size 7
                 ticketsArr[0] = ticketJSON.get('ticketID')
@@ -345,8 +345,6 @@ def staffTicketView(ticketID):
                 empName = fName + " " + lName
                 ticketsArr[5] = empName
                 ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
-
-                chat = get_ticket_chat(ticketID)
 
                 return render_template('ITstaffviewticket.html', ticket = ticketsArr)
         else:
@@ -452,8 +450,6 @@ def vewticket(ID):
                 send_msg(ID, cookieID(), request.form['chatInput'])
                 return(redirect("/userview/userviewticket/" + str(ID)))
             else:
-                chat = format_ticket_chat(get_ticket_chat(ID), cookieID())
-
                 ticketsArr = [0] * 7 # create a list of size 7
                 print('HI')
                 ticketsArr[0] = ticketJSON.get('ticketID')
@@ -473,6 +469,7 @@ def vewticket(ID):
                     empName = fName + " " + lName
                     ticketsArr[5] = empName
                     chat = True
+                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID())
                 ticketsArr[6] = ticketJSON.get('startTime')
                 if(ticketsArr[4] is not None):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
