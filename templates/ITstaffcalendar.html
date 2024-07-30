@@ -31,11 +31,11 @@
             cursor: pointer;
         }
         .title {
-            font-size: 24px; /* Adjust as needed */
+            font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
             color: #2c2929;
-            text-align: center; /* Center align the title */
+            text-align: center;
         }
         .calendar-container {
             max-width: 100%;
@@ -75,60 +75,55 @@
             border-bottom: 1px solid rgb(220, 218, 218);
         }
         .blocked {
-            background-color: rgb(233, 233, 233);    
-            height: calc(800px / 1440); /* Distribute the height for 24 time slots */
-            line-height: calc(800px / 1440); /* Center text vertically */        
+            background-color: rgb(233, 233, 233);
+            height: calc(800px / 1440);
+            line-height: calc(800px / 1440);
         }
         .open {
-            background-color: white;   
+            background-color: white;
         }
 
         .ticketheader {
             background-color: rgb(166, 165, 194);
+            height: calc(30 * (800px / 1440));
+            line-height: calc(30 * (800px / 1440));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: black; /* Ensure text color is visible */
+            font-weight: bold; /* Make text bold */
         }
 
         .ticketed {
             background-color: rgb(206, 205, 228);
-            position: relative; /* Ensure the button can be positioned absolutely */
-            overflow: hidden; /* Ensure no overflow from the button */
+            position: relative;
+            overflow: hidden;
         }
 
-        .ticketed button {
+        .ticketed button,
+        .ticketheader button {
             width: 100%;
             height: 100%;
-            background-color: transparent; /* Make the button background transparent */
-            color: transparent; /* Make the button text invisible */
+            background-color: transparent;
+            color: transparent;
             border: none;
             cursor: pointer;
-            position: absolute; /* Position the button absolutely */
+            position: absolute;
             top: 0;
             left: 0;
-            z-index: 0; /* Place the button behind the text */
-        }
-
-        .ticketheader button{
-            width: 100%;
-            height: 100%;
-            background-color: transparent; /* Make the button background transparent */
-            color: transparent; /* Make the button text invisible */
-            border: none;
-            cursor: pointer;
-            position: absolute; /* Position the button absolutely */
-            top: 0;
-            left: 0;
-            z-index: 0; /* Place the button behind the text */
+            z-index: 1;
         }
 
         .time div {
-            height: calc(800px / 24); /* Distribute the height for 24 time slots */
-            line-height: calc(800px / 24); /* Center text vertically */
+            height: calc(800px / 24);
+            line-height: calc(800px / 24);
         }
 
         .time-slot {
-            height: calc(800px / 1440); /* Distribute the height for 24 hours */
-            line-height: calc(800px / 1440); /* Center text vertically */
+            height: calc(800px / 1440);
+            line-height: calc(800px / 1440);
         }
-        
     </style>
 </head>
 <body>
@@ -159,11 +154,11 @@
                 <tr>
                     <td class="time">
                         {% for hour in range(0, 12) %}
-                            <div>{{hour}}:00 AM</div>                            
+                            <div>{{hour}}:00 AM</div>
                         {% endfor %}
                         <div>12:00 PM</div>
                         {% for hour in range(1, 12) %}
-                            <div>{{hour}}:00 PM</div>                            
+                            <div>{{hour}}:00 PM</div>
                         {% endfor %}
                     </td>
                     <td class="day-container" id="sun"></td>
@@ -186,11 +181,11 @@
 
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
-            
+
             for (let minute = 1; minute < 1441; minute++) {
                 const div = document.createElement('div');
-                if (minute % 60 === 0) {            
-                    div.className = 'timeborder';                
+                if (minute % 60 === 0) {
+                    div.className = 'timeborder';
                 } else {
                     let open = false;
                     let ticketed = false;
@@ -198,36 +193,38 @@
                     let ticketID;
                     for (let i = 0; i < ticket[index][0].length; i++) {
                         if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
-                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i] + 30) {
+                            if (minute === ticket[index][0][i]) {
                                 ticketheader = true;
-                                // want a text on this area for 30 minutes span
+                                ticketID = ticket[index][2][i];
+                                minute += 29; // Adjust the minute to skip the next 29 minutes
+                                break; // Exit the inner loop if condition is met
                             } else {
-                                ticketed = true;                          
+                                ticketed = true;
+                                ticketID = ticket[index][2][i];
+                                break; // Exit the inner loop if condition is met
                             }
-                            ticketID = ticket[index][2][i];  
-                            break;  // Exit the inner loop if condition is met
                         }
                     }
 
                     for (let i = 0; i < shifts[index][0].length; i++) {
                         if (minute >= shifts[index][0][i] && minute <= shifts[index][1][i]) {
                             open = true;
-                            break;  // Exit the inner loop if condition is met
+                            break; // Exit the inner loop if condition is met
                         }
                     }
-                    
+
                     if (ticketheader) {
                         div.className = 'ticketheader';
-                        
+                        div.textContent = 'ticket';
+
                         const button = document.createElement('button');
                         button.onclick = function() {
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
                         };
                         div.appendChild(button);
-    
                     } else if (ticketed) {
                         div.className = 'ticketed';
-                        
+
                         const button = document.createElement('button');
                         button.onclick = function() {
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
@@ -238,13 +235,11 @@
                     } else {
                         div.className = 'blocked';
                     }
-                   
                 }
                 div.classList.add('time-slot');
                 scheduleContainer.appendChild(div);
             }
         });
     </script>
-
 </body>
 </html>
