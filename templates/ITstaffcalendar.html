@@ -87,7 +87,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            /*position: relative;*/
             font-weight: bold; /* Make text bold */
         }
 
@@ -105,7 +105,7 @@
             color: transparent;
             border: none;
             cursor: pointer;
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
             z-index: 1;
@@ -178,6 +178,7 @@
 
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
+            let count = 0;
 
             for (let minute = 0; minute < 1440; minute++) {
                 const div = document.createElement('div');
@@ -191,6 +192,7 @@
                     for (let i = 0; i < ticket[index][0].length; i++) {
                         if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
                             if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i]+30) {
+                                //document.write(minute + ", ");
                                 ticketheader = true;
                                 ticketID = ticket[index][2][i];
                                 break; // Exit the inner loop if condition is met
@@ -211,12 +213,26 @@
 
                     if (ticketheader) {
                         div.className = 'ticketheader';
+
                         const button = document.createElement('button');
+
+                        if (count === 15){
+                            div.innerHTML += "Ticket#"
+                            div.innerHTML += ticketID
+                            count = 0;
+                        } else if (count === 30){
+                            count = 0;
+                        } else {
+                            count++;  
+                        }
+
                         button.onclick = function() {
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
                         };
                         div.appendChild(button);
+
                     } else if (ticketed) {
+                        count = 0;
                         div.className = 'ticketed';
 
                         const button = document.createElement('button');
