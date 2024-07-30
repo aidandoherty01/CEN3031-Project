@@ -76,13 +76,10 @@
         }
         .blocked {
             background-color: rgb(233, 233, 233);
-            height: calc(800px / 1440);
-            line-height: calc(800px / 1440);
         }
         .open {
             background-color: white;
         }
-
         .ticketheader {
             background-color: rgb(166, 165, 194);
             height: calc(30 * (800px / 1440));  /* make this 30 mnites span */
@@ -91,14 +88,13 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            color: black; /* Ensure text color is visible */
             font-weight: bold; /* Make text bold */
         }
 
         .ticketed {
             background-color: rgb(206, 205, 228);
             position: relative;
-            overflow: hidden;
+            
         }
 
         .ticketed button,
@@ -124,6 +120,7 @@
             height: calc(800px / 1440);
             line-height: calc(800px / 1440);
         }
+
     </style>
 </head>
 <body>
@@ -182,7 +179,7 @@
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
 
-            for (let minute = 1; minute < 1441; minute++) {
+            for (let minute = 0; minute < 1440; minute++) {
                 const div = document.createElement('div');
                 if (minute % 60 === 0) {
                     div.className = 'timeborder';
@@ -193,10 +190,9 @@
                     let ticketID;
                     for (let i = 0; i < ticket[index][0].length; i++) {
                         if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
-                            if (minute === ticket[index][0][i]) {
+                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i]+30) {
                                 ticketheader = true;
                                 ticketID = ticket[index][2][i];
-                                minute += 29; // Adjust the minute to skip the next 29 minutes
                                 break; // Exit the inner loop if condition is met
                             } else {
                                 ticketed = true;
@@ -215,8 +211,6 @@
 
                     if (ticketheader) {
                         div.className = 'ticketheader';
-                        div.textContent = 'ticket';
-
                         const button = document.createElement('button');
                         button.onclick = function() {
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
