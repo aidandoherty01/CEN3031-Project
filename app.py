@@ -346,7 +346,7 @@ def staffTicketView(ticketID):
                 ticketsArr[5] = empName
                 ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
-                return render_template('ITstaffviewticket.html', ticket = ticketsArr, chatContents = chatContents)
+                return render_template('ITstaffviewticket.html', ticket = ticketsArr)
         else:
             return "Not authorized to view this page"
     else:
@@ -475,7 +475,7 @@ def vewticket(ID):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
 
-                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat, chatContents= chatContents)
+                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat)
             
         else:
             return "Not authorized to view this page. Ensure that you are logged in."
