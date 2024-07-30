@@ -55,7 +55,7 @@
             color: #2c2b2b;
         }
         td.title {
-            background-color: #608bbd; /* Green */
+            background-color: #608bbd; 
             border: none;
             font-size: 16px;
             margin: 4px 2px;
@@ -72,12 +72,78 @@
             background-color: #fff;
         }
         .chatbot-header {
-            font-size: 18px;
+            font-size: 30px;
+            color: #053367;
             font-weight: bold;
             text-align: center;
+            margin-top: 30px;
             margin-bottom: 15px;
         }
+  
+        .chat-history {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ccc;
+            width: 60%;
+            margin-left: 20%;
+        }
 
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-input button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #608bbd;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .message {
+            display: inline-block;
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .chat-history .user .message {
+            background-color: #cbdcf3;
+            align-self: flex-end;
+        }
+
+        .chat-history .bot .message {
+            background-color: #e0e0e0;
+            align-self: flex-start;
+        }
+
+        .chat-history .user {
+            text-align: right;
+        }
+
+        .chat-history .bot {
+            text-align: left;
+        }
     </style>
 </head>
 <body>
@@ -133,12 +199,31 @@
         </table>
     </div>
 
+    
+
+
     <form method="POST">
-        <div class="chatbot-container">
+        <div class="chat-container">
             <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
-            <div class="chatbot-messages" id="chatbot-messages"></div>
-            <input type="text" id="chatInput" name="chatInput" placeholder="Type a message...">
-            <button type="submit" name="submit" value="send">Send</button>
+            <div class="chat-history" id="chat-history">
+                {% for msg in chatContents %}
+                    {% if msg[3] %}
+                        <div class="user">
+                            <div class="time">{{msg[1]}}</div>
+                            <div class="message">{{msg[0]}}</div>
+                        </div>
+                    {% else %}
+                        <div class="bot">
+                            <div class="time">{{msg[1]}}</div>
+                            <div class="message">{{msg[0]}}</div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" name="chatInput" placeholder="Type a message...">
+                <button type="submit" name="submit" value="send">Send</button>
+            </div>
         </div>
     </form>
 

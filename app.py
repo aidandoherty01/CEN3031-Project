@@ -30,6 +30,38 @@ def check_type(type):
             return True
     return False
 
+def format_ticket_chat(chat, accID):
+    out = []
+    msgs = chat.get('msgs')
+    emp = get_account(chat.get('empID'))
+    user = get_account(chat.get('userID'))
+
+    empName = (emp.get('fName') + " " + emp.get('lName'))
+    empID = (emp.get('accID'))
+    userName = (user.get('fName') + " " + emp.get('lName'))
+    userID = (user.get('accID'))
+
+    for i in range(len(msgs)):
+        temp = [0] * 4
+
+        temp[0] = msgs[i][0]
+        temp[1] = msgs[i][1].strftime("%H:%M %m-%d-%Y")
+        
+        if (msgs[i][2] == empID):
+            temp[2] = empName
+        else:
+            temp[2] = userName
+
+        if (msgs[i][2] == accID):
+            temp[3] = True
+        else:
+            temp[3] = False
+
+        out.append(temp)
+
+    return out
+
+
 @app.route("/logout/", methods=["GET", "POST"])
 def logout():
     response = make_response(redirect('/'))
@@ -299,6 +331,8 @@ def staffTicketView(ticketID):
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
+                chatContents = format_ticket_chat(get_ticket_chat(ticketID), cookieID())
+
                 ticketsArr = [0] * 7 # create a list of size 7
                 ticketsArr[0] = ticketJSON.get('ticketID')
                 ticketsArr[1] = ticketJSON.get('category')
@@ -312,9 +346,7 @@ def staffTicketView(ticketID):
                 ticketsArr[5] = empName
                 ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
-                chat = get_ticket_chat(ticketID)
-
-                return render_template('ITstaffviewticket.html', ticket = ticketsArr)
+                return render_template('ITstaffviewticket.html', ticket = ticketsArr, chatContents = chatContents)
         else:
             return "Not authorized to view this page"
     else:
@@ -437,12 +469,13 @@ def vewticket(ID):
                     empName = fName + " " + lName
                     ticketsArr[5] = empName
                     chat = True
+                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID())
                 ticketsArr[6] = ticketJSON.get('startTime')
                 if(ticketsArr[4] is not None):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
 
-                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat)
+                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat, chatContents= chatContents)
             
         else:
             return "Not authorized to view this page. Ensure that you are logged in."

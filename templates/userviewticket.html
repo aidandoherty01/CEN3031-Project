@@ -125,20 +125,22 @@
             </tr>
         </table>
     </div>
-
         
 
     <!-- Chat will only be available when ticket is assigned -->
          
     <form method="POST">
-        {% if chat %} {
+        {% if chat %} 
             <div class="chatbot-container">
                 <div class="chatbot-header">You are chatting with {{ticket[5]}}</div>
+                {% for msg in chatContents %}   
+                    <div >{{msg[0]}}</div>
+                {% endfor %}
                 <div class="chatbot-messages" id="chatbot-messages"></div>
                 <input type="text" id="chatInput" name="chatInput" placeholder="Type a message...">
                 <button type="submit" name="submit" value="send">Send</button>
             </div>
-        }
+        
         {% else %}
             <div class="chatbot-container">
                 <div class="chatbot-header">You can start the chat when your ticket is assigned with an IT staff.</div>
