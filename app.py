@@ -375,16 +375,6 @@ def empCalendar():
     
     return "Not authorized to view this page"
 
-## IT staff calendar page for testing only (will delete later and use the above)
-@app.route("/calendar/")
-def Calendar():
-    numbers = [num for num in range(1, 1441) if num % 2 == 0]
-    shift = [[[480], [1080]], [[0, 840], [600, 1080]], [[480], [1080]], [[480, 840], [600, 1080]], [[480], [1080]], [[480, 840], [600, 1080]], [[480], [1080]]]
-    tickettime = [[[480], [600], [1]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]], [[600, 900], [700, 1000], [1, 2]], [[600], [700], [1]], [[600, 900], [700, 1000], [1, 2]]]
-    
-    return render_template('ITstaffcalendar.html', shift = shift, tickettime = tickettime)
-      
-
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
 def userview():
