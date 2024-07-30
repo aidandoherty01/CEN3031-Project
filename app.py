@@ -30,6 +30,38 @@ def check_type(type):
             return True
     return False
 
+def format_ticket_chat(chat, accID):
+    out = []
+    msgs = chat.get('msgs')
+    emp = get_account(chat.get('empID'))
+    user = get_account(chat.get('userID'))
+
+    empName = (emp.get('fName') + " " + emp.get('lName'))
+    empID = (emp.get('accID'))
+    userName = (user.get('fName') + " " + emp.get('lName'))
+    userID = (user.get('accID'))
+
+    for i in range(len(msgs)):
+        temp = [0] * 4
+
+        temp[0] = msgs[i][0]
+        temp[1] = msgs[i][1].strftime("%H:%M %m-%d-%Y")
+        
+        if (msgs[i][2] == empID):
+            temp[2] = empName
+        else:
+            temp[2] = userName
+
+        if (msgs[i][2] == accID):
+            temp[3] = True
+        else:
+            temp[3] = False
+
+        out.append(temp)
+
+    return out
+
+
 @app.route("/logout/", methods=["GET", "POST"])
 def logout():
     response = make_response(redirect('/'))
@@ -299,6 +331,8 @@ def staffTicketView(ticketID):
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
+                chat = format_ticket_chat(get_ticket_chat(ticketID), cookieID())
+
                 ticketsArr = [0] * 7 # create a list of size 7
                 ticketsArr[0] = ticketJSON.get('ticketID')
                 ticketsArr[1] = ticketJSON.get('category')
@@ -418,6 +452,8 @@ def vewticket(ID):
                 send_msg(ID, cookieID(), request.form['chatInput'])
                 return(redirect("/userview/userviewticket/" + str(ID)))
             else:
+                chat = format_ticket_chat(get_ticket_chat(ID), cookieID())
+
                 ticketsArr = [0] * 7 # create a list of size 7
                 print('HI')
                 ticketsArr[0] = ticketJSON.get('ticketID')
