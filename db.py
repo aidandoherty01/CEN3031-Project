@@ -33,7 +33,7 @@ def create_collections():
         db.create_collection('categories')
 
 def create_indexes():
-    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
+    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1, 'hoursWorked' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1, 'type' : 1}) # type can be 0,1,2; 0 = user, 1 = employee, 2 = admin
     db.schedules.create_index ({'accID' : 1, 'timeSlots' : 1})
     db.categories.create_index ({'category' : 1})
@@ -107,6 +107,9 @@ def assign_ticket_start_time(ticketID, startTime):
 def close_ticket(ticketID):
     print(ticketID)
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
+
+def update_hours_worked(ticketID, hours):
+    return db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'hoursWorked' : int(hours)}})
 
 ## Account Functions
 def hash_password(passPlain): # hashes passwords using division by prime method

@@ -11,7 +11,7 @@ import string
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
 get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
-convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array
+convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -289,8 +289,7 @@ def staffTicketView(ticketID):
         ticket = get_ticket_by_id(ticketID)
         if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST':
-                close_ticket(ticketID)
-                return redirect("/ITstaffview/ticket/" + str(ticketID))
+                return redirect("/ITstaffview/ticket/" + str(ticketID) + "/close/")
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
@@ -312,7 +311,23 @@ def staffTicketView(ticketID):
             return "Not authorized to view this page"
     else:
         return "Not authorized to view this page"
-
+    
+@app.route("/ITstaffview/ticket/<int:ticketID>/close/", methods=['GET', 'POST'])
+def closeTicket(ticketID):
+    if (check_type(1)):
+        ticket = get_ticket_by_id(ticketID)
+        if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
+            if (request.method == 'GET'):
+                return render_template("closeticket.html")
+            else:
+                hoursWorked = int(request.form['input'])
+                update_hours_worked(ticketID, hoursWorked)
+                close_ticket(ticketID)
+                return redirect("/ITstaffview/")
+        else:
+            return "Not authorized to view this page"
+    else:
+        return "Not authorized to view this page"
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
