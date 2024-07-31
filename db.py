@@ -370,3 +370,6 @@ def get_categories_array():
     for i in cats:
         catsArr.append(i.get('category'))
     return catsArr
+
+def delete_category(cat):
+    return db.categories.delete_one({'category' : str(cat)})
