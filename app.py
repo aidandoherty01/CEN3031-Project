@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, current_app, g, make_response
+from flask import Flask, request, redirect, render_template, current_app, g, make_response, flash
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 
@@ -10,7 +10,8 @@ import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
+convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -40,13 +41,9 @@ def logout():
 def index():
     return render_template('index.html')
 
-## delete late
-@app.route("/homepage/", methods=["GET", "POST"])
-def homepage():
-    return render_template('homepage.html')
-
 @app.route("/login/", methods=["GET", "POST"])
 def login():
+    error = None
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -65,7 +62,8 @@ def login():
 
             return response
         else:
-            return "Login Failed, incorrect username or password"
+            error = 'Login failed. Please check your username and password.'
+            return render_template('login.html', error=error)
     else:
         return render_template("login.html")
     
@@ -73,6 +71,7 @@ def login():
 # Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
 def register():
+    error = None
     if (request.method == 'POST'):
         accID = get_new_ID()
         username = request.form.get("username")
@@ -80,12 +79,13 @@ def register():
         fname = request.form.get("fname")
         lname = request.form.get('lname')
 
-        if (check_username_free):
+        if (check_username_free(username)):
             new_account(accID, username, password, fname, lname, 0)
 
             return redirect("/login/")
         else:
-            return "Error: username is already in use"
+            error = "Username is already in use. Try again!"
+            return render_template("register.html", error = error)
     
     else:
         return render_template('register.html')
@@ -328,11 +328,12 @@ def ticketEtaAssignment(ticketID):
                     emps = list(get_emp_accounts())
 
                     for x in emps:
-                        thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
+                        if (check_if_schedule(x.get('accID'))):
+                            thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
 
-                        if (thisEmpSoonestFit < soonestFit):
-                            soonestFit = thisEmpSoonestFit
-                            soonestEmp = x.get('accID')
+                            if (thisEmpSoonestFit < soonestFit):
+                                soonestFit = thisEmpSoonestFit
+                                soonestEmp = x.get('accID')
 
                     if (soonestFit == datetime.max):
                         return "error: could not fit ticket with that eta into any employees schedule"
@@ -355,6 +356,24 @@ def ticketEtaAssignment(ticketID):
             return render_template('ticketeta.html', ticket = ticketArr)
     else:
         return "Not authorized to view this page"
+    
+## IT staff calendar page
+@app.route("/ITstaffview/calendar")
+def empCalendar():
+    if (check_type(1)):
+        scheduleRaw = get_schedule(cookieID())
+        ticketsRaw = list(get_tickets_by_acc(cookieID()))
+
+        schedule = convert_schedule_to_minutes(scheduleRaw)
+        tickets = convert_tickets_to_minutes(ticketsRaw)
+
+        firstOfWeek = get_first_day_of_week(datetime.now())
+
+        dayArray = get_day_array(firstOfWeek)
+
+        return render_template('ITstaffcalendar.html', shift = schedule, tickettime = tickets)
+    
+    return "Not authorized to view this page"
 
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
@@ -411,7 +430,6 @@ def vewticket(ID):
                 print('test')
             else:
                 ticketsArr = [0] * 7 # create a list of size 7
-                print('HI')
                 ticketsArr[0] = ticketJSON.get('ticketID')
                 ticketsArr[1] = ticketJSON.get('category')
                 ticketsArr[2] = ticketJSON.get('status')
