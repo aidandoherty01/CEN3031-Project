@@ -36,7 +36,7 @@
             <th>Tickets:</th>
             {% for item in tickets %}
                 <tr>
-                    <td>{{ item }}</td>
+                    <td>User ID: {{ item.get('userID') }}</td><td>Employee ID: {{ item.get('assignedEmpID') }}</td>
                 </tr>
             {% endfor %}
         </table>
@@ -48,10 +48,12 @@
             {% for day in schedule %}
             <tr>
                 <td>{{ loop.index }}</td>   <!--Days of the week-->
-                {% for i in  range(day | length) %}
-                    <!--Start Time followed by Duration-->
-                    <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td><td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
-                {% endfor %}
+                {% if day | length > 0 %}
+                    {% for i in  range(day[0] | length) %} <!--this is why it only 2 indexes, day is just 0 or 1, need to change loop condition-->
+                        <!--Start Time followed by Duration-->
+                        <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td><td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
+                    {% endfor %}
+                {% endif %}
             <tr>
             {% endfor %}
         </table>
@@ -100,7 +102,9 @@
         <label for="endTime">End Time:</label>
         <input type="time" name="endTime" value="endTime" required>
 
-        <button type="submit" name="submit" value="schedule">Submit</button>
+        <button type="submit" name="submit" value="schedule">Add Timeslot</button>
+        <button type="submit" name="submit" value="remove">Remove Timeslot</button>
     </form>
+    
 </body>
 </html>

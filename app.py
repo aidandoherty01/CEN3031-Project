@@ -8,7 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, update_account, new_schedule, update_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, update_account, new_schedule, update_schedule, get_schedule, delete_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -138,7 +138,7 @@ def admin():
                 return redirect('/admin/create/')
             elif (request.form['submit'] == 'deleteEmp'):
                 empID = request.form['empAccs']
-                delete_account(int(empID))
+                return redirect('/admin/delete/' + str(empID))
             elif (request.form['submit'] == 'modifyEmp'):
                 empID = request.form['empAccs']
                 return redirect('/admin/modify/' + str(empID))
@@ -184,6 +184,22 @@ def createEmp():
     else:
         return 'Error: Not authorized to view this page'
     
+@app.route("/admin/delete/<int:empID>", methods=["GET", "POST"])
+def deleteEmp(empID):
+    if (check_type(2)):
+        account = get_account(empID)
+        message = ''
+        if (request.method == 'POST'):
+            if (request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            elif (request.form['submit'] == 'confirm'):
+                if delete_account(empID):
+                    return 'Error: Account deletion unsuccessful, check that the provided id is an employee and that the account exists.'
+                message = 'Successfully deleted account.'
+        return render_template('admindelete.html', account=account, message=message)
+    else:
+        return "Error: Not authorized to view this page"
+    
 @app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
 def modifyEmp(empID):
     if (check_type(2)):
@@ -206,22 +222,21 @@ def modifyEmp(empID):
                 password = request.form['password']
                 if not update_account(empID, username, password, fname, lname):
                     return 'Error: Username is already being used.'
-            elif(request.form['submit'] == 'schedule'):
+            elif((request.form['submit'] == 'schedule') or (request.form['submit'] == 'remove')):
                 day = int(request.form['day'])   # indexes: 0-6, sun-sat
                 start = request.form['startTime']
                 end = request.form['endTime']
                 # Formatting startTime to ==> HH:MM:SS
                 startDateTime = datetime.strptime(start, '%H:%M')
-                startTimeDelta = timedelta(hours=startDateTime.hour, minutes=startDateTime.minute)
-                startTime = str(startTimeDelta)
+                startDelta = timedelta(hours=startDateTime.hour, minutes=startDateTime.minute)
                 # Calculating duration
                 durationDelta = datetime.strptime(end, '%H:%M') - startDateTime
-                duration = str(durationDelta)
-
-                if update_schedule(empID, day, startTimeDelta, durationDelta):
-                    return 'Error: Intersection found, please resolve the conflict'
-
-            # Create menu for deleting timeslots
+                if(request.form['submit'] == 'schedule'):   # Add timeslot
+                    if update_schedule(empID, day, startDelta, durationDelta):
+                        return 'Error: Intersection found, please resolve the conflict.'
+                else:   # Remove timeslot
+                    if delete_schedule(empID, day, startDelta, durationDelta):
+                        return 'Error: No timeslots to remove for the specified window.'
 
             # Load modified information
             account = get_account(empID)
