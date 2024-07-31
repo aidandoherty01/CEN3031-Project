@@ -29,11 +29,14 @@ def create_collections():
         db.create_collection('accounts')
     if 'schedules' not in db.list_collection_names():
         db.create_collection('schedules')
+    if 'categories' not in db.list_collection_names():
+        db.create_collection('categories')
 
 def create_indexes():
     db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1, 'type' : 1}) # type can be 0,1,2; 0 = user, 1 = employee, 2 = admin
     db.schedules.create_index ({'accID' : 1, 'timeSlots' : 1})
+    db.categories.create_index ({'category' : 1})
 
 def init_app(app):
     with app.app_context():
@@ -43,6 +46,11 @@ def init_app(app):
         if(check_username_free('admin')):
             new_account(0, 'admin', 'password', 'John', 'Doe', 2)
             # accID, username, password, fName, lName, type
+
+        # populate categories with default values
+        if (db.categories.count_documents({}) == 0):
+            db.categories.insert_one({'category' : "Software Problem"})
+            db.categories.insert_one({'category' : "Hardware Problem"})
 
 ## Ticket Fucntions
 def new_ticket(ticketID, userID, category, description):
@@ -351,4 +359,14 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
         loops += 1
 
     return datetime.max # returns max time to show that cannot be fit into schedule
-                            
+
+## Categories functions
+def new_category(cat):
+    return db.catagories.insert_one({"category" : str(cat)})
+
+def get_categories_array():
+    cats = list(db.categories.find())
+    catsArr = []
+    for i in cats:
+        catsArr.append(i.get('category'))
+    return catsArr
