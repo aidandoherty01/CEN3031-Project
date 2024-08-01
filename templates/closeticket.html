@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Close Ticket</title>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Close Ticket</h1>
+        
+    </div>
+
+    <form method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->     
+        <h1></h1>
+
+        <label for="input">Please enter the amount of hours you worked on this ticket, rounded to the nearst whole hour:</label><br>
+        <input type="number" name="input" id="input"></input>
+        
+        <h1></h1>
+
+        <button type="submit" value="Submit">Close Ticket</button>
+    </form>
+
+</body>
+</html>
