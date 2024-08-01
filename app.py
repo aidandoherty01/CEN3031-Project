@@ -108,7 +108,7 @@ def newTicket():
 
             new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
-            return redirect("/userview/ticketsubmitted/")
+            return redirect("/userview/newticket/")
 
         else:
             categoriesArray = get_categories_array()
