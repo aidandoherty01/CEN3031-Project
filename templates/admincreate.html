@@ -20,11 +20,11 @@
 
         <!--Create Employee Account-->
         <div>
-            <label for="fname">Your First Name</label>
+            <label for="fname">First Name</label>
             <input type="text" id="fname" name="fname" required>
         </div>
         <div>
-            <label for="lname">Your Last Name</label>
+            <label for="lname">Last Name</label>
             <input type="text" id="lname" name="lname" required>
         </div>
         <div>
@@ -34,6 +34,13 @@
         <div>
             <label for="password">Password</label>
             <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <label for="accType">Account Type</label>
+            <select name="accType" id="accType" required>
+                <option value="1">Employee</option>
+                <option value="2">Admin</option>
+            </select>
         </div>
         <button type="submit" name ="submit" value="createEmp">Create Employee Account</button>  
 

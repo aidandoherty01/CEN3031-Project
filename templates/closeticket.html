@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket {{ ticket[0] }}</title>
+    <title>Close Ticket</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,18 +104,17 @@
     </div>
 
     <div class="container">
-        <div class="title">Ticket {{ ticket[0] }}</div>
-        <p>Category: {{ ticket[1] }}</p>
-        <p>Desc: {{ ticket[2] }}</p>
-        <form method="POST" onkeydown="return event.key != 'Enter';">           
-            <div class="time-inputs">
-                <label for="hours">Enter time estimate:</label>
-                <input type="text" id="hours" name="hours" required>
-                <label for="minutes">:</label>
-                <input type="text" id="minutes" name="minutes" required>
-                <span>hours : minutes</span>
+        <div class="title">Close Ticket</div>
+        <form method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->     
+            <div>
+                <label for="input">Please enter the amount of hours you worked on this ticket:</label>
+            <input type="number" name="input" id="input"></input>
             </div>
-            <button type="submit" value="Submit">Submit Estimate</button>
+            <div>Please round it to the nearest hour.</div>
+            
+            
+            <div></div>
+            <button type="submit" value="Submit">Close Ticket</button>
         </form>
     </div>
     
