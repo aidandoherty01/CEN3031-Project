@@ -17,7 +17,8 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header .left-buttons {
+        .header .left-buttons,
+        .header .right-buttons {
             display: flex;
         }
         .header .left-buttons button,
@@ -27,55 +28,51 @@
             border: none;
             border-radius: 5px;
             background-color: white;
+            color: #00030bde; /* Ensure text color contrasts with the button background */
             font-size: 16px;
             cursor: pointer;
         }
-        .table-container {
-            margin-top: 20px; /* Adjust the value to move the table further down */
-            font-family: Arial, sans-serif;
+        .header .left-buttons button:hover,
+        .header .right-buttons button:hover {
+            background-color: #e0e0e0; /* Add a hover effect */
         }
         .title {
-            font-size: 24px; /* Adjust as needed */
+            font-size: 40px; /* Adjust as needed */
             font-weight: bold;
+            margin-top: 20px;
             margin-bottom: 20px;
             color: #2c2929;
             text-align: center; /* Center align the title */
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            font-size: 16px; /* Adjust as needed */
-            color: #2c2b2b;
-        }
-        tr.title {
-            background-color: #608bbd; /* Green */
-            border: none;
-            font-size: 16px;
-            margin: 4px 2px;
-            border-radius: 4px;
-        }
-        tr:nth-child(even) {
+        form {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
             background-color: #f9f9f9;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif;
         }
-        /* Chatbot styling */
-        .chatbot-container {
-            width: 300px;
-            padding: 70px;
-            margin: 80px auto;
-            background-color: #fff;
-        }
-        .chatbot-header {
-            font-size: 18px;
+        label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: bold;
-            text-align: center;
-            margin-bottom: 15px;
+            color: #333;
+        }
+        select, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4c65b8de;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
 
     </style>
@@ -85,10 +82,12 @@
         <div class="left-buttons">
             <button onclick="location.href='/userview/'">Home</button>
         </div>
-        <div class="right-button">
+        <div class="right-buttons">
             <button onclick="location.href='/logout/'">Logout</button>
         </div>
     </div>
+
+    <div class="title">New Ticket</div>
 
     <form method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->
         <label for="category">Please select the category that best describes your ticket:</label>
