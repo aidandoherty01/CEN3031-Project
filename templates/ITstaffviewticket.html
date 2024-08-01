@@ -76,7 +76,7 @@
             color: #053367;
             font-weight: bold;
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px;
             margin-bottom: 15px;
         }
   
@@ -87,11 +87,16 @@
             border-bottom: 1px solid #ccc;
             width: 60%;
             margin-left: 20%;
+            height: 250px; /* Set a fixed height */
+            border: 1px solid #ccc; /* Add border */
+            box-sizing: border-box;
         }
 
         .chat-input {
             display: flex;
             padding: 10px;
+            width: 60%;
+            margin-left: 20%;
         }
 
         .chat-input input {
@@ -145,6 +150,18 @@
             text-align: left;
         }
     </style>
+    <!-- scroll to bottom to display latest messages -->  
+    <script>
+        function scrollToBottom() {
+            var chatHistory = document.getElementById("chat-history");
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            scrollToBottom();
+        });
+    </script>
+    
 </head>
 <body>
     <div class="header">
@@ -164,8 +181,7 @@
                 <td>
                     <div>Ticket ID</div>
                 </td>
-                <td><div>Category</div></td>
-                
+                <td><div>Category</div></td>               
                 <td>
                     <div>Status</div>
                 </td>
