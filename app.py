@@ -328,6 +328,7 @@ def closeTicket(ticketID):
             return "Not authorized to view this page"
     else:
         return "Not authorized to view this page"
+
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
