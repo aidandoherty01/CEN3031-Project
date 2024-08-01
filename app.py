@@ -38,11 +38,6 @@ def logout():
 def index():
     return render_template('index.html')
 
-## delete late
-@app.route("/homepage/", methods=["GET", "POST"])
-def homepage():
-    return render_template('homepage.html')
-
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     if request.method == 'POST':
