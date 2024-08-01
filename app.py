@@ -10,8 +10,9 @@ import string
 
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
-convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked, update_account, update_schedule, delete_schedule
+get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes,\
+convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked, update_account, update_schedule, delete_schedule,\
+get_ticket_chat, send_msg
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -29,6 +30,38 @@ def check_type(type):
         elif (cookieType() == 2): # lets admin acc view every page
             return True
     return False
+
+def format_ticket_chat(chat, accID):
+    out = []
+    msgs = chat.get('msgs')
+    emp = get_account(chat.get('empID'))
+    user = get_account(chat.get('userID'))
+
+    empName = (emp.get('fName') + " " + emp.get('lName'))
+    empID = (emp.get('accID'))
+    userName = (user.get('fName') + " " + emp.get('lName'))
+    userID = (user.get('accID'))
+
+    for i in range(len(msgs)):
+        temp = [0] * 4
+
+        temp[0] = msgs[i][0]
+        temp[1] = msgs[i][1].strftime("%H:%M %m-%d-%Y")
+        
+        if (msgs[i][2] == empID):
+            temp[2] = empName
+        else:
+            temp[2] = userName
+
+        if (msgs[i][2] == accID):
+            temp[3] = True
+        else:
+            temp[3] = False
+
+        out.append(temp)
+
+    return out
+
 
 @app.route("/logout/", methods=["GET", "POST"])
 def logout():
@@ -314,10 +347,17 @@ def staffTicketView(ticketID):
     if (check_type(1)):
         ticket = get_ticket_by_id(ticketID)
         if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
-            if request.method == 'POST':
-                return redirect("/ITstaffview/ticket/" + str(ticketID) + "/close/")
+            if request.method == 'POST': # mark ticket as closed
+                if (request.form['submit'] == "close"):
+                    close_ticket(ticketID)
+                    return redirect("/ITstaffview/ticket/" + str(ticketID))
+                else: # send chat msg
+                    send_msg(ticketID, cookieID(), request.form['chatInput'])
+                    return redirect("/ITstaffview/ticket/" + str(ticketID))
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
+
+                chatContents = format_ticket_chat(get_ticket_chat(ticketID), cookieID())
 
                 ticketsArr = [0] * 7 # create a list of size 7
                 ticketsArr[0] = ticketJSON.get('ticketID')
@@ -332,7 +372,7 @@ def staffTicketView(ticketID):
                 ticketsArr[5] = empName
                 ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
-                return render_template('ITstaffviewticket.html', ticket = ticketsArr)
+                return render_template('ITstaffviewticket.html', ticket = ticketsArr, chatContents = chatContents)
         else:
             return "Not authorized to view this page"
     else:
@@ -469,7 +509,8 @@ def vewticket(ID):
     if (check_type(0)):
         if (ticketJSON.get('userID') == cookieID() or check_type(2)):          
             if (request.method == 'POST'):
-                print('test')
+                send_msg(ID, cookieID(), request.form['chatInput'])
+                return(redirect("/userview/userviewticket/" + str(ID)))
             else:
                 ticketsArr = [0] * 7 # create a list of size 7
                 ticketsArr[0] = ticketJSON.get('ticketID')
@@ -489,12 +530,13 @@ def vewticket(ID):
                     empName = fName + " " + lName
                     ticketsArr[5] = empName
                     chat = True
+                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID())
                 ticketsArr[6] = ticketJSON.get('startTime')
                 if(ticketsArr[4] is not None):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
 
 
-                return render_template('userviewticket.html', ticket = ticketsArr, chat = chat)
+                return render_template('userviewticket.html', ticket = ticketsArr, chatContents = chatContents, chat = chat)
             
         else:
             return "Not authorized to view this page. Ensure that you are logged in."
