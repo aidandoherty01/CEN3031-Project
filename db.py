@@ -157,7 +157,18 @@ def get_emp_accounts():
     return db.accounts.find({'type' : 1})
 
 def delete_account(accID):
-    db.accounts.delete_one({'accID' : accID})
+    t = get_account(accID)  # check that the account exists
+    if t:
+        t = t.get('type')
+        if t != 0:  # check the account is an employee (or admin)
+            db.accounts.delete_one({'accID' : accID})
+            db.schedules.delete_one({'accID' : accID})
+            if get_tickets_by_acc(accID):
+                db.tickets.update_many({'assignedEmpID' : accID},
+                                        {'$set' : {'status' : 'unassigned'}})
+        return 0
+    else:
+        return 1
 
 def get_new_ID(): # returns an int = the lowest avaliable acc id
     accounts = list(db.accounts.find().sort('accID')) # gets all the accounts, sorted by ID
@@ -175,7 +186,10 @@ def get_new_ID(): # returns an int = the lowest avaliable acc id
     
 def update_account(accID, username, password, fName, lName):
     if not check_username_free(username):
-        return 0
+        # Username is not free, check if this username's accID == this accID
+        temp = get_account_by_username(username)
+        if(temp.get('accID') != accID):
+            return 0    # Can't have duplicate usernames on different ids
     hashed = hash_password(password)
     response = db.accounts.find_one_and_update(
         { 'accID' : accID },
@@ -188,6 +202,41 @@ def new_schedule(accID, timeSlots): # takes in array of strings and an accID to 
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
     return db.schedules.insert_one(schedule_doc)
 
+def update_schedule(accID, day, startTime, duration):   # adds timeslot to account's schedule (if no overlap)
+    if not db.schedules.find_one({'accID' : accID}):
+        found = False
+        schedule = [[0] * 2 for _ in range(7)]  # initialize new schedule
+        for i in range(7):
+            for j in range(2):
+                schedule[i][j] = []
+    else:
+        found = True
+        # schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
+        timedelta_schedule = get_schedule(accID)
+    for i in range(len(timedelta_schedule[day][0])):
+        # Converting to timedelta for intersection checking
+        #s = datetime.strptime(schedule[day][0][i], '%H:%M:%S')
+        #s = timedelta(hours=s.hour, minutes=s.minute, seconds=s.second)
+        #d = datetime.strptime(schedule[day][1][i], '%H:%M:%S')
+        #d = timedelta(hours=d.hour, minutes=d.minute, seconds=d.second)
+        s = timedelta_schedule[day][0][i]
+        d = timedelta_schedule[day][1][i]
+        if check_intersect(startTime, s, duration, d):  # check if the new timeslot intersects with any of the current schedule
+            return 1    # Intersection found, return flag
+    
+    # startTime and duration were passed to this function as timedeltas, so convert to strings for storage
+    string_schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
+    startTime = str(startTime)
+    duration = str(duration)
+    string_schedule[day][0].append(startTime)
+    string_schedule[day][1].append(duration)
+
+    if found:
+        db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : string_schedule}})
+    else:
+        new_schedule(accID, string_schedule)
+    return 0
+
 def check_if_schedule(accID):
     if (db.schedules.find_one({'accID' : accID}) != None):
         return True
@@ -195,6 +244,8 @@ def check_if_schedule(accID):
         return False
 
 def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!!
+    if not db.schedules.find_one({'accID' : accID}):
+        return [] # if schedule doesn't exists, return any empty array
     scheduleJSON = db.schedules.find_one({'accID' : accID}).get('timeSlots')
     scheduleOut = [[0] * 2 for _ in range(7)]
 
@@ -217,6 +268,29 @@ def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!
             #print(str(i) + " " + str(j) + ": " + str(scheduleOut[i][0][j]) + "-" + str(scheduleOut[i][0][j] + scheduleOut[i][1][j]))
 
     return scheduleOut
+
+def delete_schedule(accID, day, startTime, duration): # removes specified timeslots
+    schedule = get_schedule(accID)  # timedelta schedule used for comparisons
+    if not schedule:    # check employee has a schedule
+        return 1
+    
+    indices = []    # holds indices of timeslots to be removed
+    for i in range(len(schedule[day][0])):  # checking what timeslots are enveloped
+        s = schedule[day][0][i]
+        d = schedule[day][1][i]
+        if (startTime <= s) and ((startTime + duration) >= (s + d)):
+            indices.append(i)
+
+    string_schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')  # actual schedule getting manipulated
+    i = len(indices) - 1
+    while i > -1:   # removing the specified timeslots
+        del string_schedule[day][0][indices[i]]
+        del string_schedule[day][1][indices[i]]
+        i = i - 1
+    if len(indices) > 0:    # if any timeslots were removed, update the schedule
+        db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : string_schedule}})
+    else:   # else return an error
+        return 1
 
 def get_first_day_of_week(dateIn): # returns a datetime that holds the first day of the week that the given date is in
     dayIn = date_to_weekday(dateIn)
@@ -275,7 +349,6 @@ def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d
             ticketsOut[day][2].append(x.get("ticketID"))
 
     return ticketsOut
-    
 
 def date_to_weekday(date): # gets the int value of the weekday of a given date (0 = sun, 1 = mon, ...)
     

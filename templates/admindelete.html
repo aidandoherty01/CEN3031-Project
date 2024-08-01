@@ -7,18 +7,12 @@
 
 </head>
 <body>
-    <div class="container">
-        <h1>Admin</h1>
-    </div>
 
     <form method="POST">
         <button type="submit" name="submit" value="return">Return to Admin Home</button>
-    </form>
-
-    <form method="POST">        
-        <label for="delID">Account ID</label>
-        <input type="number" id="delID" name="delID" required>
-        <button type="submit" name="submit" value="deleteEmp">Delete Employee Account</button>
+        <h1></h1>
+        <p>Are you sure you want to delete: {{ account.get('accID') }}: {{ account.get('fName') }} {{ account.get('lName') }}?</p>
+        <button type="submit" name="submit" value="confirm">Delete Employee Account</button>
     </form>
     
     <p>{{message}}</p>

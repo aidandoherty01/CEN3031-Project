@@ -11,7 +11,7 @@ import string
 from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
 get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
-convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked
+convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked, update_account, update_schedule, delete_schedule
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -139,13 +139,16 @@ def admin():
             elif (request.form['submit'] == 'createEmp'):
                 return redirect('/admin/create/')
             elif (request.form['submit'] == 'deleteEmp'):
-                return redirect('/admin/delete')
-            elif (request.form['submit'] == 'modify'):
-                accID = request.form['accID']
-                return redirect('/admin/modify/' + str(accID))
-        return render_template('admin.html')
+                empID = request.form['empAccs']
+                return redirect('/admin/delete/' + str(empID))
+            elif (request.form['submit'] == 'modifyEmp'):
+                empID = request.form['empAccs']
+                return redirect('/admin/modify/' + str(empID))
+        
+        emps = get_emp_accounts()
+        return render_template('admin.html', emps=emps)
     else:
-        return "Not authorized to view this page"
+        return "Error: Not authorized to view this page"
 
 @app.route("/admin/roster/", methods=["GET", "POST"])
 def printRoster():
@@ -153,11 +156,11 @@ def printRoster():
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
-        else:
-            accounts = get_emp_accounts()
-            return render_template('adminroster.html', accounts=accounts)
+        
+        accounts = get_emp_accounts()
+        return render_template('adminroster.html', accounts=accounts)
     else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
     
 @app.route("/admin/create/", methods=["GET", "POST"])
 def createEmp():
@@ -171,58 +174,81 @@ def createEmp():
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
-                new_account(accID, username, password, fname, lname, 1)
-                account = get_account(accID)
-                return render_template('admincreate.html', account=account)
-        else:
-            return render_template('admincreate.html')
-    else:
-        return 'Not authorized to view this page'
-    
-@app.route("/admin/delete/", methods=["GET", "POST"])
-def deleteEmp():
-    if (check_type(2)):
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-            elif(request.form['submit'] == 'deleteEmp'):
-                accID = int(request.form['delID'])
-                if not get_account(accID):
-                    return 'Specified employee does not exist'
+                accType = int(request.form['accType'])
+                if not check_username_free(username):
+                    return 'Error: Username is already in use.'
                 else:
-                    delete_account(accID)
-                    return render_template('admindelete.html', message='Account successfully deleted')
-        else:
-            return render_template('admindelete.html')
+                    new_account(accID, username, password, fname, lname, accType)
+                    account = get_account(accID)
+                return render_template('admincreate.html', account=account)
+        
+        return render_template('admincreate.html')
     else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
+    
+@app.route("/admin/delete/<int:empID>", methods=["GET", "POST"])
+def deleteEmp(empID):
+    if (check_type(2)):
+        account = get_account(empID)
+        message = ''
+        if (request.method == 'POST'):
+            if (request.form['submit'] == 'return'):
+                return redirect('/admin/')
+            elif (request.form['submit'] == 'confirm'):
+                if delete_account(empID):
+                    return 'Error: Account deletion unsuccessful, check that the provided id is an employee and that the account exists.'
+                message = 'Successfully deleted account.'
+        return render_template('admindelete.html', account=account, message=message)
+    else:
+        return "Error: Not authorized to view this page"
     
 @app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
 def modifyEmp(empID):
     if (check_type(2)):
         account = get_account(empID)
         if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
-            return 'Specified employee does not exist'
+            return 'Error: Specified employee does not exist.'
+        tickets = get_tickets_by_acc(empID)
+        schedule = get_schedule(empID)
         # Processing webpage
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
-            if(request.form['submit'] == 'modify'):
+            elif(request.form['submit'] == 'change'):
+                empID = request.form['empAccs']
+                return redirect('/admin/modify/' + str(empID))
+            elif(request.form['submit'] == 'modify'):
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
                 if not update_account(empID, username, password, fname, lname):
-                    return 'Username is already being used'
-                else:
-                    account = get_account(empID)
-                    tickets = get_tickets_by_acc(empID)
-                    return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
-        else:
+                    return 'Error: Username is already being used.'
+            elif((request.form['submit'] == 'schedule') or (request.form['submit'] == 'remove')):
+                day = int(request.form['day'])   # indexes: 0-6, sun-sat
+                start = request.form['startTime']
+                end = request.form['endTime']
+                # Formatting startTime to ==> HH:MM:SS
+                startDateTime = datetime.strptime(start, '%H:%M')
+                startDelta = timedelta(hours=startDateTime.hour, minutes=startDateTime.minute)
+                # Calculating duration
+                durationDelta = datetime.strptime(end, '%H:%M') - startDateTime
+                if(request.form['submit'] == 'schedule'):   # Add timeslot
+                    if update_schedule(empID, day, startDelta, durationDelta):
+                        return 'Error: Intersection found, please resolve the conflict.'
+                else:   # Remove timeslot
+                    if delete_schedule(empID, day, startDelta, durationDelta):
+                        return 'Error: No timeslots to remove for the specified window.'
+
+            # Load modified information
+            account = get_account(empID)
             tickets = get_tickets_by_acc(empID)
-            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
+            schedule = get_schedule(empID)
+
+        emps = get_emp_accounts()   # Used for changing employee dropdown
+        return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets, emps=emps, schedule=schedule)
     else:
-        return 'Not authorized to view this page'
+        return 'Error: Not authorized to view this page'
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
