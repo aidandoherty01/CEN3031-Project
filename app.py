@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, current_app, g, make_response, flash
+from flask import Flask, request, redirect, render_template, current_app, g, make_response
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 
@@ -8,10 +8,7 @@ import random
 import os
 import string
 
-from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time,\
-assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
-get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes, \
-convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked
+from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_ticket, get_ticket_by_id, get_tickets_by_acc, assign_ticket_start_time, assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit, get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -43,7 +40,6 @@ def index():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
-    error = None
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
@@ -62,8 +58,7 @@ def login():
 
             return response
         else:
-            error = 'Login failed. Please check your username and password.'
-            return render_template('login.html', error=error)
+            return "Login Failed, incorrect username or password"
     else:
         return render_template("login.html")
     
@@ -71,7 +66,6 @@ def login():
 # Register for a new account
 @app.route("/register/", methods=["GET", "POST"])
 def register():
-    error = None
     if (request.method == 'POST'):
         accID = get_new_ID()
         username = request.form.get("username")
@@ -79,13 +73,12 @@ def register():
         fname = request.form.get("fname")
         lname = request.form.get('lname')
 
-        if (check_username_free(username)):
+        if (check_username_free):
             new_account(accID, username, password, fname, lname, 0)
 
             return redirect("/login/")
         else:
-            error = "Username is already in use. Try again!"
-            return render_template("register.html", error = error)
+            return "Error: username is already in use"
     
     else:
         return render_template('register.html')
@@ -108,12 +101,12 @@ def newTicket():
 
             new_ticket(ticketID, accID, category, desc) # creates a new ticket with the info given
 
-            return redirect("/userview/newticket/")
+            return redirect("/userview/ticketsubmitted/")
 
         else:
-            categoriesArray = get_categories_array()
+            catagoriesArray = ["category1", "category2", "category3"] # TODO: get catagories from database
 
-            return render_template('newticket.html', catagoriesArray=categoriesArray)
+            return render_template('newticket.html', catagoriesArray=catagoriesArray)
     else:
         return "Not authorized to view this page"
 
@@ -126,103 +119,50 @@ def ticketSubmitted():
     else:
         return render_template('ticketsubmitted.html')
     
-## Admin View
+## Admin Page
 @app.route("/admin/", methods=["GET", "POST"])
 def admin():
-    if (check_type(2)): # check account type is 'admin'
+    if (check_type(2)):
         if (request.method == 'POST'):
-            if (request.form['submit'] == 'logout'):
-                return redirect('/logout/')
-            # Manage Employees
-            elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
-                return redirect('/admin/roster/')
-            elif (request.form['submit'] == 'createEmp'):
-                return redirect('/admin/create/')
-            elif (request.form['submit'] == 'deleteEmp'):
-                return redirect('/admin/delete')
-            elif (request.form['submit'] == 'modify'):
+            if (request.form['submit'] == "assign"):            
+                ticketID = request.form['ticketID']
+                empID = request.form['empID']
+                assign_ticket_emp(ticketID, empID)
+            elif (request.form['submit'] == "close"):
+                ticketID = request.form['ticketIDc']
+                close_ticket(ticketID)
+            elif (request.form['submit'] == "lookTicket"):
+                ticketID = request.form['ticketIDl']
+                ticket = get_ticket_by_id(ticketID)
+                print(ticket)
+            elif (request.form['submit'] == "lookAcc"):
                 accID = request.form['accID']
-                return redirect('/admin/modify/' + str(accID))
-        return render_template('admin.html')
-    else:
-        return "Not authorized to view this page"
-
-@app.route("/admin/roster/", methods=["GET", "POST"])
-def printRoster():
-    if (check_type(2)):
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-        else:
-            accounts = get_emp_accounts()
-            return render_template('adminroster.html', accounts=accounts)
-    else:
-        return 'Not authorized to view this page'
-    
-@app.route("/admin/create/", methods=["GET", "POST"])
-def createEmp():
-    if (check_type(2)):
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-            elif(request.form['submit'] == 'createEmp'):
+                tickets = get_tickets_by_acc(accID)
+                for x in tickets:
+                    print(x)
+            # Start Admin Functionality
+            elif (request.form['submit'] == 'allEmp'):  # On button press, display all employee accounts and information
+                accounts = get_accounts()
+                return render_template('admin.html', accounts=accounts)
+            elif (request.form['submit'] == 'createEmp'):
                 accID = get_new_ID()
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
                 new_account(accID, username, password, fname, lname, 1)
-                account = get_account(accID)
-                return render_template('admincreate.html', account=account)
-        else:
-            return render_template('admincreate.html')
+            elif (request.form['submit'] == 'deleteEmp'):
+                accID = request.form['delID']
+                # if not isinstance(accID, int):
+                    # print('Error: Incorrect Input')   # Figure out better way to handle this
+                # else:
+                    # delete_account(accID)
+                delete_account(int(accID))
+            # add ticket view
+
+        return render_template('admin.html')
     else:
-        return 'Not authorized to view this page'
-    
-@app.route("/admin/delete/", methods=["GET", "POST"])
-def deleteEmp():
-    if (check_type(2)):
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-            elif(request.form['submit'] == 'deleteEmp'):
-                accID = int(request.form['delID'])
-                if not get_account(accID):
-                    return 'Specified employee does not exist'
-                else:
-                    delete_account(accID)
-                    return render_template('admindelete.html', message='Account successfully deleted')
-        else:
-            return render_template('admindelete.html')
-    else:
-        return 'Not authorized to view this page'
-    
-@app.route("/admin/modify/<int:empID>", methods=["GET", "POST"])
-def modifyEmp(empID):
-    if (check_type(2)):
-        account = get_account(empID)
-        if (not account) or (account.get('type') != 1):  # check that accID exists and is an employee
-            return 'Specified employee does not exist'
-        # Processing webpage
-        if (request.method == 'POST'):
-            if(request.form['submit'] == 'return'):
-                return redirect('/admin/')
-            if(request.form['submit'] == 'modify'):
-                fname = request.form['fname']
-                lname = request.form['lname']
-                username = request.form['username']
-                password = request.form['password']
-                if not update_account(empID, username, password, fname, lname):
-                    return 'Username is already being used'
-                else:
-                    account = get_account(empID)
-                    tickets = get_tickets_by_acc(empID)
-                    return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
-        else:
-            tickets = get_tickets_by_acc(empID)
-            return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets)
-    else:
-        return 'Not authorized to view this page'
+        return "Not authorized to view this page"
 
 ## IT Staff View
 @app.route("/ITstaffview/", methods=["GET", "POST"])
@@ -289,7 +229,8 @@ def staffTicketView(ticketID):
         ticket = get_ticket_by_id(ticketID)
         if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST':
-                return redirect("/ITstaffview/ticket/" + str(ticketID) + "/close/")
+                close_ticket(ticketID)
+                return redirect("/ITstaffview/ticket/" + str(ticketID))
             else:
                 ticketJSON = get_ticket_by_id(ticketID) # get the ticket associated with that ticketID
 
@@ -311,23 +252,7 @@ def staffTicketView(ticketID):
             return "Not authorized to view this page"
     else:
         return "Not authorized to view this page"
-    
-@app.route("/ITstaffview/ticket/<int:ticketID>/close/", methods=['GET', 'POST'])
-def closeTicket(ticketID):
-    if (check_type(1)):
-        ticket = get_ticket_by_id(ticketID)
-        if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
-            if (request.method == 'GET'):
-                return render_template("closeticket.html")
-            else:
-                hoursWorked = int(request.form['input'])
-                update_hours_worked(ticketID, hoursWorked)
-                close_ticket(ticketID)
-                return redirect("/ITstaffview/")
-        else:
-            return "Not authorized to view this page"
-    else:
-        return "Not authorized to view this page"
+
 ## IT Staff ticket eta assignment page
 @app.route("/ITstaffview/eta/<ticketID>", methods=["GET", "POST"])
 def ticketEtaAssignment(ticketID):
@@ -343,12 +268,11 @@ def ticketEtaAssignment(ticketID):
                     emps = list(get_emp_accounts())
 
                     for x in emps:
-                        if (check_if_schedule(x.get('accID'))):
-                            thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
+                        thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
 
-                            if (thisEmpSoonestFit < soonestFit):
-                                soonestFit = thisEmpSoonestFit
-                                soonestEmp = x.get('accID')
+                        if (thisEmpSoonestFit < soonestFit):
+                            soonestFit = thisEmpSoonestFit
+                            soonestEmp = x.get('accID')
 
                     if (soonestFit == datetime.max):
                         return "error: could not fit ticket with that eta into any employees schedule"
@@ -371,24 +295,6 @@ def ticketEtaAssignment(ticketID):
             return render_template('ticketeta.html', ticket = ticketArr)
     else:
         return "Not authorized to view this page"
-    
-## IT staff calendar page
-@app.route("/ITstaffview/calendar")
-def empCalendar():
-    if (check_type(1)):
-        scheduleRaw = get_schedule(cookieID())
-        ticketsRaw = list(get_tickets_by_acc(cookieID()))
-
-        schedule = convert_schedule_to_minutes(scheduleRaw)
-        tickets = convert_tickets_to_minutes(ticketsRaw)
-
-        firstOfWeek = get_first_day_of_week(datetime.now())
-
-        dayArray = get_day_array(firstOfWeek)
-
-        return render_template('ITstaffcalendar.html', shift = schedule, tickettime = tickets)
-    
-    return "Not authorized to view this page"
 
 ## User view
 @app.route("/userview/", methods=["GET", "POST"])
@@ -445,6 +351,7 @@ def vewticket(ID):
                 print('test')
             else:
                 ticketsArr = [0] * 7 # create a list of size 7
+                print('HI')
                 ticketsArr[0] = ticketJSON.get('ticketID')
                 ticketsArr[1] = ticketJSON.get('category')
                 ticketsArr[2] = ticketJSON.get('status')
