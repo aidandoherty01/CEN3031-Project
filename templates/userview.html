@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomePage</title>
+    <title>User View</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,14 +11,14 @@
             margin: 0;
         }
         .header {
-            background-color: rgb(210, 209, 212);
+            background-color: #266ab7;
             padding: 10px 20px;
             display: flex;
-            justify-content: flex-end;
             align-items: center;
+            justify-content: flex-end;
         }
-        .header .right-buttons {
-            display: flex;
+        
+        .header .right-buttons button {
             padding: 10px 20px;
             margin: 0 10px;
             border: none;
@@ -105,7 +105,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="right-button">
+        <div class="right-buttons">
             <button onclick="location.href='/logout/'">Logout</button>
         </div>
     </div>

@@ -29,11 +29,14 @@ def create_collections():
         db.create_collection('accounts')
     if 'schedules' not in db.list_collection_names():
         db.create_collection('schedules')
+    if 'categories' not in db.list_collection_names():
+        db.create_collection('categories')
 
 def create_indexes():
-    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
+    db.tickets.create_index ({'ticketID' : 1, 'userID' : 1, 'category' : 1, 'description' : 1, 'assignedEmpID' : 1, 'status' : 1, 'eta' : 1, 'startTime' : 1, 'hoursWorked' : 1}) # status can either be: 'unassigned' 'assigned' or 'closed'
     db.accounts.create_index ({'accID' : 1,'username' : 1, 'password' : 1, 'fName' : 1, 'lName' : 1, 'type' : 1}) # type can be 0,1,2; 0 = user, 1 = employee, 2 = admin
     db.schedules.create_index ({'accID' : 1, 'timeSlots' : 1})
+    db.categories.create_index ({'category' : 1})
 
 def init_app(app):
     with app.app_context():
@@ -43,6 +46,11 @@ def init_app(app):
         if(check_username_free('admin')):
             new_account(0, 'admin', 'password', 'John', 'Doe', 2)
             # accID, username, password, fName, lName, type
+
+        # populate categories with default values
+        if (db.categories.count_documents({}) == 0):
+            db.categories.insert_one({'category' : "Software Problem"})
+            db.categories.insert_one({'category' : "Hardware Problem"})
 
 ## Ticket Fucntions
 def new_ticket(ticketID, userID, category, description):
@@ -99,6 +107,9 @@ def assign_ticket_start_time(ticketID, startTime):
 def close_ticket(ticketID):
     print(ticketID)
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
+
+def update_hours_worked(ticketID, hours):
+    return db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'hoursWorked' : int(hours)}})
 
 ## Account Functions
 def hash_password(passPlain): # hashes passwords using division by prime method
@@ -226,6 +237,12 @@ def update_schedule(accID, day, startTime, duration):   # adds timeslot to accou
         new_schedule(accID, string_schedule)
     return 0
 
+def check_if_schedule(accID):
+    if (db.schedules.find_one({'accID' : accID}) != None):
+        return True
+    else:
+        return False
+
 def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!!
     if not db.schedules.find_one({'accID' : accID}):
         return [] # if schedule doesn't exists, return any empty array
@@ -275,6 +292,64 @@ def delete_schedule(accID, day, startTime, duration): # removes specified timesl
     else:   # else return an error
         return 1
 
+def get_first_day_of_week(dateIn): # returns a datetime that holds the first day of the week that the given date is in
+    dayIn = date_to_weekday(dateIn)
+    delta = timedelta(days=dayIn)
+
+    dateIn = dateIn - delta
+
+    dateOut = datetime(dateIn.year, dateIn.month, dateIn.day, 0, 0, 0, 0)
+
+    return dateOut
+
+def convert_schedule_to_minutes(scheduleRaw): # converts an input schedule array to ints representing the time deltas as minutes (ex. 12:00 = 720)
+        scheduleOut = [[0] * 2 for _ in range(7)]
+
+        for i in range(7): # initalize empty array
+            for j in range(2):
+                scheduleOut[i][j] = []
+
+        for i in range(7): # loop thru array and convery time deltas to int representing minutes
+            for j in range(len(scheduleRaw[i][0])): 
+                tempStart = int(scheduleRaw[i][0][j].total_seconds() / 60) # converts start time to minutes
+
+                tempDur = int(scheduleRaw[i][1][j].total_seconds() / 60) # converts dur to minutes
+                tempFinish = tempStart + tempDur
+
+                scheduleOut[i][0].append(tempStart)
+                scheduleOut[i][1].append(tempFinish)
+
+        return scheduleOut
+
+def convert_tickets_to_minutes(ticketsRaw): # converts a list of tickets to a 3d array formatted the same as the schedules but with an aditional catagory for ticket id(tickets[day][0=start, 1=finish, 2=ticketID0][n])
+
+    ticketsOut = [[0] * 3 for _ in range(7)]
+
+    for i in range(7): # initalize empty array
+         for j in range(3):
+            ticketsOut[i][j] = []
+
+    firstOfWeek = get_first_day_of_week(datetime.now())
+
+    for x in ticketsRaw:
+        if (x.get("startTime") > firstOfWeek and x.get("startTime") < (firstOfWeek + timedelta(days=7,hours=23,minutes=59))): # ensures that only tickets within the desired week are added
+            day = date_to_weekday(x.get('startTime'))
+
+            tempStart = (x.get("startTime").hour * 60) # converts start time to minutes
+            tempStart += (x.get("startTime").minute)
+
+            tempDur = x.get("eta").split(":") # converts eta to minutes
+            dur = int(tempDur[0]) * 60
+            dur += int(tempDur[1]) 
+
+            finish = tempStart + dur
+
+            ticketsOut[day][0].append(tempStart)
+            ticketsOut[day][1].append(finish)
+            ticketsOut[day][2].append(x.get("ticketID"))
+
+    return ticketsOut
+
 def date_to_weekday(date): # gets the int value of the weekday of a given date (0 = sun, 1 = mon, ...)
     
     switch = {
@@ -288,6 +363,14 @@ def date_to_weekday(date): # gets the int value of the weekday of a given date (
     }
 
     return switch.get(date.strftime("%A"))
+
+def get_day_array(date): # creates an array of the days for the next week
+    out = []
+    for i in range(7):
+        out.append(date.day)
+        date += timedelta(days=1)
+
+    return out
 
 def check_intersect(start1, start2, eta1, eta2): #checks if a given pair of starts and etas intersect
     if (start1 < start2):
@@ -352,4 +435,17 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
         loops += 1
 
     return datetime.max # returns max time to show that cannot be fit into schedule
-                            
+
+## Categories functions
+def new_category(cat):
+    return db.catagories.insert_one({"category" : str(cat)})
+
+def get_categories_array():
+    cats = list(db.categories.find())
+    catsArr = []
+    for i in cats:
+        catsArr.append(i.get('category'))
+    return catsArr
+
+def delete_category(cat):
+    return db.categories.delete_one({'category' : str(cat)})

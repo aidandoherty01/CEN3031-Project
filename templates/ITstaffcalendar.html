@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .left-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c2929;
+            text-align: center;
+        }
+        .calendar-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0px;
+            text-align: center;
+            width: calc(100% / 8);
+        }
+
+        th {
+            background-color: #f2f2f2;
+            height: 40px;
+        }
+
+        td {
+            background-color: white;
+        }
+
+        .time {
+            font-size: 15px;
+        }
+
+        .timeborder {
+            border-bottom: 1px solid rgb(220, 218, 218);
+        }
+        .blocked {
+            background-color: rgb(233, 233, 233);
+        }
+        .open {
+            background-color: white;
+        }
+        .ticketheader {
+            background-color: rgb(166, 165, 194);
+            height: calc(30 * (800px / 1440));  /* make this 30 mnites span */
+            line-height: calc(30 * (800px / 1440));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /*position: relative;*/
+            font-weight: bold; /* Make text bold */
+        }
+
+        .ticketed {
+            background-color: rgb(206, 205, 228);
+            position: relative;
+            
+        }
+
+        .ticketed button,
+        .ticketheader button {
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            color: transparent;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .time div {
+            height: calc(800px / 24);
+            line-height: calc(800px / 24);
+        }
+
+        .time-slot {
+            height: calc(800px / 1440);
+            line-height: calc(800px / 1440);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="left-buttons">
+            <button onclick="location.href='/ITstaffview/'">Home</button>
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
+    <div class="calendar-container">
+        <div class="title">YOUR SCHEDULE THIS WEEK</div>
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Sunday</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="time">
+                        {% for hour in range(0, 12) %}
+                            <div>{{hour}}:00 AM</div>
+                        {% endfor %}
+                        <div>12:00 PM</div>
+                        {% for hour in range(1, 12) %}
+                            <div>{{hour}}:00 PM</div>
+                        {% endfor %}
+                    </td>
+                    <td class="day-container" id="sun"></td>
+                    <td class="day-container" id="mon"></td>
+                    <td class="day-container" id="tue"></td>
+                    <td class="day-container" id="wed"></td>
+                    <td class="day-container" id="thu"></td>
+                    <td class="day-container" id="fri"></td>
+                    <td class="day-container" id="sat"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        const shifts = JSON.parse('{{ shift | tojson }}');
+        const ticket = JSON.parse('{{ tickettime | tojson }}');
+
+        const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+        days.forEach((day, index) => {
+            const scheduleContainer = document.getElementById(day);
+            let count = 0;
+
+            for (let minute = 0; minute < 1440; minute++) {
+                const div = document.createElement('div');
+                if (minute % 60 === 0) {
+                    div.className = 'timeborder';
+                } else {
+                    let open = false;
+                    let ticketed = false;
+                    let ticketheader = false;
+                    let ticketID;
+                    for (let i = 0; i < ticket[index][0].length; i++) {
+                        if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
+                            if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i]+30) {
+                                //document.write(minute + ", ");
+                                ticketheader = true;
+                                ticketID = ticket[index][2][i];
+                                break; // Exit the inner loop if condition is met
+                            } else {
+                                ticketed = true;
+                                ticketID = ticket[index][2][i];
+                                break; // Exit the inner loop if condition is met
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < shifts[index][0].length; i++) {
+                        if (minute >= shifts[index][0][i] && minute <= shifts[index][1][i]) {
+                            open = true;
+                            break; // Exit the inner loop if condition is met
+                        }
+                    }
+
+                    if (ticketheader) {
+                        div.className = 'ticketheader';
+
+                        const button = document.createElement('button');
+
+                        if (count === 15){
+                            div.innerHTML += "Ticket#"
+                            div.innerHTML += ticketID
+                            count = 0;
+                        } else if (count === 30){
+                            count = 0;
+                        } else {
+                            count++;  
+                        }
+
+                        button.onclick = function() {
+                            window.location.href = "/ITstaffview/ticket/" + ticketID;
+                        };
+                        div.appendChild(button);
+
+                    } else if (ticketed) {
+                        count = 0;
+                        div.className = 'ticketed';
+
+                        const button = document.createElement('button');
+                        button.onclick = function() {
+                            window.location.href = "/ITstaffview/ticket/" + ticketID;
+                        };
+                        div.appendChild(button);
+                    } else if (open) {
+                        div.className = 'open';
+                    } else {
+                        div.className = 'blocked';
+                    }
+                }
+                div.classList.add('time-slot');
+                scheduleContainer.appendChild(div);
+            }
+        });
+    </script>
+</body>
+</html>

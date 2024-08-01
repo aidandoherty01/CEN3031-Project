@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomePage</title>
+    <title>Ticket View</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -85,7 +85,7 @@
         <div class="left-buttons">
             <button onclick="location.href='/ITstaffview/'">Home</button>
         </div>
-        <div class="right-button">
+        <div class="right-buttons">
             <button onclick="location.href='/'">Logout</button>
         </div>
     </div>
@@ -110,12 +110,15 @@
                 
             </tr>
             <tr>
-
-                <td>
-                    <form action="/ITstaffview/ticket/{{ ticket[0] }}" method="POST" >
-                        <button type="submit" value="Submit">Done</button>
-                    </form>
-                </td>
+                {% if ticket[2] != "closed" %}
+                    <td>
+                        <form action="/ITstaffview/ticket/{{ ticket[0] }}" method="POST" >
+                            <button type="submit" value="Submit">Done</button>
+                        </form>
+                    </td>
+                {% else %}
+                    <td></td>
+                {% endif %}
                 <td>
                     <div>{{ticket[0]}}</div>
                 </td>
