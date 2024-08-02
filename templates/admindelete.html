@@ -4,18 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header .left-buttons,
+        .header .right-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            color: #000000de; /* Ensure text color contrasts with the button background */
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        form button[type="submit"] {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        form button[name="submit"][value="confirm"] {
+            background-color: #d9534f;
+            color: white;
+        }
+        
+        p.message {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <div class="left-buttons">
+            <form method="POST">
+                <button type="submit" name="submit" value="return">Home</button>
+            </form>
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
 
     <form method="POST">
-        <button type="submit" name="submit" value="return">Return to Admin Home</button>
-        <h1></h1>
+        <h1>Delete Account</h1>
         <p>Are you sure you want to delete: {{ account.get('accID') }}: {{ account.get('fName') }} {{ account.get('lName') }}?</p>
         <button type="submit" name="submit" value="confirm">Delete Employee Account</button>
     </form>
     
-    <p>{{message}}</p>
+    <p class="message">{{message}}</p>
 
 </body>
 </html>

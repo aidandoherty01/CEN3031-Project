@@ -4,16 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Employee</title>
-
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header .left-buttons,
+        .header .right-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            color: #000000de; /* Ensure text color contrasts with the button background */
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div class="header">
+        <div class="left-buttons">
+            <form method="POST">
+                <button type="submit" name="submit" value="return">Home</button>
+            </form>
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
     <div class="container">
         <h1>Create Employee</h1>
     </div>
 
-    <form method="POST">
-        <button type="submit" name="submit" value="return">Return to Admin Home</button>
-    </form>
+    
 
     <!--Second form used to avoid conflict with required inputs-->
     <form method="POST">
