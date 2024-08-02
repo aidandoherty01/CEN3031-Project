@@ -179,6 +179,7 @@ def delete_account(accID):
     if t:
         t = t.get('type')
         if t != 0:  # check the account is an employee (or admin)
+            delete_acc_from_chats(accID)
             db.accounts.delete_one({'accID' : accID})
             db.schedules.delete_one({'accID' : accID})
             if get_tickets_by_acc(accID):
@@ -560,6 +561,33 @@ def send_msg(ticketID, accID, msg):
 
 def get_ticket_chat(ticketID):
     return db.ticketChats.find_one({'ticketID' : ticketID})
+
+def update_ticket_chat_emp(ticketID, accID):
+    return db.ticketChats.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'empID' : accID}})
+
+def delete_acc_from_chats(accID): # sets the id for all msgs sent by this acc to -1
+    chats = list(db.ticketChats.find({'empID' : accID}))
+    if (len(chats) == 0):
+        chats = list(db.ticketChats.find({'userID' : accID}))
+
+    if (len(chats) == 0):
+        return False
+    
+    for chat in chats:
+        if (chat.get('userID') == accID):
+            db.ticketChats.find_one_and_update({'ticketID' : int(chat.get('ticketID'))}, {'$set' : {'userID' : -1}})
+        else:
+            db.ticketChats.find_one_and_update({'ticketID' : int(chat.get('ticketID'))}, {'$set' : {'empID' : -1}})
+
+        msgs = chat.get('msgs')
+
+        for msg in msgs:
+            if (msg[2] == accID):
+                msg[2] = -1
+
+        db.ticketChats.find_one_and_update({'ticketID' : int(chat.get('ticketID'))}, {'$set' : {'msgs' : msgs}})
+
+    return True
 
 ## Categories functions
 def new_category(cat):

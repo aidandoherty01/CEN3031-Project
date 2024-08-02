@@ -12,7 +12,7 @@ from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
 get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes,\
 convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked, update_account, update_schedule, delete_schedule,\
-get_ticket_chat, send_msg, default_schedule, clear_schedule, get_ticket_ids_by_account, get_emp_ids, schedule_start_to_datetime, manual_reassign
+get_ticket_chat, send_msg, default_schedule, clear_schedule, get_ticket_ids_by_account, get_emp_ids, schedule_start_to_datetime, manual_reassign, update_ticket_chat_emp
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
@@ -37,10 +37,18 @@ def format_ticket_chat(chat, accID):
     emp = get_account(chat.get('empID'))
     user = get_account(chat.get('userID'))
 
-    empName = (emp.get('fName') + " " + emp.get('lName'))
-    empID = (emp.get('accID'))
-    userName = (user.get('fName') + " " + emp.get('lName'))
-    userID = (user.get('accID'))
+    if (chat.get('empID') == -1):
+        empName = "Deleted User"
+        empID = -1
+    else:
+        empName = (emp.get('fName') + " " + emp.get('lName'))
+        empID = (emp.get('accID'))
+
+    if (chat.get('userID') == -1):
+        userName = "Deleted User"
+    else:
+        userName = (user.get('fName') + " " + user.get('lName'))
+        userID = (user.get('accID'))
 
     for i in range(len(msgs)):
         temp = [0] * 4
@@ -328,6 +336,7 @@ def reassignTicket(ticketID, empID):
                     if assign_ticket_emp(ticketID, empID):
                         return 'Error: Ticket could not be reassigned.'
                     else:   # if ticket reassignment was successful, update
+                        update_ticket_chat_emp(ticketID, empID)
                         assign_ticket_start_time(ticketID, startTime)
                         ticket = get_ticket_by_id(ticketID)
                 else:
@@ -342,6 +351,7 @@ def reassignTicket(ticketID, empID):
                     if assign_ticket_emp(ticketID, empID):
                         return 'Error: Ticket could not be reassigned.'
                     else:
+                        update_ticket_chat_emp(ticketID, empID)
                         assign_ticket_start_time(ticketID, startTime)
                         ticket = get_ticket_by_id(ticketID)
                 else:
