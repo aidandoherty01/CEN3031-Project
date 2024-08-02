@@ -213,6 +213,10 @@ def update_schedule(accID, day, startTime, duration):   # adds timeslot to accou
         for i in range(7):
             for j in range(2):
                 schedule[i][j] = []
+
+        new_schedule(accID, schedule)
+        timedelta_schedule = get_schedule(accID)
+        found = True
     else:
         found = True
         # schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
