@@ -5,13 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;;
+        }
+        .header .left-title {
+            font-size: 40px; 
+            font-weight: bold;
+            font-family: 'Trebuchet MS', sans-serif; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); 
+            color: #f5f0f0; 
+        }
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            color: black;
         }
         .login-container {
             text-align: center;
@@ -39,7 +62,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #5b5f5b;
+            background-color: #4c65b8de;
             color: white;
             border: none;
             border-radius: 5px;
@@ -49,6 +72,14 @@
     </style>
 </head>
 <body>
+    <div class="header">
+        <div class="left-title">
+            Welcome to Human Scrum
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/logout/'">Back</button>
+        </div>
+    </div>
     <div class="login-container">
         <h2>Login</h2>
         <form method="post"> 
