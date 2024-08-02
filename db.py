@@ -243,6 +243,10 @@ def update_schedule(accID, day, startTime, duration):   # adds timeslot to accou
         for i in range(7):
             for j in range(2):
                 schedule[i][j] = []
+
+        new_schedule(accID, schedule)
+        timedelta_schedule = get_schedule(accID)
+        found = True
     else:
         found = True
         # schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
@@ -480,6 +484,25 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
         loops += 1
 
     return datetime.max # returns max time to show that cannot be fit into schedule
+                            
+## Ticket Chat Functions
+
+def new_ticket_chat(ticketID, userID, empID):
+    newArr = []
+    chatDoc = {'ticketID' : int(ticketID), 'userID' : int(userID), 'empID' : int(empID), 'msgs' : newArr}
+    return db.ticketChats.insert_one(chatDoc)
+
+def send_msg(ticketID, accID, msg):
+    chat = db.ticketChats.find_one({'ticketID' : int(ticketID)})
+    msgs = chat.get('msgs')
+
+    newMsg = [msg, datetime.now(), int(accID)]
+    msgs.append(newMsg)
+
+    return db.ticketChats.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'msgs' : msgs}})
+
+def get_ticket_chat(ticketID):
+    return db.ticketChats.find_one({'ticketID' : ticketID})
 
 def manual_reassign(day, startTime, eta, schedule, tickets):
     # Conversions
