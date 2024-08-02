@@ -13,12 +13,14 @@
 
     <!--Change Employee Being Viewed-->
     <form method="POST">
-        <label for="empAccs">Employees:</label>
-        <select name="empAccs" id="empAccs" required>
-            {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
-            <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
-            {% endfor %}
-        </select>
+        <div>
+            <label for="empAccs">Employees:</label>
+            <select name="empAccs" id="empAccs" required>
+                {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
+                    <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
+                {% endfor %}
+            </select>
+        </div>
         <div>
             <button type="submit" name="submit" value="change">Change Employee</button>
         </div>
@@ -26,41 +28,16 @@
 
     <h1></h1>
     
-    <!--Print Employee Information and Assigned Tickets-->
+    <!--Print Employee Information-->
     <div>
-        <p><b>Employee:</b> {{ account.get('fName')}} {{ account.get('lName') }}<br>Username: {{ account.get('username') }}<br>Password: {{ account.get('password') }}</p>
-    </div>
-    <!--Printing the Tickets-->
-    <div>
-        <table>
-            <th>Tickets:</th>
-            {% for item in tickets %}
-                <tr>
-                    <td>User ID: {{ item.get('userID') }}</td><td>Employee ID: {{ item.get('assignedEmpID') }}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </div>
-    <!--Printing the Schedule-->
-    <div>
-        <table>
-            <th>Schedule:</th>
-            {% for day in schedule %}
-            <tr>
-                <td>{{ loop.index }}</td>   <!--Days of the week-->
-                {% if day | length > 0 %}
-                    {% for i in  range(day[0] | length) %} <!--this is why it only 2 indexes, day is just 0 or 1, need to change loop condition-->
-                        <!--Start Time followed by Duration-->
-                        <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td><td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
-                    {% endfor %}
-                {% endif %}
-            <tr>
-            {% endfor %}
-        </table>
+        <p><b>Employee:</b> {{ account.get('fName')}} {{ account.get('lName') }}<br>
+            AccID: {{ account.get('accID') }}<br>
+            Username: {{ account.get('username') }}<br>
+            Password: {{ account.get('password') }}</p>
     </div>
 
     <h1></h1>
-    
+
     <!--Employee Credentials-->
     <form method="POST">
         <div>
@@ -84,6 +61,71 @@
 
     <h1></h1>
 
+    <!--Printing the Tickets-->
+    <div>
+        <table>
+            <th>Tickets:</th>
+            {% for item in tickets %}
+                <tr>
+                    <td> {{ item.get('ticketID') }}</td>
+                    <td>User ID: {{ item.get('userID') }}</td>
+                    <td>Employee ID: {{ item.get('assignedEmpID') }}</td>
+                    <td>Status: {{ item.get('status') }}</td>
+                    <td>Eta: {{ item.get('eta') }}</td>
+                    <td>Start Time: {{ item.get('startTime') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <h1></h1>
+
+    <!--Ticket changes-->
+    <form method="POST">
+        <div>
+            <label for="tIDs">Tickets:</label>
+            <select name="tIDs" id="tIDs" required>
+                {% for item in ticketIDs %}
+                    <option value="{{ item.get('ticketID') }}">{{ item.get('ticketID') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="eIDs">Employees:</label>
+            <select name="eIDs" id="eIDs" required>
+                {% for item in empIDs %}
+                    <option value="{{ item.get('accID') }}">{{ item.get('accID') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" name="submit" value="reassign">Reassign Ticket</button>
+        </div>
+    </form>
+
+    <h1></h1>
+
+    <!--Printing the Schedule-->
+    <div>
+        <table>
+            <th>Schedule:</th>
+            {% for day in schedule %}
+            <tr>
+                <td>{{ days_list[loop.index0] }}:</td>   <!--Days of the week-->
+                {% if day | length > 0 %}
+                    {% for i in  range(day[0] | length) %}
+                        <!--Start Time followed by Duration-->
+                        <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td>
+                        <td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
+                    {% endfor %}
+                {% endif %}
+            <tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+    <h1></h1>
+
     <!--Schedule Changes-->
     <form method="POST">
         <select name="day" id="day" required>
@@ -104,6 +146,13 @@
 
         <button type="submit" name="submit" value="schedule">Add Timeslot</button>
         <button type="submit" name="submit" value="remove">Remove Timeslot</button>
+    </form>
+
+    <h1></h1>
+
+    <form method="POST">
+        <button type="submit" name="submit" value="default">Assign Default Schedule</button>
+        <button type="submit" name="submit" value="clear">Clear Whole Schedule</button>
     </form>
     
 </body>
