@@ -48,7 +48,9 @@ def format_ticket_chat(chat, accID):
         temp[0] = msgs[i][0]
         temp[1] = msgs[i][1].strftime("%H:%M %m-%d-%Y")
         
-        if (msgs[i][2] == empID):
+        if (msgs[i][2] == -1):
+            temp[2] = "Deleted User"
+        elif (msgs[i][2] == empID):
             temp[2] = empName
         else:
             temp[2] = userName
