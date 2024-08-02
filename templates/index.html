@@ -11,13 +11,20 @@
             margin: 0;
         }
         .header {
-            background-color: rgb(212, 209, 209);
+            background-color: #4c65b8de;
             padding: 10px 20px;
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
         }
-        .header button {
+        .header .left-title {
+            font-size: 40px; 
+            font-weight: bold;
+            font-family: 'Trebuchet MS', sans-serif; 
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); 
+            color: #f5f0f0; 
+        }
+        .header .right-buttons button {
             padding: 10px 20px;
             margin: 0 10px;
             border: none;
@@ -25,23 +32,132 @@
             background-color: white;
             font-size: 16px;
             cursor: pointer;
+            font-weight: bold;
         }
         .container {
             text-align: center;
             margin-top: 50px;
+            margin-right: 30px;
         }
-        .container h1 {
-            margin-bottom: 20px;
+     
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
+
+        td {
+            vertical-align: top;
+            padding: 20px;
+        }
+
+        .site {
+            width: 75%;
+        }
+
+        .intro {
+            font-family: 'Arial', sans-serif; /* Consistent font for better readability */
+            font-size: 18px; /* Base font size */
+            color: #444; /* Dark grey color for a softer look */
+            line-height: 1.6; /* Improved line spacing for readability */
+            padding: 20px; /* Padding around the text */
+            background-color: #f9f9f9; /* Light background color for contrast */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+            height: 300px;
+            display: flex; /* Enable flexbox */
+            flex-direction: column; /* Arrange items in a column */
+            justify-content: center; /* Center items vertically */
+            align-items: center; /* Center items horizontally */
+            text-align: center; /* Center text */
+            overflow-y: auto; /* Allows scrolling if content exceeds height */
+        }
+
+        .welcome {
+            font-size: 32px; /* Larger font size for emphasis */
+            font-weight: bold; /* Bold for prominence */
+            color: #333; /* Darker color for contrast */
+            margin-bottom: 20px; /* Spacing below the welcome message */
+            line-height: 1.4; /* Improved line spacing */
+            text-transform: uppercase; /* Uppercase for emphasis */
+            letter-spacing: 1px; /* Increased letter spacing */
+        }
+
+
+        .help {
+            font-size: 36px; /* Increased font size */
+            font-weight: bold;
+            color: #333; /* Darker text color for better contrast */
+            margin-bottom: 20px; /* Spacing below the element */
+            text-align: left; /* Align text to the left */
+            line-height: 1.4; /* Increase line height for better readability */
+            border-bottom: 3px solid #4c65b8de; /* Bottom border for emphasis */
+            padding-bottom: 10px; /* Padding below the text */
+        }
+
+
+        .Us {
+            height: 400px;
+            padding: 20px; /* Apply padding to all sides */
+            background-color: rgba(76, 101, 184, 0.87); /* Semi-transparent blue background */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow */
+            border-radius: 8px; /* Rounded corners */
+            display: flex; /* Enable flexbox */
+            flex-direction: column; /* Arrange items in a column */
+            justify-content: center; /* Center items vertically */
+            align-items: center; /* Center items horizontally */
+            text-align: center; /* Center text */
+            overflow-y: auto; /* Allows scrolling if content exceeds height */
+        }
+
+        .About-us {
+            font-size: 45px; /* Increased font size */
+            font-weight: bold;
+            margin-bottom: 15px; /* Increased bottom margin for better spacing */
+            color: #fff; 
+        }
+
+        .name {
+            font-size: 25px; /* Increased font size */
+            margin-bottom: 10px; /* Increased bottom margin for better spacing */
+            color: #ebe6e6; 
+        }
+
     </style>
 </head>
 <body>
     <div class="header">
-        <button onclick="location.href='/login/'">Login</button>
+        <div class="left-title">
+            Human Scrum
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/login/'">Login</button>
         <button onclick="location.href='/register/'">Register</button>
+        </div>
     </div>
     <div class="container">
-        <h1>Hello World</h1>
+        <table>
+            <tr>
+                <td class="site">   
+                    <div class="help">How can we help you?</div>  
+                    <div  class="intro">           
+                    <div class="welcome">Welcome to Human Scrum</div>
+                    <div>Human Scrum allows you to effortlessly submit support requests and receive prompt, 
+                        efficient solutions tailored to your needs. Our intuitive platform streamlines the process, 
+                        ensuring your technical issues are addressed swiftly so you can focus on what matters most. 
+                        Whether you're facing a minor glitch or a major problem, our team of experienced professionals is here to provide the support you need, when you need it.</div>
+                    </div>  
+                </td>
+                
+                <td class="Us">
+                    <div class="About-us">About Us</div>
+                    <div class="name">Aidan Doherty</div>
+                    <div class="name">Anh Le</div>
+                    <div class="name">Corey Telkitz</div>
+                </td>
+                
+            </tr>
+        </table>
 
     </div>
 </body>
