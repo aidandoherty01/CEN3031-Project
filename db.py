@@ -96,10 +96,18 @@ def get_ticket_finish_time(ticket):
     finishTime = startTime + eta
     return finishTime
 
-def assign_ticket_emp(ticketID, empID):
-    response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(empID), 'status' : "assigned"}})
-    new_ticket_chat(ticketID, db.tickets.find_one({'ticketID' : int(ticketID)}).get('userID'), int(empID))
-    return response
+def assign_ticket_emp(ticketID, accID): # On successful assignment, returns 0, else returns 1
+    if not get_account(accID):
+        return 1
+    flag = get_ticket_by_id(ticketID).get('assignedEmpID')  # Either None or Currently assigned emp
+    if flag == accID:   # reassigning to same account
+        return 1
+    db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'assignedEmpID' : int(accID), 'status' : "assigned"}})
+    if not flag:    # If flag is None ==> First time ticket is being assigned
+        new_ticket_chat(ticketID, db.tickets.find_one({'ticketID' : int(ticketID)}).get('userID'), int(accID))
+    else:   # Ticket Reassignment
+        db.ticketChats.update_many({'empID' : flag}, {'$set' : {'empID' : accID}})
+    return 0
 
 def assign_ticket_eta(ticketID, eta):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)},  {'$set' : {'eta' : eta}})
@@ -109,11 +117,14 @@ def assign_ticket_start_time(ticketID, startTime):
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'startTime' : startTime}})
 
 def close_ticket(ticketID):
-    print(ticketID)
+    # print(ticketID)
     response = db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'status' : "closed"}})
 
 def update_hours_worked(ticketID, hours):
     return db.tickets.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'hoursWorked' : int(hours)}})
+
+def get_ticket_ids_by_account(accID):
+    return db.tickets.find({'assignedEmpID' : accID}, {'ticketID' : 1})
 
 ## Account Functions
 def hash_password(passPlain): # hashes passwords using division by prime method
@@ -159,6 +170,9 @@ def get_accounts():
 
 def get_emp_accounts():
     return db.accounts.find({'type' : 1})
+
+def get_emp_ids():
+    return db.accounts.find({'type' : 1}, {'accID' : 1})
 
 def delete_account(accID):
     t = get_account(accID)  # check that the account exists
@@ -206,6 +220,22 @@ def new_schedule(accID, timeSlots): # takes in array of strings and an accID to 
     schedule_doc = {'accID' : accID, 'timeSlots' : timeSlots} # format of array: [0-7 for sun-sat][0 for starttimes 1 for durations][n starttime/durations]
     return db.schedules.insert_one(schedule_doc)
 
+def default_schedule(accID):    # Generates and stores a default 9-5
+    default_startTime = "9:00:00"
+    default_duration = "8:00:00"
+    schedule = [[0] * 2 for _ in range(7)]  # initialize new schedule
+    for i in range(7):
+            for j in range(2):
+                schedule[i][j] = []
+    for i in range(7):
+            schedule[i][0].append(default_startTime)
+            schedule[i][1].append(default_duration)
+    if check_if_schedule(accID):   # account already has schedule
+        db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : schedule}})
+    else:   # account does not have a schedule assigned
+        new_schedule(accID, schedule)
+    return 0
+
 def update_schedule(accID, day, startTime, duration):   # adds timeslot to account's schedule (if no overlap)
     if not db.schedules.find_one({'accID' : accID}):
         found = False
@@ -222,11 +252,6 @@ def update_schedule(accID, day, startTime, duration):   # adds timeslot to accou
         # schedule = db.schedules.find_one({'accID' : accID}).get('timeSlots')
         timedelta_schedule = get_schedule(accID)
     for i in range(len(timedelta_schedule[day][0])):
-        # Converting to timedelta for intersection checking
-        #s = datetime.strptime(schedule[day][0][i], '%H:%M:%S')
-        #s = timedelta(hours=s.hour, minutes=s.minute, seconds=s.second)
-        #d = datetime.strptime(schedule[day][1][i], '%H:%M:%S')
-        #d = timedelta(hours=d.hour, minutes=d.minute, seconds=d.second)
         s = timedelta_schedule[day][0][i]
         d = timedelta_schedule[day][1][i]
         if check_intersect(startTime, s, duration, d):  # check if the new timeslot intersects with any of the current schedule
@@ -276,6 +301,15 @@ def get_schedule(accID):  # returns an array of timedelta objects, NOT STRINGS!!
             #print(str(i) + " " + str(j) + ": " + str(scheduleOut[i][0][j]) + "-" + str(scheduleOut[i][0][j] + scheduleOut[i][1][j]))
 
     return scheduleOut
+
+def clear_schedule(accID):  # Removes ALL timeslots from the schedule
+    if not check_if_schedule(accID):    # no schedule found
+        return
+    schedule = get_schedule(accID)
+    for i in range(7):
+        for j in range(2):
+            schedule[i][j] = []
+    db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : schedule}})
 
 def delete_schedule(accID, day, startTime, duration): # removes specified timeslots
     schedule = get_schedule(accID)  # timedelta schedule used for comparisons
@@ -397,8 +431,16 @@ def schedule_start_to_datetime(relativeDate, scheduleStart): # converts the star
     return out
 
 def get_soonest_fit(accID, ticketID): # finds the soonest start time that a ticket can be fit into a given employees shechdule
+    account = get_account(accID)
+    if not account:
+        return datetime.max
     schedule = get_schedule(accID)
+    if not schedule:
+        return datetime.max
     ticket = get_ticket_by_id(ticketID)
+    if not ticket:
+        return datetime.max
+
     ticketEta = get_ticket_eta(ticket)
     tickets = list(get_tickets_by_acc(accID))
 
@@ -411,7 +453,7 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
     found = False
     loops = 0 # prevents looping forever when the ticket does not fit in any time slot
 
-    while(found == False or loops >= 100):
+    while(found == False and loops <= 100):
         if (startDay == 7): # reset start day to 0 when end of a week is reached
             startDay = 0
         
@@ -439,11 +481,67 @@ def get_soonest_fit(accID, ticketID): # finds the soonest start time that a tick
 
         startDay += 1
         startTime = startTime + timedelta(days=1) # moves start time to the next day so that the relative starttime can be set properly
-
         loops += 1
 
     return datetime.max # returns max time to show that cannot be fit into schedule
                             
+## Ticket Chat Functions
+
+def new_ticket_chat(ticketID, userID, empID):
+    newArr = []
+    chatDoc = {'ticketID' : int(ticketID), 'userID' : int(userID), 'empID' : int(empID), 'msgs' : newArr}
+    return db.ticketChats.insert_one(chatDoc)
+
+def send_msg(ticketID, accID, msg):
+    chat = db.ticketChats.find_one({'ticketID' : int(ticketID)})
+    msgs = chat.get('msgs')
+
+    newMsg = [msg, datetime.now(), int(accID)]
+    msgs.append(newMsg)
+
+    return db.ticketChats.find_one_and_update({'ticketID' : int(ticketID)}, {'$set' : {'msgs' : msgs}})
+
+def get_ticket_chat(ticketID):
+    return db.ticketChats.find_one({'ticketID' : ticketID})
+
+def manual_reassign(day, startTime, eta, schedule, tickets):
+    # Conversions
+    ed = datetime.strptime(eta, '%H:%M:%S')
+    ed = timedelta(hours=ed.hour, minutes=ed.minute, seconds=ed.second)
+    ret = datetime.strptime(startTime, '%H:%M')
+    sd = timedelta(hours=ret.hour, minutes=ret.minute, seconds=ret.second)
+    beggining_of_week = (datetime.today() - timedelta(days=datetime.today().isoweekday() % 7)).date()    # Converting to sunday of current week
+    target_date = beggining_of_week + timedelta(days=day)    # Finding target day
+    # Checking for valid timeslot
+    found = 0
+    intersections = 0
+    for i in range(len(schedule[day][0])):
+        if (sd >= schedule[day][0][i]) and ((sd + ed) <= (schedule[day][0][i] + schedule[day][1][i])):
+            # Found valid timeslot ==> Now check if any tickets occupy this slot
+            for j in tickets:
+                if (j.get('startTime').date() != target_date) or (j.get('status') == 'closed'):  # Ignore tickets not occupying the target day or closed tickets
+                    continue
+                # Convert for comparisons
+                jsd = j.get('startTime')
+                jsd = timedelta(hours=jsd.hour, minutes=jsd.minute, seconds=jsd.second)
+                jed = j.get('eta')
+                jed = datetime.strptime(jed, '%H:%M:%S')
+                jed = timedelta(hours=jed.hour, minutes=jed.minute, seconds=jed.second)
+
+                if (jsd >= schedule[day][0][i]) and ((jsd + jed) <= (schedule[day][0][i] + schedule[day][1][i])):
+                    # Found ticket that exists in timeslot ==> Check if intersects with given ticket
+                    if check_intersect(sd, jsd, ed, jed):
+                        intersections += 1
+
+            # Update found after checking all valid tickets
+            found = 1
+            if intersections > 0:
+                found = 0
+
+    if intersections == 0 and found == 1:   # Found a valid timeslot with no intersections
+        return datetime.combine(target_date, ret.time())
+    return -1
+
 ## Ticket Chat Functions
 
 def new_ticket_chat(ticketID, userID, empID):

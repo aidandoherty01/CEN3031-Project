@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reassigning Ticket: {{ ticket.get('ticketID') }}</title>
+</head>
+<body>
+    <form method="POST">
+        <button type="submit" name="submit" value="return">Return to Admin Home</button>
+    </form>
+
+    <!--Change Employee Being Viewed-->
+    <form method="POST">
+        <div>
+            <label for="empAccs">Employees:</label>
+            <select name="empAccs" id="empAccs" required>
+                {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
+                    <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit" name="submit" value="change">Change Employee</button>
+        </div>
+    </form>
+
+    <h1></h1>
+
+    <!--Print Employee Information-->
+    <div>
+        <p><b>Candidate Employee:</b> {{ account.get('fName')}} {{ account.get('lName') }}<br>
+            AccID: {{ account.get('accID') }}<br>
+            Username: {{ account.get('username') }}<br>
+            Password: {{ account.get('password') }}</p>
+    </div>
+
+    <h1></h1>
+
+    <!--Ticket to be Reassigned-->
+    <div>
+        <p><b>Ticket to be Reassigned:</b><br>
+            <td>Ticket ID: {{ ticket.get('ticketID') }}<br>
+            <td>User ID: {{ ticket.get('userID') }}<br>
+            <td>Employee ID: {{ ticket.get('assignedEmpID') }}<br>
+            <td>Status: {{ ticket.get('status') }}<br>
+            <td>Eta: {{ ticket.get('eta') }}</p>
+    </div>
+
+    <form method="POST">
+        <button type="submit" name="submit" value="auto">Reassign with Earliest Fit</button>
+    </form>
+
+    <h1></h1>
+
+    <form method="POST">
+        <select name="day" id="day" required>
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+        <div>
+            <label for="startTime">Start Time</label>
+            <input type="time" id="startTime" name="startTime" required>
+        </div>
+        <button type="submit" name="submit" value="manual">Reassign Manually</button>
+    </form>
+
+    <h1></h1>
+    
+    <!--Printing the Schedule-->
+    <div>
+        <table>
+            <th>Candidate's Schedule:</th>
+            {% for day in schedule %}
+            <tr>
+                <td>{{ days_list[loop.index0] }}:</td>   <!--Days of the week-->
+                {% if day | length > 0 %}
+                    {% for i in  range(day[0] | length) %}
+                        <!--Start Time followed by Duration-->
+                        <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td>
+                        <td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
+                    {% endfor %}
+                {% endif %}
+            <tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <h1></h1>
+
+    <!--Printing the Tickets-->
+    <div>
+        <table>
+            <th>Candidate's Tickets:</th>
+            {% for item in tickets %}
+                <tr>
+                    <td> {{ item.get('ticketID') }}</td>
+                    <td>User ID: {{ item.get('userID') }}</td>
+                    <td>Employee ID: {{ item.get('assignedEmpID') }}</td>
+                    <td>Status: {{ item.get('status') }}</td>
+                    <td>Eta: {{ item.get('eta') }}</td>
+                    <td>Start Time: {{ item.get('startTime') }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+</body>
+</html>
