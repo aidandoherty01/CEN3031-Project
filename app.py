@@ -420,8 +420,7 @@ def staffTicketView(ticketID):
         if (cookieID() == ticket.get('assignedEmpID') or check_type(2)):
             if request.method == 'POST': # mark ticket as closed
                 if (request.form['submit'] == "close"):
-                    close_ticket(ticketID)
-                    return redirect("/ITstaffview/ticket/" + str(ticketID))
+                    return redirect("/ITstaffview/ticket/" + str(ticketID) + "/close/")
                 else: # send chat msg
                     send_msg(ticketID, cookieID(), request.form['chatInput'])
                     return redirect("/ITstaffview/ticket/" + str(ticketID))

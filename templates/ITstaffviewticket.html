@@ -197,7 +197,7 @@
                 {% if ticket[2] != "closed" %}
                     <td>
                         <form action="/ITstaffview/ticket/{{ ticket[0] }}" method="POST" >
-                            <button type="submit" value="Submit">Done</button>
+                            <button type="submit" value="close", name="submit">Done</button>
                         </form>
                     </td>
                 {% else %}
