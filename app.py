@@ -595,6 +595,7 @@ def vewticket(ID):
                     ticketsArr[4] = ticketsArr[4][:len(ticketsArr[4]) - 3] # remove the last 3 chars of the time string, as these contain the seconds  
                 if(ticketJSON.get('status') == 'unassigned'):
                     ticketsArr[5] = ''
+                    chatContents = None
                     chat = False
                 else:
                     fName = get_account(ticketJSON.get('assignedEmpID')).get('fName') 
