@@ -52,9 +52,18 @@
 
     <p>
         <table>
+            <th>Account ID</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>First Name</th>
+            <th>Last Name</th>
             {% for item in accounts %}  <!--Iterates through all passed accounts-->
             <tr>
-                <td>{{item}}</td> <!--Prints each document in the collection-->
+                <td>{{ item.get('accID') }}</td> <!--Prints each document in the collection-->
+                <td>{{ item.get('username') }}</td>
+                <td>{{ item.get('password') }}</td>
+                <td>{{ item.get('fName') }}</td>
+                <td>{{ item.get('lName') }}</td>
             </tr>
             {% endfor %}    <!--Ends for loop-->
         </table>

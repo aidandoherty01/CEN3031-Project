@@ -4,25 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reassigning Ticket: {{ ticket.get('ticketID') }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .header {
+            background-color: #4c65b8de;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .header .left-buttons,
+        .header .right-buttons {
+            display: flex;
+        }
+        .header .left-buttons button,
+        .header .right-buttons button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: white;
+            color: #000000de; /* Ensure text color contrasts with the button background */
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <form method="POST">
-        <button type="submit" name="submit" value="return">Return to Admin Home</button>
-    </form>
+    <div class="header">
+        <div class="left-buttons">
+            <form method="POST">
+                <button type="submit" name="submit" value="return">Return to Admin Home</button>
+            </form>
+        </div>
+        <div class="right-buttons">
+            <button onclick="location.href='/logout/'">Logout</button>
+        </div>
+    </div>
 
     <!--Change Employee Being Viewed-->
     <form method="POST">
-        <div>
-            <label for="empAccs">Employees:</label>
-            <select name="empAccs" id="empAccs" required>
-                {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
-                    <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <button type="submit" name="submit" value="change">Change Employee</button>
-        </div>
+        <label for="empAccs">Change Employee Being Viewed:</label>
+        <select name="empAccs" id="empAccs" required>
+            {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
+                <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="submit" value="change">Change Employee</button>
     </form>
 
     <h1></h1>
@@ -63,10 +96,8 @@
             <option value="5">Friday</option>
             <option value="6">Saturday</option>
         </select>
-        <div>
-            <label for="startTime">Start Time</label>
-            <input type="time" id="startTime" name="startTime" required>
-        </div>
+        <label for="startTime">Start Time</label>
+        <input type="time" id="startTime" name="startTime" required>
         <button type="submit" name="submit" value="manual">Reassign Manually</button>
     </form>
 
@@ -74,8 +105,8 @@
     
     <!--Printing the Schedule-->
     <div>
+        <h3>Candidate's Schedule</h3>
         <table>
-            <th>Candidate's Schedule:</th>
             {% for day in schedule %}
             <tr>
                 <td>{{ days_list[loop.index0] }}:</td>   <!--Days of the week-->
@@ -95,16 +126,22 @@
 
     <!--Printing the Tickets-->
     <div>
+        <h3>Candidate's Tickets</h3>
         <table>
-            <th>Candidate's Tickets:</th>
+            <th>Ticket ID</th>
+            <th>User ID</th>
+            <th>Employee ID</th>
+            <th>Status</th>
+            <th>Eta</th>
+            <th>Start Time</th>
             {% for item in tickets %}
                 <tr>
                     <td> {{ item.get('ticketID') }}</td>
-                    <td>User ID: {{ item.get('userID') }}</td>
-                    <td>Employee ID: {{ item.get('assignedEmpID') }}</td>
-                    <td>Status: {{ item.get('status') }}</td>
-                    <td>Eta: {{ item.get('eta') }}</td>
-                    <td>Start Time: {{ item.get('startTime') }}</td>
+                    <td>{{ item.get('userID') }}</td>
+                    <td>{{ item.get('assignedEmpID') }}</td>
+                    <td>{{ item.get('status') }}</td>
+                    <td>{{ item.get('eta') }}</td>
+                    <td>{{ item.get('startTime') }}</td>
                 </tr>
             {% endfor %}
         </table>

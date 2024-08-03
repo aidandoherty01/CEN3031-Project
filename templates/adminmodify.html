@@ -50,7 +50,7 @@
     <!--Change Employee Being Viewed-->
     <form method="POST">
         <div>
-            <label for="empAccs">Employees:</label>
+            <label for="empAccs">Change Employee Being Viewed:</label>
             <select name="empAccs" id="empAccs" required>
                 {% for item in emps %} <!-- loops thru all the employees in ids and adds them to the dropdown box-->
                     <option value="{{ item.get('accID') }}">{{ item.get('accID') }}: {{ item.get('fName') }} {{ item.get('lName') }}</option>
@@ -100,15 +100,20 @@
     <!--Printing the Tickets-->
     <div>
         <table>
-            <th>Tickets:</th>
+            <th>Ticket ID</th>
+            <th>User ID</th>
+            <th>Employee ID</th>
+            <th>Status</th>
+            <th>Eta</th>
+            <th>Start Time</th>
             {% for item in tickets %}
                 <tr>
                     <td> {{ item.get('ticketID') }}</td>
-                    <td>User ID: {{ item.get('userID') }}</td>
-                    <td>Employee ID: {{ item.get('assignedEmpID') }}</td>
-                    <td>Status: {{ item.get('status') }}</td>
-                    <td>Eta: {{ item.get('eta') }}</td>
-                    <td>Start Time: {{ item.get('startTime') }}</td>
+                    <td>{{ item.get('userID') }}</td>
+                    <td>{{ item.get('assignedEmpID') }}</td>
+                    <td>{{ item.get('status') }}</td>
+                    <td>{{ item.get('eta') }}</td>
+                    <td>{{ item.get('startTime') }}</td>
                 </tr>
             {% endfor %}
         </table>
@@ -143,8 +148,8 @@
 
     <!--Printing the Schedule-->
     <div>
+        <h3>Schedule</h3>
         <table>
-            <th>Schedule:</th>
             {% for day in schedule %}
             <tr>
                 <td>{{ days_list[loop.index0] }}:</td>   <!--Days of the week-->
