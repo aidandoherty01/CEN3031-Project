@@ -88,7 +88,7 @@
     </div>
 
     <div class="title">New Ticket</div>
-
+    <!-- not submit with enter code from here: https://stackoverflow.com/a/42343359 -->
     <form method="POST" onkeydown="return event.key != 'Enter';"> <!-- the onkeydown part prevents the form from submitting when enter is pressed-->
         <label for="category">Please select the category that best describes your ticket:</label>
         <select name="catagories" id="catagories">

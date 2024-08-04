@@ -10,7 +10,7 @@ from bson.errors import InvalidId
 from datetime import time, timedelta, date, datetime
 
 
-
+# DB setup code from: https://www.mongodb.com/resources/products/compatibilities/setting-up-flask-with-mongodb
 def get_db():
     db = getattr(g, "_database", None)
 
