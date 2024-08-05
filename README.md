@@ -4,7 +4,6 @@ Key features of the system include:
   Built-in Calendar: A robust calendar feature to manage the high volume of tickets, ensuring efficient scheduling and tracking.
   Communication Tools: Support for both asynchronous messaging and live chat between ticket submitters and IT staff to enhance communication and resolution efficiency.
 The system must be capable of running on multiple machines while accessing a central database. 
-During the development and testing phases, a local database will be used, but the design will ensure it can function seamlessly when connected to a central server database.
 
 Setup:
 Type all commands without the brackets
