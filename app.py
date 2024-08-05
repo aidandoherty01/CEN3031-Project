@@ -191,7 +191,7 @@ def admin():
         emps = get_emp_accounts()
         return render_template('admin.html', emps=emps)
     else:
-        return "Error: Not authorized to view this page"
+        return "Error: Not authorized to view this page"    # If account type is not 'admin', throw an error
 
 @app.route("/admin/roster/", methods=["GET", "POST"])
 def printRoster():
@@ -200,7 +200,7 @@ def printRoster():
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
         
-        accounts = get_emp_accounts()
+        accounts = get_emp_accounts()    # grab all employee accounts to be displayed
         return render_template('adminroster.html', accounts=accounts)
     else:
         return 'Error: Not authorized to view this page'
@@ -212,7 +212,7 @@ def createEmp():
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
             elif(request.form['submit'] == 'createEmp'):
-                accID = get_new_ID()
+                accID = get_new_ID()    # Genereate a new unique id for the account
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
@@ -221,8 +221,8 @@ def createEmp():
                 if not check_username_free(username):
                     return 'Error: Username is already in use.'
                 else:
-                    new_account(accID, username, password, fname, lname, accType)
-                    account = get_account(accID)
+                    new_account(accID, username, password, fname, lname, accType)    # create a new account with the added information
+                    account = get_account(accID)    # update account variable to display new information
                 return render_template('admincreate.html', account=account)
         
         return render_template('admincreate.html')
@@ -238,7 +238,7 @@ def deleteEmp(empID):
             if (request.form['submit'] == 'return'):
                 return redirect('/admin/')
             elif (request.form['submit'] == 'confirm'):
-                if delete_account(empID):   # account existence and type are checked in function
+                if delete_account(empID):   # account existence and type are checked in function to prevent html modifications from deleting a random account
                     return 'Error: Account deletion unsuccessful, check that the provided id is an employee and that the account exists.'
                 message = 'Successfully deleted account.'
         return render_template('admindelete.html', account=account, message=message)
@@ -257,27 +257,27 @@ def modifyEmp(empID):
         if (request.method == 'POST'):
             if(request.form['submit'] == 'return'):
                 return redirect('/admin/')
-            elif(request.form['submit'] == 'change'):
+            elif(request.form['submit'] == 'change'):    # Change the current employee being viewed
                 empID = request.form['empAccs']
                 return redirect('/admin/modify/' + str(empID))
-            elif(request.form['submit'] == 'modify'):
+            elif(request.form['submit'] == 'modify'):    # Modify the current employee's information
                 fname = request.form['fname']
                 lname = request.form['lname']
                 username = request.form['username']
                 password = request.form['password']
                 if not update_account(empID, username, password, fname, lname):
                     return 'Error: Username is already being used.'
-            elif(request.form['submit'] == 'reassign'):
+            elif(request.form['submit'] == 'reassign'):    # Redirect to reassign interface
                 ticketID = request.form['tIDs']
                 empID = request.form['eIDs']
                 return redirect('/admin/reassign/' + ticketID + '/' + empID)
-            elif((request.form['submit'] == 'schedule') or (request.form['submit'] == 'remove')):
+            elif((request.form['submit'] == 'schedule') or (request.form['submit'] == 'remove')):    # Schedule Modifications
                 day = int(request.form['day'])   # indexes: 0-6, sun-sat
                 start = request.form['startTime']
                 end = request.form['endTime']
                 # Formatting startTime to ==> HH:MM:SS
                 startDateTime = datetime.strptime(start, '%H:%M')
-                startDelta = timedelta(hours=startDateTime.hour, minutes=startDateTime.minute)
+                startDelta = timedelta(hours=startDateTime.hour, minutes=startDateTime.minute)    # Converting to timedelta for comparisons
                 # Calculating duration
                 durationDelta = datetime.strptime(end, '%H:%M') - startDateTime
                 if(request.form['submit'] == 'schedule'):   # Add timeslot
@@ -296,9 +296,9 @@ def modifyEmp(empID):
             tickets = get_tickets_by_acc(empID)
             schedule = get_schedule(empID)
 
-        days_list = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        days_list = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']    # Formatting
         emps = get_emp_accounts()   # Used for changing employee dropdown
-        empIDs = get_emp_ids()  # Probably don't need this ==> use get_acc again?
+        empIDs = get_emp_ids()  # Ticket reassignment selection
         ticketIDs = get_ticket_ids_by_account(empID)    # For ticket reassignment
         return render_template('adminmodify.html', empID=empID, account=account, tickets=tickets, ticketIDs=ticketIDs, emps=emps, empIDs=empIDs, schedule=schedule, days_list = days_list)
     else:
@@ -310,12 +310,10 @@ def reassignTicket(ticketID, empID):
         ticket = get_ticket_by_id(ticketID)
         if (not ticket) or (ticket.get('status') == 'closed'):  # check that ticket exists and isn't closed
             return 'Error: Specified ticket is ineligible for reassignment.'
-        assigned_emp = get_account(ticket.get('assignedEmpID'))
+        assigned_emp = get_account(ticket.get('assignedEmpID'))    # employee currently assigned to the ticket
         if not assigned_emp:
             return 'Error: Assigned Employee no longer exists.'
         assigned_emp_id = assigned_emp.get('accID')
-        # if empID == assigned_emp_id:
-            # return 'Error: Ticket must be reassigned to new employee.'
         candidate = get_account(empID)
         if (not candidate) or (candidate.get('type') != 1):
             return 'Error: Specified employee no longer exists.'
@@ -330,7 +328,7 @@ def reassignTicket(ticketID, empID):
             elif(request.form['submit'] == 'change'):
                 empID = request.form['empAccs']
                 return redirect('/admin/reassign/' + str(ticketID) + '/' + empID)
-            elif(request.form['submit'] == 'auto'):
+            elif(request.form['submit'] == 'auto'):    # Use the soonest_fit algorithm to reassign the ticket to the currently selected candidate employee
                 startTime = get_soonest_fit(empID, ticketID)    # returns start time if it can fit, else max
                 if (startTime != datetime.max):   # if candidate found
                     if assign_ticket_emp(ticketID, empID):
@@ -341,13 +339,13 @@ def reassignTicket(ticketID, empID):
                         ticket = get_ticket_by_id(ticketID)
                 else:
                     return 'Error: Ticket could not be reassigned.'
-            elif(request.form['submit'] == 'manual'):
+            elif(request.form['submit'] == 'manual'):    # Manually reassign the ticket
                 day = int(request.form['day'])
                 startTime = request.form['startTime']
                 eta = ticket.get('eta')
                 tickets = get_tickets_by_acc(empID)
-                startTime = manual_reassign(day, startTime, eta, schedule, tickets)
-                if startTime != -1:
+                startTime = manual_reassign(day, startTime, eta, schedule, tickets)    # Call the manual reassignment function
+                if startTime != -1:    # Check if an error code was returned
                     if assign_ticket_emp(ticketID, empID):
                         return 'Error: Ticket could not be reassigned.'
                     else:
@@ -612,8 +610,8 @@ def vewticket(ID):
                     lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
                     empName = fName + " " + lName
                     ticketsArr[5] = empName
-                    chat = True
-                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID())
+                    chat = True # chat is true when tickets is assigned
+                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID()) # get the chat and chat history, stored in an array
                 ticketsArr[6] = ticketJSON.get('startTime')
                 if(ticketsArr[4] is not None):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
