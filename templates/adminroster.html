@@ -80,8 +80,10 @@
         <h1>Employee Roster</h1>
     </div>
 
+    <!--Printing all employee accounts-->
     <p>
         <table>
+            <!--Table Formatting-->
             <th>Account ID</th>
             <th>Username</th>
             <th>Password</th>
@@ -89,7 +91,7 @@
             <th>Last Name</th>
             {% for item in accounts %}  <!--Iterates through all passed accounts-->
             <tr>
-                <td>{{ item.get('accID') }}</td> <!--Prints each document in the collection-->
+                <td>{{ item.get('accID') }}</td> <!--Prints each piece of information in its own cell-->
                 <td>{{ item.get('username') }}</td>
                 <td>{{ item.get('password') }}</td>
                 <td>{{ item.get('fName') }}</td>
