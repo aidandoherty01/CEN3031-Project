@@ -312,6 +312,7 @@ def clear_schedule(accID):  # Removes ALL timeslots from the schedule
             schedule[i][j] = []
     db.schedules.find_one_and_update({'accID' : accID}, {'$set' : {'timeSlots' : schedule}})
 
+# While loop removing indices in reverse from: https://www.geeksforgeeks.org/python-remove-elements-at-indices-in-list/#
 def delete_schedule(accID, day, startTime, duration): # removes specified timeslots
     schedule = get_schedule(accID)  # timedelta schedule used for comparisons
     if not schedule:    # check employee has a schedule
