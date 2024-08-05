@@ -100,14 +100,16 @@
     <!--Printing the Tickets-->
     <div>
         <table>
+            <!--Table Header Formatting-->
             <th>Ticket ID</th>
             <th>User ID</th>
             <th>Employee ID</th>
             <th>Status</th>
             <th>Eta</th>
             <th>Start Time</th>
-            {% for item in tickets %}
+            {% for item in tickets %}    <!--Iterate through each ticket-->
                 <tr>
+                    <!--Each piece of information gets its own cell in the table-->
                     <td> {{ item.get('ticketID') }}</td>
                     <td>{{ item.get('userID') }}</td>
                     <td>{{ item.get('assignedEmpID') }}</td>
@@ -126,7 +128,7 @@
         <div>
             <label for="tIDs">Tickets:</label>
             <select name="tIDs" id="tIDs" required>
-                {% for item in ticketIDs %}
+                {% for item in ticketIDs %}    <!--Adding each ticket ID to selection-->
                     <option value="{{ item.get('ticketID') }}">{{ item.get('ticketID') }}</option>
                 {% endfor %}
             </select>
@@ -134,7 +136,7 @@
         <div>
             <label for="eIDs">Employees:</label>
             <select name="eIDs" id="eIDs" required>
-                {% for item in empIDs %}
+                {% for item in empIDs %}    <!--Adding each employee ID to selection-->
                     <option value="{{ item.get('accID') }}">{{ item.get('accID') }}</option>
                 {% endfor %}
             </select>
@@ -150,11 +152,11 @@
     <div>
         <h3>Schedule</h3>
         <table>
-            {% for day in schedule %}
+            {% for day in schedule %}    <!--Schedule is a 3-D array, so start by iterating through each day-->
             <tr>
                 <td>{{ days_list[loop.index0] }}:</td>   <!--Days of the week-->
-                {% if day | length > 0 %}
-                    {% for i in  range(day[0] | length) %}
+                {% if day | length > 0 %}    <!--Check if current day has any entries-->
+                    {% for i in  range(day[0] | length) %}    <!--Iterate though each timeslot-->
                         <!--Start Time followed by Duration-->
                         <td>Start {{ loop.index }}: {{ day[0][loop.index0] }}</td>
                         <td>Duration {{ loop.index }}: {{ day[1][loop.index0] }}</td>
@@ -191,6 +193,7 @@
 
     <h1></h1>
 
+    <!--Schedule Default/Clear-->
     <form method="POST">
         <button type="submit" name="submit" value="default">Assign Default Schedule</button>
         <button type="submit" name="submit" value="clear">Clear Whole Schedule</button>
