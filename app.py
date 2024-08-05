@@ -612,8 +612,8 @@ def vewticket(ID):
                     lName = get_account(ticketJSON.get('assignedEmpID')).get('lName') # get empployee first name and last name
                     empName = fName + " " + lName
                     ticketsArr[5] = empName
-                    chat = True
-                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID())
+                    chat = True # chat is true when tickets is assigned
+                    chatContents = format_ticket_chat(get_ticket_chat(ID), cookieID()) # get the chat and chat history, stored in an array
                 ticketsArr[6] = ticketJSON.get('startTime')
                 if(ticketsArr[4] is not None):
                     ticketsArr[6] = ticketJSON.get('startTime').strftime("%m-%d-%Y %H:%M")
