@@ -90,17 +90,17 @@ def login():
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
-        if check_account(username, password):
+        if check_account(username, password): # checks if the login details are valid
             acc = get_account_by_username(username)
 
-            if (acc.get('type') == 0):
+            if (acc.get('type') == 0): # checks the account type and redirects to the appropriate page
                 response = make_response(redirect('/userview/'))
             elif (acc.get('type') == 1):
                 response = make_response(redirect('/ITstaffview/'))
             else:
                 response = make_response(redirect('/admin/'))
 
-            response.set_cookie('accID', str(acc.get('accID')), secure=True)
+            response.set_cookie('accID', str(acc.get('accID')), secure=True) # adds the login details to the cookies so that other pages can access them
             response.set_cookie('type', str(acc.get('type')), secure=True)
 
             return response
@@ -116,13 +116,13 @@ def login():
 def register():
     error = None
     if (request.method == 'POST'):
-        accID = get_new_ID()
+        accID = get_new_ID() # gets the lowest unused acc id
         username = request.form.get("username")
         password = request.form.get("password")
         fname = request.form.get("fname")
         lname = request.form.get('lname')
 
-        if (check_username_free(username)):
+        if (check_username_free(username)): # checks if the input user name is in use
             new_account(accID, username, password, fname, lname, 0)
 
             return redirect("/login/")
@@ -154,7 +154,7 @@ def newTicket():
             return redirect("/userview/")
 
         else:
-            categoriesArray = get_categories_array()
+            categoriesArray = get_categories_array() # gets an array of the categories from the database
 
             return render_template('newticket.html', catagoriesArray=categoriesArray)
     else:
@@ -468,9 +468,9 @@ def closeTicket(ticketID):
             if (request.method == 'GET'):
                 return render_template("closeticket.html")
             else:
-                hoursWorked = int(request.form['input'])
+                hoursWorked = int(request.form['input']) # gets the input hours worked
                 update_hours_worked(ticketID, hoursWorked)
-                close_ticket(ticketID)
+                close_ticket(ticketID) 
                 return redirect("/ITstaffview/")
         else:
             return "Not authorized to view this page"
@@ -486,23 +486,23 @@ def ticketEtaAssignment(ticketID):
                 if (int(request.form['minutes']) < 60):
                     eta = time(int(request.form['hours']), int(request.form['minutes']))
 
-                    assign_ticket_eta(ticketID, eta.isoformat())
+                    assign_ticket_eta(ticketID, eta.isoformat()) # assignes the input eta estimate to the ticket (must be done before finding fit since eta is used)
 
-                    soonestFit = datetime.max
-                    emps = list(get_emp_accounts())
+                    soonestFit = datetime.max # sets the starting soonest time to the max time, if it is this time at the end, error is returned, as no fit could be found
+                    emps = list(get_emp_accounts()) # gets a list of all emps
 
-                    for x in emps:
-                        if (check_if_schedule(x.get('accID'))):
+                    for x in emps: # loops thru all emps, gets the soonest time the ticket could fit into their schedule
+                        if (check_if_schedule(x.get('accID'))): # checks to make sure the given emp has a schedule, prevents crash
                             thisEmpSoonestFit = get_soonest_fit(x.get('accID'), ticketID)
 
-                            if (thisEmpSoonestFit < soonestFit):
+                            if (thisEmpSoonestFit < soonestFit): # checks if this emp can do the ticket sooner than previous ones
                                 soonestFit = thisEmpSoonestFit
                                 soonestEmp = x.get('accID')
 
                     if (soonestFit == datetime.max):
                         return "error: could not fit ticket with that eta into any employees schedule"
                     else:
-                        assign_ticket_emp(ticketID, soonestEmp)
+                        assign_ticket_emp(ticketID, soonestEmp) # assigns the ticket to the emp that it fit soonest with
                         assign_ticket_start_time(ticketID, soonestFit)
 
                     return redirect("/ITstaffview/eta")
@@ -517,7 +517,7 @@ def ticketEtaAssignment(ticketID):
             ticketArr[1] = ticketJSON.get('category')
             ticketArr[2] = ticketJSON.get('description')
 
-            return render_template('ticketeta.html', ticket = ticketArr)
+            return render_template('ticketeta.html', ticket = ticketArr) # displays the tickets info
     else:
         return "Not authorized to view this page"
     
@@ -525,10 +525,10 @@ def ticketEtaAssignment(ticketID):
 @app.route("/ITstaffview/calendar")
 def empCalendar():
     if (check_type(1)):
-        scheduleRaw = get_schedule(cookieID())
+        scheduleRaw = get_schedule(cookieID()) # gets the raw json data for the emps tickets and schedule
         ticketsRaw = list(get_tickets_by_acc(cookieID()))
 
-        schedule = convert_schedule_to_minutes(scheduleRaw)
+        schedule = convert_schedule_to_minutes(scheduleRaw) # convets the raw data to arrays of ints representing minutes from 00:00
         tickets = convert_tickets_to_minutes(ticketsRaw)
 
         firstOfWeek = get_first_day_of_week(datetime.now())
