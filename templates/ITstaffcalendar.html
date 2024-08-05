@@ -136,6 +136,7 @@
         <div class="title">YOUR SCHEDULE THIS WEEK</div>
         <table>
             <thead>
+                 <!-- title row for the day of the week -->
                 <tr>
                     <th></th>
                     <th>Sunday</th>
@@ -149,6 +150,7 @@
             </thead>
             <tbody>
                 <tr>
+                     <!-- get 24 hours -->
                     <td class="time">
                         {% for hour in range(0, 12) %}
                             <div>{{hour}}:00 AM</div>
@@ -179,7 +181,7 @@
         days.forEach((day, index) => {
             const scheduleContainer = document.getElementById(day);
             let count = 0;
-
+            // every minute will be a pixel (1440 minutes in a day)
             for (let minute = 0; minute < 1440; minute++) {
                 const div = document.createElement('div');
                 if (minute % 60 === 0) {
@@ -189,8 +191,10 @@
                     let ticketed = false;
                     let ticketheader = false;
                     let ticketID;
+                    // if IT staff has a ticket
                     for (let i = 0; i < ticket[index][0].length; i++) {
                         if (minute >= ticket[index][0][i] && minute <= ticket[index][1][i]) {
+                            // 30 first pixels of the ticket is for the darker color with ticket ID on it
                             if (minute >= ticket[index][0][i] && minute <= ticket[index][0][i]+30) {
                                 //document.write(minute + ", ");
                                 ticketheader = true;
@@ -203,14 +207,14 @@
                             }
                         }
                     }
-
+                    // if their schedule are available
                     for (let i = 0; i < shifts[index][0].length; i++) {
                         if (minute >= shifts[index][0][i] && minute <= shifts[index][1][i]) {
                             open = true;
                             break; // Exit the inner loop if condition is met
                         }
                     }
-
+                    // ticket header (with ticket ID)
                     if (ticketheader) {
                         div.className = 'ticketheader';
 
@@ -231,7 +235,9 @@
                         };
                         div.appendChild(button);
 
-                    } else if (ticketed) {
+                    } 
+                    // ticket pixels
+                    else if (ticketed) {
                         count = 0;
                         div.className = 'ticketed';
 
@@ -240,9 +246,13 @@
                             window.location.href = "/ITstaffview/ticket/" + ticketID;
                         };
                         div.appendChild(button);
-                    } else if (open) {
+                    } 
+                    // if their schedule are open
+                    else if (open) {
                         div.className = 'open';
-                    } else {
+                    } 
+                    // their blocked time
+                    else {
                         div.className = 'blocked';
                     }
                 }
