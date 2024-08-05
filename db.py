@@ -506,6 +506,7 @@ def send_msg(ticketID, accID, msg):
 def get_ticket_chat(ticketID):
     return db.ticketChats.find_one({'ticketID' : ticketID})
 
+# Finding Sunday of current week from: https://stackoverflow.com/questions/39441639/getting-the-date-of-the-first-day-of-the-week
 def manual_reassign(day, startTime, eta, schedule, tickets):
     # Conversions
     ed = datetime.strptime(eta, '%H:%M:%S')
