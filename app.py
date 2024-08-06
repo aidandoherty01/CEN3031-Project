@@ -15,7 +15,7 @@ convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_sched
 get_ticket_chat, send_msg, default_schedule, clear_schedule, get_ticket_ids_by_account, get_emp_ids, schedule_start_to_datetime, manual_reassign, update_ticket_chat_emp
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/testDB"
+app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/finalDB"
 init_app(app)
 
 def cookieID():
