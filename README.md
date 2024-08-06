@@ -5,7 +5,7 @@ The objective of this project is to develop an IT help desk ticket system design
 ## Key features of the system include:
   <h4>Automatic Ticket Assignment: </h4> The system will automatically assign tickets to individual IT staff members based on predefined criteria.
   <h4>Built-in Calendar:  </h4> A robust calendar feature to manage the high volume of tickets, ensuring efficient scheduling and tracking.
-  <h4>Communication Tools:  </h4> Support for both asynchronous messaging and live chat between ticket submitters and IT staff to enhance communication and resolution efficiency.
+  <h4>Communication Tools:  </h4> Support for asynchronous messaging between ticket submitters and IT staff to enhance communication and resolution efficiency.
 <h3></h3>
 The system must be capable of running on multiple machines while accessing a central database. 
 
