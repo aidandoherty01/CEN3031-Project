@@ -17,7 +17,7 @@ The system must be capable of running on multiple machines while accessing a cen
 ## Setup:
 ### How to run locally
 
-Install Python3 and pip, follow install instructions on respective webpages
+Install <a href="https://www.python.org/downloads/" target="_blank">Python3</a> and <a href="https://pypi.org/project/pip/" target="_blank">pip</a>, follow install instructions on respective webpages
 
 Download and extract project files to a folder
 
