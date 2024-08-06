@@ -17,13 +17,15 @@ The system must be capable of running on multiple machines while accessing a cen
 ## Setup:
 ### How to run locally
 
-Install <a href="https://www.python.org/downloads/" target="_blank">Python3</a> and <a href="https://pypi.org/project/pip/" target="_blank">pip</a>, follow install instructions on respective webpages
+Install [Python3](https://www.python.org/downloads/) and [pip](https://pypi.org/project/pip/), follow install instructions on respective webpages
 
-Download and extract project files to a folder
-
-Open command prompt as admin and type 
+Clone the forked repository to your local machine:
+```bash
+git clone https://github.com/aidandoherty01/CEN3031-Project.git
+``` 
+Change to the directory of the cloned repository:
 ```shell
-cd \path\to\folder\
+cd CEN3031-Project
 ```
 Then, type
 ```shell
