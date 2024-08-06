@@ -41,4 +41,4 @@ Run
 ```shell
 Flask --app app run
 ```
-Open [http://127.0.0.1:5000] in browser
+Open http://127.0.0.1:5000 in browser
