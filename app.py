@@ -12,7 +12,8 @@ from db import init_app, new_ticket, get_ticket_count, assign_ticket_emp, close_
 assign_ticket_eta, new_account, get_account_count, get_unassigned_tickets, get_active_tickets, check_account, new_schedule, get_schedule, get_soonest_fit,\
 get_emp_accounts, get_account, get_tickets_by_account, get_accounts, delete_account, get_new_ID, check_username_free, get_account_by_username, convert_schedule_to_minutes,\
 convert_tickets_to_minutes, get_first_day_of_week, get_day_array, check_if_schedule, get_categories_array, update_hours_worked, update_account, update_schedule, delete_schedule,\
-get_ticket_chat, send_msg, default_schedule, clear_schedule, get_ticket_ids_by_account, get_emp_ids, schedule_start_to_datetime, manual_reassign, update_ticket_chat_emp
+get_ticket_chat, send_msg, default_schedule, clear_schedule, get_ticket_ids_by_account, get_emp_ids, schedule_start_to_datetime, manual_reassign, update_ticket_chat_emp,\
+new_category, delete_category
 
 app = Flask(__name__)
 app.config['MONGO_URI'] = "mongodb+srv://admin:j6BIXDqwhnSevMT9@group29.xghzavk.mongodb.net/finalDB"
@@ -173,6 +174,7 @@ def ticketSubmitted():
 @app.route("/admin/", methods=["GET", "POST"])
 def admin():
     if (check_type(2)): # check account type is 'admin'
+        message = ''
         if (request.method == 'POST'):
             if (request.form['submit'] == 'logout'):
                 return redirect('/logout/')
@@ -187,9 +189,21 @@ def admin():
             elif (request.form['submit'] == 'modifyEmp'):
                 empID = request.form['empAccs']
                 return redirect('/admin/modify/' + str(empID))
+            elif (request.form['submit'] == 'deleteCat'):   # Delete a category
+                cat = request.form['cats']
+                response = delete_category(cat)
+                if not response:
+                    message = 'Failed to remove: ' + cat
+                else:
+                    message = 'Successfully removed: ' + cat
+            elif (request.form['submit'] == 'createCat'):   # Create a category
+                cat = request.form['cat']
+                message = 'Successfully added: ' + cat
+                new_category(cat)
         
+        categories = get_categories_array()
         emps = get_emp_accounts()
-        return render_template('admin.html', emps=emps)
+        return render_template('admin.html', emps=emps, categories=categories, message=message)
     else:
         return "Error: Not authorized to view this page"    # If account type is not 'admin', throw an error
 

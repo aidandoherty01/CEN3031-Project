@@ -593,7 +593,9 @@ def delete_acc_from_chats(accID): # sets the id for all msgs sent by this acc to
 
 ## Categories functions
 def new_category(cat):
-    return db.catagories.insert_one({"category" : str(cat)})
+    return db.categories.update_one({"category" : str(cat)},    # Attempt to match on cat
+                                    {"$set" : {"category" : str(cat)}}, # If cat is matched, set it to itself ==> prevents duplicates
+                                    upsert=True)    # If cat isn't matched, insert new cat
 
 def get_categories_array():
     cats = list(db.categories.find())
