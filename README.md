@@ -1,4 +1,4 @@
-# Human Scrum
+# Welcome to Human Scrum
 ## Project Description
 The objective of this project is to develop an IT help desk ticket system designed to streamline the process of submitting and managing IT support requests. Users will be able to submit tickets for issues such as account assistance and repair requests.
 
@@ -15,7 +15,7 @@ The system must be capable of running on multiple machines while accessing a cen
 - Corey Telkitz
 
 ## Setup:
-Type all commands without the brackets
+### How to run locally
 
 Install Python3 and pip, follow install instructions on respective webpages
 
