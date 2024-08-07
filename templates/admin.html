@@ -74,5 +74,28 @@
         </div>
     </form>
 
+    <h1></h1>
+
+    <!--Ticket Category Deletion-->
+    <form method="POST">
+        <label for="cats">Categories:</label>
+        <select name="cats" id="cats" required>
+            {% for item in categories %} <!--Display all categories-->
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="submit" value="deleteCat">Delete Category</button>
+    </form>
+    
+    <!--Ticket Category Creation-->
+    <form method="POST">
+        <label for="cat">New Category:</label>
+        <input type="text" id="cat" name="cat" required>
+        <button type="submit" name="submit" value="createCat">Create Category</button>
+    </form>
+
+    <!--Print response message ("ticket insert/delete")-->
+    <p>{{ message }}</p>
+    
 </body>
 </html>
